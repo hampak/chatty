@@ -4,6 +4,9 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import morgan from "morgan"
 
+/* Auth Imports */
+import authRoutes from "./routes/authRoutes"
+
 dotenv.config()
 const PORT = process.env.PORT ? process.env.PORT : 8000
 
@@ -16,6 +19,8 @@ app.use(cors({
 }))
 app.use(cookieParser())
 app.use(morgan("common"))
+
+app.use("/api/auth", authRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server running on port - ${PORT}`)

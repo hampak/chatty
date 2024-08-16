@@ -8,7 +8,11 @@ import Dashboard from './routes/Dashboard'
 import { checkAuthStatus } from './utils'
 
 const router = createBrowserRouter(createRoutesFromElements(
-  <Route path="/" element={<RootLayout />}>
+  <Route
+    path="/"
+    element={<RootLayout />}
+  // loader={async () => await checkAuthStatus()}
+  >
     <Route index path="/login" element={<Login />} />
     <Route
       path="/dashboard"
