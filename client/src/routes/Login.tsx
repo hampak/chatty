@@ -7,14 +7,17 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center px-2">
       <Card className="w-[400px] flex flex-col items-center">
         <CardHeader className="text-xl font-semibold text-center">Welcome to Chatty :)</CardHeader>
         <CardContent className="w-full flex flex-col items-center space-y-4">
-          <div className="flex items-center p-2 border rounded-lg px-4 w-3/4 text-center justify-evenly hover:bg-gray-100 transition-all hover:cursor-pointer">
+          <a
+            className="flex items-center p-2 border rounded-lg px-4 w-3/4 text-center justify-evenly hover:bg-gray-100 transition-all hover:cursor-pointer"
+            href="/api/auth/google"
+          >
             <FaGoogle className="text-blue-500" />
             <span className="font-semibold">Start with Google</span>
-          </div>
+          </a>
           <div className="flex items-center p-2 border rounded-lg px-4 w-3/4 text-center justify-evenly hover:bg-gray-100 transition-all hover:cursor-pointer">
             <FaGithub className="text-gray-700" />
             <span className="font-semibold">Start with Github</span>

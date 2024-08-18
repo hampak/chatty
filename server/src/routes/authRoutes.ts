@@ -17,6 +17,13 @@ const authRoutes = express.Router()
 
   /* Google auth */
   .get("/google", (req, res) => {
+
+    const userCookie = req.cookies.user
+
+    if (userCookie) {
+      return res.redirect(`${CLIENT_URL}/dashboard`)
+    }
+
     res.header("Access-Control-Allow-Origin", CLIENT_URL);
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header("Referrer-Policy", "no-referrer-when-downgrade");
@@ -59,7 +66,7 @@ const authRoutes = express.Router()
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 30 * 60 * 1000,
-        sameSite: "none"
+        // sameSite: "none"
       })
 
       res.redirect(`${CLIENT_URL}/dashboard`)
@@ -69,11 +76,16 @@ const authRoutes = express.Router()
     }
   })
 
+  /* Github Auth */
+
+
+  /* Logout */
   .get("/logout", (req, res) => {
     res.clearCookie("user")
     res.redirect("/")
   })
 
+  /* Check auth for route protection */
   .get("/check-auth", (req, res) => {
 
     const userCookie = req.cookies.user
@@ -89,7 +101,5 @@ const authRoutes = express.Router()
       res.json(null)
     }
   })
-  })
-
 
 export default authRoutes
