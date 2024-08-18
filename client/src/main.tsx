@@ -4,6 +4,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import RootLayout from './components/RootLayout'
 import './index.css'
 import LandingPage from './routes/LandingPage'
+import Login from './routes/Login'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -12,6 +13,7 @@ const router = createBrowserRouter(createRoutesFromElements(
   // loader={async () => await checkAuthStatus()}
   >
     <Route index element={<LandingPage />} />
+    <Route index path="/login" element={<Login />} />
     {/* <Route index path="/login" element={<Login />} />
     <Route
       path="/dashboard"
