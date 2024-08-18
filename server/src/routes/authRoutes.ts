@@ -1,6 +1,7 @@
 import dotenv from "dotenv"
 import express from "express"
 import { OAuth2Client } from "google-auth-library"
+import { User } from "../db/models"
 
 dotenv.config()
 
@@ -55,13 +56,28 @@ const authRoutes = express.Router()
         audience: GOOGLE_CLIENT_ID
       })
 
-      const user = ticket.getPayload()
+      const accessingUser = ticket.getPayload()
+
+      // check to see if user already exists
+      const user = await User.findOne({
+        google_id: accessingUser?.sub
+      })
+
+      if (!user) {
+        const newUser = new User({
+          name: accessingUser?.name,
+          email: accessingUser?.email,
+          google_id: accessingUser?.sub,
+          image: accessingUser?.picture
+        })
+        await newUser.save()
+      }
 
       res.cookie("user", JSON.stringify({
-        id: user?.sub,
-        email: user?.email,
-        name: user?.name,
-        picture: user?.picture,
+        id: accessingUser?.sub,
+        email: accessingUser?.email,
+        name: accessingUser?.name,
+        picture: accessingUser?.picture,
       }), {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

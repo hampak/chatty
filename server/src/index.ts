@@ -24,14 +24,6 @@ app.use(morgan("common"))
 
 app.use("/api/auth", authRoutes)
 
-app.get("/testing", async (req, res) => {
-  const testingData = new User({
-    name: "Testing1"
-  })
-
-  await testingData.save()
-})
-
 app.listen(PORT, () => {
   connectToMongoDb()
   console.log(`Server running on port - ${PORT}`)

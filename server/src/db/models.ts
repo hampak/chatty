@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
   github_id: {
     type: String,
     required: false
+  },
+  image: {
+    type: String,
+    required: false
   }
 }, {
   timestamps: true
