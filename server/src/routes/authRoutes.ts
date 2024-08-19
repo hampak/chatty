@@ -2,6 +2,8 @@ import dotenv from "dotenv"
 import express from "express"
 import { OAuth2Client } from "google-auth-library"
 import { User } from "../db/models"
+import jwt from 'jsonwebtoken';
+
 
 dotenv.config()
 
@@ -10,6 +12,7 @@ const CLIENT_URL = process.env.CLIENT_URL
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
 const REDIRECT_URI = process.env.REDIRECT_URI
+const JWT_SECRET = process.env.JWT_SECRET
 
 const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI)
 
@@ -63,6 +66,8 @@ const authRoutes = express.Router()
         google_id: accessingUser?.sub
       })
 
+      let token
+
       if (!user) {
         const newUser = new User({
           name: accessingUser?.name,
@@ -70,15 +75,30 @@ const authRoutes = express.Router()
           google_id: accessingUser?.sub,
           image: accessingUser?.picture
         })
-        await newUser.save()
+        const savedUser = await newUser.save()
+
+        token = jwt.sign({
+          user_id: savedUser?._id,
+          name: savedUser?.name,
+          email: savedUser?.email,
+          picture: savedUser?.image
+        },
+          JWT_SECRET!,
+          { expiresIn: "30m" }
+        )
+      } else {
+        token = jwt.sign({
+          user_id: user?._id,
+          name: user?.name,
+          email: user?.email,
+          picture: user?.image
+        },
+          JWT_SECRET!,
+          { expiresIn: "30m" }
+        )
       }
 
-      res.cookie("user", JSON.stringify({
-        id: accessingUser?.sub,
-        email: accessingUser?.email,
-        name: accessingUser?.name,
-        picture: accessingUser?.picture,
-      }), {
+      res.cookie("user", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 30 * 60 * 1000,
@@ -102,19 +122,39 @@ const authRoutes = express.Router()
   })
 
   /* Check auth for route protection */
+  // .get("/check-auth", (req, res) => {
+
+  //   const userCookie = req.cookies.user
+
+  //   if (userCookie) {
+  //     const user = JSON.parse(userCookie)
+
+  //     res.status(200).json({
+  //       id: user?.id,
+  //       username: user?.name
+  //     })
+  //   } else {
+  //     res.json(null)
+  //   }
+  // })
   .get("/check-auth", (req, res) => {
 
-    const userCookie = req.cookies.user
+    const token = req.cookies.user
 
-    if (userCookie) {
-      const user = JSON.parse(userCookie)
+    if (!token) {
+      return res.status(401).json(null)
+    }
 
-      res.status(200).json({
-        id: user?.id,
-        username: user?.name
-      })
-    } else {
-      res.json(null)
+    try {
+      // const decoded = jwt.verify(token, JWT_SECRET!)
+
+      // User.findById(decoded.id).then(user => {
+      //   if (user) {
+      //     res.status()
+      //   }
+      // })
+    } catch (error) {
+
     }
   })
 
