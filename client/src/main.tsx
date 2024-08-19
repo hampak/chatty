@@ -7,6 +7,7 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import Dashboard from './routes/Dashboard'
 import { checkAuthStatus } from './utils'
+import UserProvider from './components/context/UserProvider'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -40,6 +41,8 @@ function App() {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <UserProvider>
+      <App />
+    </UserProvider>
   </StrictMode>,
 )

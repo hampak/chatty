@@ -3,26 +3,28 @@ import dotenv from "dotenv"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import morgan from "morgan"
-
-/* Auth Imports */
-import authRoutes from "./routes/authRoutes"
 import connectToMongoDb from "./db/db"
-import { User } from "./db/models"
+
+/* route Imports */
+import authRoutes from "./routes/authRoutes"
+import userRoutes from "./routes/userRoutes"
 
 dotenv.config()
 const PORT = process.env.PORT ? process.env.PORT : 8000
+const CLIENT_URL = process.env.CLIENT_URL
 
 const app = express()
 
 app.use(express.json())
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: `${CLIENT_URL}`,
   credentials: true
 }))
 app.use(cookieParser())
 app.use(morgan("common"))
 
 app.use("/api/auth", authRoutes)
+app.use("/api/user", userRoutes)
 
 app.listen(PORT, () => {
   connectToMongoDb()
