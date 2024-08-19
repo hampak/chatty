@@ -24,8 +24,6 @@ const authRoutes = express.Router()
 
     const token = req.cookies.user
 
-    // first check to see if token is that of real user. Take that boolean value and open a if statement...
-
     if (token) {
       try {
         const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
@@ -34,14 +32,41 @@ const authRoutes = express.Router()
             if (user) {
               return res.redirect(`${CLIENT_URL}/dashboard`)
             } else {
-              return next()
+              res.header("Access-Control-Allow-Origin", CLIENT_URL);
+              res.header("Access-Control-Allow-Credentials", 'true');
+              res.header("Referrer-Policy", "no-referrer-when-downgrade");
+
+              const authUrl = oauth2Client.generateAuthUrl({
+                access_type: "offline",
+                scope: 'https://www.googleapis.com/auth/userinfo.profile  openid ',
+                prompt: "consent"
+              })
+              return res.redirect(authUrl)
             }
           })
         } else {
-          return next()
+          res.header("Access-Control-Allow-Origin", CLIENT_URL);
+          res.header("Access-Control-Allow-Credentials", 'true');
+          res.header("Referrer-Policy", "no-referrer-when-downgrade");
+
+          const authUrl = oauth2Client.generateAuthUrl({
+            access_type: "offline",
+            scope: 'https://www.googleapis.com/auth/userinfo.profile  openid ',
+            prompt: "consent"
+          })
+          return res.redirect(authUrl)
         }
       } catch (error) {
-        return next()
+        res.header("Access-Control-Allow-Origin", CLIENT_URL);
+        res.header("Access-Control-Allow-Credentials", 'true');
+        res.header("Referrer-Policy", "no-referrer-when-downgrade");
+
+        const authUrl = oauth2Client.generateAuthUrl({
+          access_type: "offline",
+          scope: 'https://www.googleapis.com/auth/userinfo.profile  openid ',
+          prompt: "consent"
+        })
+        return res.redirect(authUrl)
       }
     } else {
       res.header("Access-Control-Allow-Origin", CLIENT_URL);
