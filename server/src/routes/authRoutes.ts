@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 import express from "express"
 import { OAuth2Client } from "google-auth-library"
 import { User } from "../db/models"
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 
 dotenv.config()
@@ -20,25 +20,35 @@ const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, RE
 const authRoutes = express.Router()
 
   /* Google auth */
-  .get("/google", (req, res) => {
+  .get("/google", (req, res, next) => {
 
-    const userCookie = req.cookies.user
+    const token = req.cookies.user
 
-    if (userCookie) {
-      return res.redirect(`${CLIENT_URL}/dashboard`)
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
+        if (typeof decoded !== "string" && decoded.user_id) {
+          User.findById(decoded.user_id).then(user => {
+            if (user) {
+              return res.redirect(`${CLIENT_URL}/dashboard`)
+            }
+          })
+        }
+      } catch (error) {
+        return next()
+      }
+    } else {
+      res.header("Access-Control-Allow-Origin", CLIENT_URL);
+      res.header("Access-Control-Allow-Credentials", 'true');
+      res.header("Referrer-Policy", "no-referrer-when-downgrade");
+
+      const authUrl = oauth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: 'https://www.googleapis.com/auth/userinfo.profile  openid ',
+        prompt: "consent"
+      })
+      return res.redirect(authUrl)
     }
-
-    res.header("Access-Control-Allow-Origin", CLIENT_URL);
-    res.header("Access-Control-Allow-Credentials", 'true');
-    res.header("Referrer-Policy", "no-referrer-when-downgrade");
-
-    const authUrl = oauth2Client.generateAuthUrl({
-      access_type: "offline",
-      scope: 'https://www.googleapis.com/auth/userinfo.profile  openid ',
-      prompt: "consent"
-    })
-
-    res.redirect(authUrl)
   })
 
   .get("/google/callback", async (req, res) => {
@@ -122,39 +132,29 @@ const authRoutes = express.Router()
   })
 
   /* Check auth for route protection */
-  // .get("/check-auth", (req, res) => {
-
-  //   const userCookie = req.cookies.user
-
-  //   if (userCookie) {
-  //     const user = JSON.parse(userCookie)
-
-  //     res.status(200).json({
-  //       id: user?.id,
-  //       username: user?.name
-  //     })
-  //   } else {
-  //     res.json(null)
-  //   }
-  // })
   .get("/check-auth", (req, res) => {
 
     const token = req.cookies.user
 
     if (!token) {
-      return res.status(401).json(null)
+      return res.redirect(`${CLIENT_URL}`)
     }
 
     try {
-      // const decoded = jwt.verify(token, JWT_SECRET!)
-
-      // User.findById(decoded.id).then(user => {
-      //   if (user) {
-      //     res.status()
-      //   }
-      // })
+      const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
+      if (typeof decoded !== "string" && decoded.user_id) {
+        User.findById(decoded.user_id).then(user => {
+          if (user) {
+            return res.status(200)
+          } else {
+            return res.redirect(`${CLIENT_URL}`)
+          }
+        })
+      } else {
+        return res.redirect(`${CLIENT_URL}`)
+      }
     } catch (error) {
-
+      return res.redirect(`${CLIENT_URL}`)
     }
   })
 
