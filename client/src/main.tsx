@@ -5,24 +5,21 @@ import RootLayout from './components/RootLayout'
 import './index.css'
 import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
+import Dashboard from './routes/Dashboard'
+import { checkAuthStatus } from './utils'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
     path="/"
     element={<RootLayout />}
-  // loader={async () => await checkAuthStatus()}
   >
     <Route index element={<LandingPage />} />
     <Route index path="/login" element={<Login />} />
-    {/* <Route index path="/login" element={<Login />} />
     <Route
       path="/dashboard"
       element={<Dashboard />}
       loader={async () => await checkAuthStatus()}
     />
-    <Route path="*" element={(
-      <div>Not Found</div>
-    )} /> */}
   </Route>
 ))
 

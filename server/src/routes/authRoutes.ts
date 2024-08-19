@@ -136,25 +136,33 @@ const authRoutes = express.Router()
 
     const token = req.cookies.user
 
-    if (!token) {
-      return res.redirect(`${CLIENT_URL}`)
-    }
+    // if (!token) {
+    //   return res.redirect(`${CLIENT_URL}`)
+    // }
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
       if (typeof decoded !== "string" && decoded.user_id) {
         User.findById(decoded.user_id).then(user => {
           if (user) {
-            return res.status(200)
+            return res.status(200).json({
+              message: "Authenticated"
+            })
           } else {
-            return res.redirect(`${CLIENT_URL}`)
+            return res.status(401).json({
+              message: "User not found"
+            })
           }
         })
       } else {
-        return res.redirect(`${CLIENT_URL}`)
+        return res.status(401).json({
+          message: "Internal server error"
+        })
       }
     } catch (error) {
-      return res.redirect(`${CLIENT_URL}`)
+      return res.status(401).json({
+        message: "Invalid token / token doesn't exist"
+      })
     }
   })
 
