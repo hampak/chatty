@@ -20,6 +20,12 @@ const router = createBrowserRouter(createRoutesFromElements(
       element={<Dashboard />}
       loader={async () => await checkAuthStatus()}
     />
+    <Route
+      path="*"
+      element={
+        <div>not found bro</div>
+      }
+    />
   </Route>
 ))
 

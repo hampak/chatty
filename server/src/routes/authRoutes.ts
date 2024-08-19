@@ -24,6 +24,8 @@ const authRoutes = express.Router()
 
     const token = req.cookies.user
 
+    // first check to see if token is that of real user. Take that boolean value and open a if statement...
+
     if (token) {
       try {
         const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
@@ -31,8 +33,12 @@ const authRoutes = express.Router()
           User.findById(decoded.user_id).then(user => {
             if (user) {
               return res.redirect(`${CLIENT_URL}/dashboard`)
+            } else {
+              return next()
             }
           })
+        } else {
+          return next()
         }
       } catch (error) {
         return next()
