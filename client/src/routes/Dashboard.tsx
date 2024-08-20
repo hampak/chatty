@@ -1,16 +1,15 @@
-import Sidebar from "../components/dashboard/Sidebar"
-import { RxHamburgerMenu } from "react-icons/rx";
-import { useSidebarStore } from "../utils/zustand";
-import { cn } from "../lib/utils";
-import { Button } from "../components/ui/button";
 import { CiLogout } from "react-icons/ci";
+import { RxHamburgerMenu } from "react-icons/rx";
 import LogoutAlert from "../components/dashboard/LogoutAlert";
+import Sidebar from "../components/dashboard/Sidebar";
+import { cn } from "../lib/utils";
+import { useSidebarStore } from "../utils/zustand";
 
 
 
 const Dashboard = () => {
 
-  const { isOpen, toggleSidebar, closeSidebar } = useSidebarStore()
+  const { isOpen, toggleSidebar } = useSidebarStore()
 
   return (
     <div className="bg-blue-100s h-full w-full">
@@ -27,7 +26,6 @@ const Dashboard = () => {
           </LogoutAlert>
         </div>
       </div>
-      {/* <ServerNavbar /> */}
       <Sidebar />
     </div>
   )
