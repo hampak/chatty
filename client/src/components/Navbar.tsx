@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
 import { useUser } from "./context/UserProvider"
 import { ImSpinner8 } from "react-icons/im";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 
 const Navbar = () => {
@@ -18,11 +19,17 @@ const Navbar = () => {
           <ImSpinner8 className="animate-spin h-6 w-6 text-gray-700" />
         ) : (
           user ? (
-            <Button>
+            <Button className="">
               <Link
                 to="/dashboard"
+                className="flex items-center space-x-2"
               >
-                Dashboard
+                <Avatar className="w-7 h-7">
+                  <AvatarImage src={user.picture} />
+                </Avatar>
+                <p>
+                  Dashboard
+                </p>
               </Link>
             </Button >
           ) : (
