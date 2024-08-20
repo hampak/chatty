@@ -1,11 +1,13 @@
 import { useEffect } from "react"
+import { CiLogout } from "react-icons/ci"
 import { RxHamburgerMenu } from "react-icons/rx"
 import { cn } from "../../lib/utils"
 import { useSidebarStore } from "../../utils/zustand"
-import { Avatar, AvatarImage } from "../ui/avatar"
 import { useUser } from "../context/UserProvider"
+import { Avatar, AvatarImage } from "../ui/avatar"
+import { Button } from "../ui/button"
 import LogoutAlert from "./LogoutAlert"
-import { CiLogout } from "react-icons/ci"
+import CreateChatModal from "./CreateChatModal"
 
 const Sidebar = () => {
 
@@ -38,14 +40,17 @@ const Sidebar = () => {
       </div>
 
       <div className="flex flex-col bg-purple-200s h-[93%] pt-4">
-        {/* <span className="text-lg font-semibold hidden md:block border-b-[1px] pb-2">
-          Chatty
-        </span> */}
 
+        {/* Chat / Friends List */}
         <div className="w-full flex-1 bg-green-300s">
-          hi
+          <CreateChatModal>
+            <Button className="text-center w-full">
+              Start a new chat
+            </Button>
+          </CreateChatModal>
         </div>
 
+        {/* Sidebar footer */}
         <div className="w-full bg-red-300s border-t-[1px] pt-2 flex items-center justify-between">
           <Avatar>
             <AvatarImage
