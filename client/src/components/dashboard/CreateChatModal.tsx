@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -11,14 +12,20 @@ import { Input } from "../ui/input"
 import { z } from "zod"
 import { addFriendSchema } from "../../utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { Button } from "../ui/button"
+import { useUser } from "../context/UserProvider"
+import { IoCopyOutline, IoCheckmarkOutline } from "react-icons/io5";
+import { toast } from "sonner"
+
 
 
 
 const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
+  const { user } = useUser()
   const [isPending, startTransition] = useTransition()
+  const [isCopied, setIsCopied] = useState(false)
 
   const form = useForm<z.infer<typeof addFriendSchema>>({
     resolver: zodResolver(addFriendSchema),
@@ -31,28 +38,44 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
     alert(values.userTag)
   }
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setIsCopied(true)
+        toast.success("Your user tag has been copied to the clipboard! You can share it with your friends :D")
+
+        setTimeout(() => {
+          setIsCopied(false)
+        }, 2000)
+      })
+      .catch(() => {
+        toast.error("Failed to copy your user tag to the clipboard :/")
+      })
+  }
+
   return (
     <Dialog>
       <DialogTrigger className="w-full">{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader className="mb-4">
           <DialogTitle>Start a new chat by adding a friend :D</DialogTitle>
+          <DialogDescription>When adding your friends user tag, be sure to paste it correctly!</DialogDescription>
         </DialogHeader>
         <div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-3"
+              className="space-y-5"
             >
               <FormField
                 control={form.control}
                 name="userTag"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>User Tag</FormLabel>
+                    <FormLabel>Friend's User Tag</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="usertag#1234"
+                        placeholder="usertag#12345"
                         {...field}
                         disabled={isPending}
                       />
@@ -61,11 +84,30 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
                   </FormItem>
                 )}
               />
-              <Button
-                type="submit"
-              >
-                Start New Chat
-              </Button>
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-gray-500 flex items-center">
+                  <span className="mr-2">Your user tag</span>
+                  <span className="underline underline-offset-2 mr-2">{user?.userTag}</span>
+                  {
+                    isCopied ? (
+                      <IoCheckmarkOutline
+                        className="text-black"
+                      />
+                    ) : (
+                      <IoCopyOutline
+                        className="hover:cursor-pointer text-gray-500 hover:text-black"
+                        onClick={() => copyToClipboard(user?.userTag || "")}
+                      />
+                    )
+                  }
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                >
+                  Start New Chat
+                </Button>
+              </div>
             </form>
           </Form>
         </div>

@@ -9,6 +9,7 @@ import Dashboard from './routes/Dashboard'
 import { checkAuthStatus } from './utils'
 import UserProvider from './components/context/UserProvider'
 import NotFound from './routes/NotFound'
+import { Toaster } from './components/ui/sonner'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -42,6 +43,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <UserProvider>
       <App />
+      <Toaster richColors />
     </UserProvider>
   </StrictMode>,
 )
