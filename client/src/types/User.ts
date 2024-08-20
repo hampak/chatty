@@ -2,5 +2,6 @@ export type User = {
   name: string,
   email: string,
   online: boolean,
-  picture: string
+  picture: string,
+  userTag: string
 }

@@ -3,6 +3,8 @@ import express from "express"
 import { User } from "../db/models"
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+dotenv.config()
+
 const JWT_SECRET = process.env.JWT_SECRET
 
 const userRoutes = express.Router()
@@ -15,12 +17,12 @@ const userRoutes = express.Router()
       if (typeof decoded !== "string" && decoded.user_id) {
         User.findById(decoded.user_id).then(user => {
           if (user) {
-            console.log(user)
             return res.status(200).json({
               name: user.name,
               email: user.email,
               picture: user.image,
-              online: user.online
+              online: user.online,
+              userTag: user.userTag
             })
           } else {
             return res.status(401).json({

@@ -3,6 +3,7 @@ import express from "express"
 import { OAuth2Client } from "google-auth-library"
 import { User } from "../db/models"
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import crypto from "crypto"
 
 
 dotenv.config()
@@ -108,12 +109,17 @@ const authRoutes = express.Router()
 
       let token
 
+      const fullUUID = crypto.randomUUID()
+      const tag = fullUUID.slice(0, 5)
+      const userTag = `${accessingUser?.name}#${tag}`
+
       if (!user) {
         const newUser = new User({
           name: accessingUser?.name,
           email: accessingUser?.email,
           google_id: accessingUser?.sub,
-          image: accessingUser?.picture
+          image: accessingUser?.picture,
+          userTag
         })
         const savedUser = await newUser.save()
 
