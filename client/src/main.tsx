@@ -8,6 +8,7 @@ import Login from './routes/Login'
 import Dashboard from './routes/Dashboard'
 import { checkAuthStatus } from './utils'
 import UserProvider from './components/context/UserProvider'
+import NotFound from './routes/NotFound'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -26,9 +27,7 @@ const router = createBrowserRouter(createRoutesFromElements(
     />
     <Route
       path="*"
-      element={
-        <div>not found bro</div>
-      }
+      element={<NotFound />}
     />
   </Route>
 ))
