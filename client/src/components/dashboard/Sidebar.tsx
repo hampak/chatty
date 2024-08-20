@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react"
-import { useSidebarStore } from "../../utils/zustand"
-import { cn } from "../../lib/utils"
+import { useEffect } from "react"
 import { RxHamburgerMenu } from "react-icons/rx"
+import { cn } from "../../lib/utils"
+import { useSidebarStore } from "../../utils/zustand"
 
 const Sidebar = () => {
 
-  const { isOpen, toggleSidebar, closeSidebar, openSidebar } = useSidebarStore()
+  const { isOpen, toggleSidebar, openSidebar } = useSidebarStore()
 
   useEffect(() => {
     const handleResize = () => {

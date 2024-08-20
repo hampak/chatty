@@ -4,6 +4,7 @@ import { useSidebarStore } from "../utils/zustand";
 import { cn } from "../lib/utils";
 import { Button } from "../components/ui/button";
 import { CiLogout } from "react-icons/ci";
+import LogoutAlert from "../components/dashboard/LogoutAlert";
 
 
 
@@ -19,9 +20,11 @@ const Dashboard = () => {
             className="h-5 w-5 hover:cursor-pointer transition-colors hover:text-gray-400"
             onClick={toggleSidebar}
           />
-          <CiLogout
-            className="h-5 w-5 hover:cursor-pointer hover:text-gray-400 transition-colors"
-          />
+          <LogoutAlert>
+            <CiLogout
+              className="h-5 w-5 hover:cursor-pointer hover:text-gray-400 transition-colors"
+            />
+          </LogoutAlert>
         </div>
       </div>
       {/* <ServerNavbar /> */}
