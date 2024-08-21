@@ -54,10 +54,18 @@ const chatRoutes = express.Router()
 
   .get("/chat-list", async (req, res) => {
     const { userId } = req.query
+
+    try {
+      const chatRooms = await ChatRoom.find({
+        participants: userId
+      })
+      console.log(chatRooms)
+      res.status(200).json(chatRooms)
+    } catch (error) {
+
+    }
+
     console.log(userId)
-    res.status(200).json({
-      userId
-    })
   })
 
 export default chatRoutes

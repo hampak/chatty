@@ -18,12 +18,15 @@ import { useUser } from "../context/UserProvider"
 import { IoCopyOutline, IoCheckmarkOutline } from "react-icons/io5";
 import { toast } from "sonner"
 import axios from "axios"
+import { useQueryClient } from "@tanstack/react-query"
 
 
 
 const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
   const { user } = useUser()
+  const queryClient = useQueryClient()
+
   const [isPending, startTransition] = useTransition()
   const [isCopied, setIsCopied] = useState(false)
   const [open, setOpen] = useState(false)
@@ -52,6 +55,9 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
           .then((response) => {
             setOpen(false)
             form.reset()
+            queryClient.invalidateQueries({
+              queryKey: ["chat_list", user?.id]
+            })
             const name = response.data.friendUserTag.split("#")[0]
             toast.success(`Added ${name} as a friend :D`)
           })
