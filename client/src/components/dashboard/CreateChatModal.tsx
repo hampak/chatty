@@ -26,6 +26,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUser()
   const [isPending, startTransition] = useTransition()
   const [isCopied, setIsCopied] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const form = useForm<z.infer<typeof addFriendSchema>>({
     resolver: zodResolver(addFriendSchema),
@@ -36,16 +37,26 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
   const onSubmit = async (values: z.infer<typeof addFriendSchema>) => {
 
+    if (values.friendUserTag === user?.userTag) {
+      return toast.error("Cannot befriend yourself :/")
+    }
+
     startTransition(() => {
       try {
         axios.post('/api/chat/add-friend', {
           userId: user?.id,
           userName: user?.name,
+          userTag: user?.userTag,
           friendUserTag: values.friendUserTag
         })
           .then((response) => {
-            console.log(response)
-            toast.success(`Added ${response.data} as a friend :D`)
+            setOpen(false)
+            form.reset()
+            const name = response.data.friendUserTag.split("#")[0]
+            toast.success(`Added ${name} as a friend :D`)
+          })
+          .catch((error) => {
+            toast.error(`${error.response.data.message}`)
           })
       } catch {
         toast.error("Couldn't add friend - please check if your friend's user tag is correct")
@@ -69,7 +80,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full">{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader className="mb-4">

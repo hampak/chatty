@@ -1,54 +1,55 @@
 import dotenv from "dotenv"
 import express from "express"
 import { ChatRoom, User } from "../db/models"
-import jwt, { JwtPayload } from 'jsonwebtoken';
 
 dotenv.config()
 
 const chatRoutes = express.Router()
   .post("/add-friend", async (req, res) => {
 
-    const { friendUserTag, userId, userName } = await req.body
-    console.log(friendUserTag, userId)
+    const { friendUserTag, userId, userName, userTag } = await req.body
 
     // either null or entire user data
     const userWithUserTagExists = await User.findOne({
       userTag: friendUserTag
     })
 
-    console.log(userWithUserTagExists)
-
-    if (userWithUserTagExists) {
-      const chatRoom = new ChatRoom({
-        room_title: `${userWithUserTagExists.name}|${userName}`,
-        participants: [userId, userWithUserTagExists._id]
+    // check to see if the user is trying to befriend him/herself
+    if (friendUserTag === userTag) {
+      return res.status(400).json({
+        message: "Cannot befriend yourself :/"
       })
-
-      await chatRoom.save()
     }
 
-    // if (userWithUserTagExists) {
+    if (userWithUserTagExists) {
 
-    //   // check if user is already friends with the other user
-    //   const userAlreadyFriends = await ChatRoom.findOne({
-    //     participants: { $all: [user] }
-    //   })
+      // check if user is already friends with the other user
+      const userAlreadyFriends = await ChatRoom.findOne({
+        participants: { $all: [userId, userWithUserTagExists._id] }
+      })
 
-    //   // if the above false, add user to user's friend list
-    //   if () {
+      if (userAlreadyFriends) {
+        return res.status(400).json({
+          message: "You're already friends with this user!"
+        })
+      } else {
+        const chatRoom = new ChatRoom({
+          room_title: `${userWithUserTagExists.name}|${userName}`,
+          participants: [userId, userWithUserTagExists._id]
+        })
 
-    //   } else {
-    //     // if they are already friends with each other, send error message to client
-    //   }
-    //   return res.status(200).send(userTag)
+        await chatRoom.save()
 
-    // } else if (userWithUserTagExists === null) {
-    //   // send error message to client
-    // }
+        return res.status(200).json({
+          friendUserTag
+        })
+      }
 
-    return res.status(200).send({
-      friendUserTag
-    })
+    } else if (userWithUserTagExists === null) {
+      return res.status(400).json({
+        message: "A user with that user tag doesn't exist :( Please check again"
+      })
+    }
   })
 
 export default chatRoutes
