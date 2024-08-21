@@ -22,11 +22,13 @@ export default function UserProvider({
         if (response.ok) {
           const data = await response.json()
           setUser(data)
+        } else if (response.status === 401) {
+          setUser(null)
         } else {
           setUser(null)
         }
-      } catch (error) {
-        console.error("User information could not be retrieved.", error)
+      } catch {
+        setUser(null)
       } finally {
         setLoading(false)
       }

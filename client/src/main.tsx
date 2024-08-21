@@ -16,14 +16,22 @@ const router = createBrowserRouter(createRoutesFromElements(
     path="/"
     element={<RootLayout />}
   >
-    <Route index element={<LandingPage />} />
+    <Route index element={
+      <UserProvider>
+        <LandingPage />
+      </UserProvider>
+    } />
     <Route
       path="/login"
       element={<Login />}
     />
     <Route
       path="/dashboard"
-      element={<Dashboard />}
+      element={
+        <UserProvider>
+          <Dashboard />
+        </UserProvider>
+      }
       loader={async () => await checkAuthStatus()}
     />
     <Route
@@ -33,17 +41,11 @@ const router = createBrowserRouter(createRoutesFromElements(
   </Route>
 ))
 
-function App() {
-  return (
-    <RouterProvider router={router} />
-  )
-}
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <UserProvider>
-      <App />
-      <Toaster richColors />
-    </UserProvider>
-  </StrictMode>,
+    {/* <UserProvider> */}
+    <RouterProvider router={router} />
+    <Toaster richColors />
+    {/* </UserProvider> */}
+  </StrictMode>
 )

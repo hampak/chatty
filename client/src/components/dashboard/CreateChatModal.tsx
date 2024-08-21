@@ -20,7 +20,6 @@ import { toast } from "sonner"
 
 
 
-
 const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
   const { user } = useUser()

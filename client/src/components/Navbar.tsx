@@ -9,8 +9,6 @@ const Navbar = () => {
 
   const { user, loading } = useUser()
 
-  console.log(user)
-
   return (
     <nav className="w-full p-5 border border-b flex justify-between items-center">
       <h1 className="text-xl font-semibold">Chatty</h1>
