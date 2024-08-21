@@ -17,6 +17,7 @@ const userRoutes = express.Router()
       if (typeof decoded !== "string" && decoded.user_id) {
         User.findById(decoded.user_id).then(user => {
           if (user) {
+            res.header("Cache-Control", "no-store")
             return res.status(200).json({
               name: user.name,
               email: user.email,
