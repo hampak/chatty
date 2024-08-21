@@ -33,12 +33,12 @@ const userRoutes = express.Router()
         })
       } else {
         return res.status(401).json({
-          message: "Internal server error"
+          message: "Invalid JWT"
         })
       }
     } catch (error) {
       return res.status(401).json({
-        message: "Invalid token / token doesn't exist"
+        message: "User not authorized"
       })
     }
   })
