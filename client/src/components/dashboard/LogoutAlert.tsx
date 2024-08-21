@@ -19,13 +19,13 @@ const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>
-            <a
-              href="/api/auth/logout"
-            >
+          <a
+            href="/api/auth/logout"
+          >
+            <AlertDialogAction>
               Log Out
-            </a>
-          </AlertDialogAction>
+            </AlertDialogAction>
+          </a>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
