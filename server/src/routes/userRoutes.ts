@@ -19,6 +19,7 @@ const userRoutes = express.Router()
           if (user) {
             res.header("Cache-Control", "no-store")
             return res.status(200).json({
+              id: user._id,
               name: user.name,
               email: user.email,
               picture: user.image,

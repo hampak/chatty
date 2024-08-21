@@ -8,6 +8,7 @@ import connectToMongoDb from "./db/db"
 /* route Imports */
 import authRoutes from "./routes/authRoutes"
 import userRoutes from "./routes/userRoutes"
+import chatRoutes from "./routes/chatRoutes"
 
 dotenv.config()
 const PORT = process.env.PORT ? process.env.PORT : 8000
@@ -25,6 +26,7 @@ app.use(morgan("common"))
 
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
+app.use("/api/chat", chatRoutes)
 
 app.listen(PORT, () => {
   connectToMongoDb()

@@ -17,6 +17,7 @@ import { Button } from "../ui/button"
 import { useUser } from "../context/UserProvider"
 import { IoCopyOutline, IoCheckmarkOutline } from "react-icons/io5";
 import { toast } from "sonner"
+import axios from "axios"
 
 
 
@@ -29,12 +30,27 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
   const form = useForm<z.infer<typeof addFriendSchema>>({
     resolver: zodResolver(addFriendSchema),
     defaultValues: {
-      userTag: ""
+      friendUserTag: ""
     }
   })
 
   const onSubmit = async (values: z.infer<typeof addFriendSchema>) => {
-    alert(values.userTag)
+
+    startTransition(() => {
+      try {
+        axios.post('/api/chat/add-friend', {
+          userId: user?.id,
+          userName: user?.name,
+          friendUserTag: values.friendUserTag
+        })
+          .then((response) => {
+            console.log(response)
+            toast.success(`Added ${response.data} as a friend :D`)
+          })
+      } catch {
+        toast.error("Couldn't add friend - please check if your friend's user tag is correct")
+      }
+    })
   }
 
   const copyToClipboard = (text: string) => {
@@ -68,7 +84,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
             >
               <FormField
                 control={form.control}
-                name="userTag"
+                name="friendUserTag"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Friend's User Tag</FormLabel>
