@@ -52,4 +52,12 @@ const chatRoutes = express.Router()
     }
   })
 
+  .get("/chat-list", async (req, res) => {
+    const { userId } = req.query
+    console.log(userId)
+    res.status(200).json({
+      userId
+    })
+  })
+
 export default chatRoutes

@@ -8,6 +8,7 @@ import { Avatar, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import LogoutAlert from "./LogoutAlert"
 import CreateChatModal from "./CreateChatModal"
+import ChatList from "./ChatList"
 
 const Sidebar = () => {
 
@@ -44,19 +45,26 @@ const Sidebar = () => {
         {/* Chat / Friends List */}
         <div className="w-full flex-1 bg-green-300s">
           <CreateChatModal>
-            <Button className="text-center w-full">
+            <Button className="text-center w-full h-[10%]">
               Start a new chat
             </Button>
           </CreateChatModal>
+          <div className="h-[90%]">
+            <ChatList />
+          </div>
         </div>
 
         {/* Sidebar footer */}
         <div className="w-full bg-red-300s border-t-[1px] pt-2 flex items-center justify-between">
-          <Avatar>
-            <AvatarImage
-              src={user?.picture}
-            />
-          </Avatar>
+          {
+            loading ? "" : (
+              <Avatar>
+                <AvatarImage
+                  src={user?.picture}
+                />
+              </Avatar>
+            )
+          }
           <LogoutAlert>
             <CiLogout
               className="h-5 w-5 hover:cursor-pointer hover:text-gray-400 transition-colors"

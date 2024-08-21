@@ -10,6 +10,7 @@ import { checkAuthStatus } from './utils'
 import UserProvider from './components/context/UserProvider'
 import NotFound from './routes/NotFound'
 import { Toaster } from './components/ui/sonner'
+import TanstackProvider from './components/provider/TanstackProvider'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -46,9 +47,11 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* <UserProvider> */}
-    <RouterProvider router={router} />
-    <Toaster richColors />
-    {/* </UserProvider> */}
+    <TanstackProvider>
+      {/* <UserProvider> */}
+      <RouterProvider router={router} />
+      <Toaster richColors />
+      {/* </UserProvider> */}
+    </TanstackProvider>
   </StrictMode>
 )
