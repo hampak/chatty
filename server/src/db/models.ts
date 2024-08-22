@@ -50,7 +50,10 @@ const chatRoomSchema = new mongoose.Schema({
   last_message: {
     type: mongoose.Schema.ObjectId,
     ref: "Chat"
-  }
+  },
+  images: [{
+    type: String
+  }]
 }, {
   timestamps: true
 })

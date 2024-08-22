@@ -12,5 +12,6 @@ export type ChatList = {
   title: string,
   paticipants: string[],
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
+  image: string
 }[]

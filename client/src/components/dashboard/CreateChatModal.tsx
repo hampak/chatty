@@ -50,6 +50,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
           userId: user?.id,
           userName: user?.name,
           userTag: user?.userTag,
+          userImage: user?.picture,
           friendUserTag: values.friendUserTag
         })
           .then((response) => {

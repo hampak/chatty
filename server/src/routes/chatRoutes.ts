@@ -7,7 +7,7 @@ dotenv.config()
 const chatRoutes = express.Router()
   .post("/add-friend", async (req, res) => {
 
-    const { friendUserTag, userId, userName, userTag } = await req.body
+    const { friendUserTag, userId, userName, userTag, userImage } = await req.body
 
     // either null or entire user data
     const userWithUserTagExists = await User.findOne({
@@ -35,7 +35,8 @@ const chatRoutes = express.Router()
       } else {
         const chatRoom = new ChatRoom({
           room_title: `${userWithUserTagExists.name}|${userName}`,
-          participants: [userId, userWithUserTagExists._id]
+          participants: [userId, userWithUserTagExists._id],
+          images: [userImage, userWithUserTagExists.image]
         })
 
         await chatRoom.save()
@@ -55,24 +56,37 @@ const chatRoutes = express.Router()
   .get("/chat-list", async (req, res) => {
     const { userId } = req.query
 
-    try {
-      const data = await ChatRoom.find({
-        participants: userId
-      })
+    const user = await User.findById(userId)
 
-      const chatRooms = data.map(room => ({
+    if (!user) {
+      return res.status(401).json({
+        message: "Unauthenticated, please login first"
+      })
+    }
+
+    const { name, image } = user
+
+    const data = await ChatRoom.find({
+      participants: userId
+    })
+
+    const chatRooms = data.map(room => {
+
+      const allParticipants = room.room_title.split("|").map(p => p.trim())
+      const friendName = allParticipants.find(p => p !== name)
+
+      const friendImage = room.images.find(i => i !== image)
+
+      return {
         id: room._id,
         createdAt: room.createdAt,
         updatedAt: room.updatedAt,
-        title: room.room_title,
-        participants: room.participants
-      }))
-      res.status(200).json(chatRooms)
-    } catch (error) {
-
-    }
-
-    console.log(userId)
+        title: friendName,
+        participants: room.participants,
+        image: friendImage
+      }
+    })
+    res.status(200).json(chatRooms)
   })
 
 export default chatRoutes
