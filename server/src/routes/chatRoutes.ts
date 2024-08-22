@@ -56,10 +56,17 @@ const chatRoutes = express.Router()
     const { userId } = req.query
 
     try {
-      const chatRooms = await ChatRoom.find({
+      const data = await ChatRoom.find({
         participants: userId
       })
-      console.log(chatRooms)
+
+      const chatRooms = data.map(room => ({
+        id: room._id,
+        createdAt: room.createdAt,
+        updatedAt: room.updatedAt,
+        title: room.room_title,
+        participants: room.participants
+      }))
       res.status(200).json(chatRooms)
     } catch (error) {
 
