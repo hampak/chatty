@@ -45,9 +45,9 @@ const Sidebar = () => {
         {/* Chat / Friends List */}
         <div className="w-full flex-1 bg-green-300s">
           <CreateChatModal>
-            <Button className="text-center w-full h-[10%]">
+            <div className="h-[10%] bg-black text-white p-2 rounded-lg">
               Start a new chat
-            </Button>
+            </div>
           </CreateChatModal>
           <div className="h-[90%]">
             <ChatList />
