@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { ChatList } from "../types";
 
 export function useGetChatsList(userId?: string) {
 
@@ -9,7 +10,7 @@ export function useGetChatsList(userId?: string) {
       if (!userId) {
         throw new Error("User ID is required")
       }
-      const response = await axios.get("/api/chat/chat-list", {
+      const response = await axios.get<ChatList>("/api/chat/chat-list", {
         params: {
           userId
         }

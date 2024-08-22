@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import { redirect } from "react-router-dom";
-import { User } from "../../types/User";
+import { User } from "../../types";
 
 import axios from "axios"
 
@@ -36,24 +36,6 @@ export default function UserProvider({
     }
 
     checkUser()
-
-    // axios.get("/api/user", { withCredentials: true })
-    //   .then(response => {
-    //     if (response.status === 401) {
-    //       setUser(null)
-    //     } else if (response.status === 200) {
-    //       setUser(response.data)
-    //     }
-    //   })
-    //   .catch(error => {
-    //     if (error.response && error.response.status !== 401) {
-    //       console.log(error)
-    //     }
-    //     setUser(null)
-    //   })
-    //   .finally(() => {
-    //     setLoading(false)
-    //   })
   }, [])
 
   return (
