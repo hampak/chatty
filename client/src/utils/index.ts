@@ -5,8 +5,8 @@ const serverURL = import.meta.env.VITE_API_URL
 
 const checkAuthStatus = async () => {
   try {
-    const response = await axios.get(serverURL ? `${serverURL}  "/api/auth/check-auth` : "/api/auth/check-auth"
-      , {
+    const response = await axios.get(serverURL ? `${serverURL}/api/auth/check-auth` : "/api/auth/check-auth",
+      {
         withCredentials: true
       })
 
