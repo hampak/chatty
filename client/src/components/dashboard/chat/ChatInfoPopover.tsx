@@ -53,7 +53,7 @@ const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverP
         </ul>
 
         <Separator className="my-3" />
-        <span>Room created by {participants ? participants[0] : ""} on {createdAt}</span>
+        <span className="text-xs">Room created by {participants ? participants[0] : ""} on {createdAt}</span>
       </PopoverContent>
     </Popover>
   )
