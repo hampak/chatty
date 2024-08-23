@@ -168,14 +168,14 @@ const authRoutes = express.Router()
   })
 
   /* Check auth for route protection */
-  .get("/check-auth", (req, res) => {
+  .get("/check-auth", async (req, res) => {
 
-    const token = req.cookies.user
+    const token = await req.cookies.user
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
       if (typeof decoded !== "string" && decoded.user_id) {
-        User.findById(decoded.user_id).then(user => {
+        await User.findById(decoded.user_id).then(user => {
           if (user) {
             return res.status(200).json({
               message: "Authenticated"
