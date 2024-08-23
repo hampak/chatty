@@ -17,6 +17,8 @@ const Chat = () => {
       <ChatHeader
         chatId={chatId!}
         title={data?.title}
+        participants={data?.participants}
+        createdAt={data?.createdAt}
       />
       {/* <ChatContainer /> */}
     </div>

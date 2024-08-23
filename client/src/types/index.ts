@@ -17,5 +17,7 @@ export type ChatList = {
 }[]
 
 export type Chat = {
-  title: string
+  title: string,
+  participants: string[],
+  createdAt: string
 }

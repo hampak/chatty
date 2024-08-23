@@ -113,8 +113,21 @@ const chatRoutes = express.Router()
     const allParticipants = room_title.split("|").map(p => p.trim())
     const friendName = allParticipants.find(p => p !== name)
 
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+
+    const date = new Date(createdAt)
+    const formattedDate = date.toLocaleString(undefined, options)
+
     return res.status(200).json({
-      title: friendName
+      title: friendName,
+      participants: allParticipants,
+      createdAt: formattedDate
     })
   })
 
