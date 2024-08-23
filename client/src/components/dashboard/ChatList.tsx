@@ -6,15 +6,17 @@ const ChatList = () => {
 
   const { user } = useUser()
 
-  const { data, isPending } = useGetChatsList(user?.id)
+  const { data } = useGetChatsList(user?.id)
 
-  if (isPending) {
-    return null
+  if (!data) {
+    return (
+      <div>No chats yet! Create a new room :)</div>
+    )
   }
 
   return (
     <div className="mt-6 h-full w-full bg-green-700s space-y-2">
-      {data?.map((room, index) => (
+      {data.map((room, index) => (
         <div key={index} className="w-full">
           <ChatRoomItem
             data={room}

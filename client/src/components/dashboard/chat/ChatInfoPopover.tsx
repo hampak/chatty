@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { useUser } from "../../context/UserProvider";
-import { Separator } from "../../ui/separator";
+import { Separator } from "@/components/ui/separator";
+
 
 interface ChatInfoPopoverProps {
   children: React.ReactNode,
