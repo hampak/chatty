@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.SERVER_URL ? process.env.SERVER_URL : "http://localhost:8000",
+        // target: "http://localhost:8000",
+        target: "https://chatty-server-production-1542.up.railway.app/",
         changeOrigin: true
       }
     }
