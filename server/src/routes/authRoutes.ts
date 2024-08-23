@@ -146,9 +146,9 @@ const authRoutes = express.Router()
 
       res.cookie("user", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production" ? true : false,
         maxAge: 30 * 60 * 1000,
-        sameSite: "none"
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
 
       res.redirect(`${CLIENT_URL}/dashboard`)

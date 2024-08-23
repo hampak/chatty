@@ -8,7 +8,9 @@ const ChatList = () => {
 
   const { data } = useGetChatsList(user?.id)
 
-  if (!data) {
+  console.log(data)
+
+  if (data?.length === 0) {
     return (
       <div>No chats yet! Create a new room :)</div>
     )
@@ -16,7 +18,7 @@ const ChatList = () => {
 
   return (
     <div className="mt-6 h-full w-full bg-green-700s space-y-2">
-      {data.map((room, index) => (
+      {data?.map((room, index) => (
         <div key={index} className="w-full">
           <ChatRoomItem
             data={room}
