@@ -15,3 +15,7 @@ export type ChatList = {
   updatedAt: Date,
   image: string
 }[]
+
+export type Chat = {
+  title: string
+}

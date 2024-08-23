@@ -89,4 +89,33 @@ const chatRoutes = express.Router()
     res.status(200).json(chatRooms)
   })
 
+  .get("/chat-info", async (req, res) => {
+    const { chatId, userId } = req.query
+
+    const chatRoomInfo = await ChatRoom.findById(chatId)
+    const user = await User.findById(userId)
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Not authenticated"
+      })
+    }
+
+    if (!chatRoomInfo) {
+      return res.status(200).json({
+        message: "Chatroom not found :/"
+      })
+    }
+
+    const { name } = user
+    const { room_title, participants, images, createdAt } = chatRoomInfo
+
+    const allParticipants = room_title.split("|").map(p => p.trim())
+    const friendName = allParticipants.find(p => p !== name)
+
+    return res.status(200).json({
+      title: friendName
+    })
+  })
+
 export default chatRoutes

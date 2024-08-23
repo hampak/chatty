@@ -12,14 +12,9 @@ const ChatList = () => {
     return null
   }
 
-  console.log(data)
-
   return (
     <div className="mt-6 h-full w-full bg-green-700s space-y-2">
       {data?.map((room, index) => (
-        // <div key={index}>
-        //   {room.title}
-        // </div>
         <div key={index} className="w-full">
           <ChatRoomItem
             data={room}
