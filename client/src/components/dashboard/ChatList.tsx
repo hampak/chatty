@@ -10,6 +10,10 @@ const ChatList = () => {
 
   console.log(data)
 
+  if (!data) {
+    return <div>Loading...</div>
+  }
+
   if (data?.length === 0) {
     return (
       <div>No chats yet! Create a new room :)</div>
@@ -18,7 +22,7 @@ const ChatList = () => {
 
   return (
     <div className="mt-6 h-full w-full bg-green-700s space-y-2">
-      {data!.map((room, index) => (
+      {data.map((room, index) => (
         <div key={index} className="w-full">
           <ChatRoomItem
             data={room}
