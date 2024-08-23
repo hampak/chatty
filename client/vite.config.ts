@@ -9,7 +9,8 @@ export default defineConfig({
       "/api": {
         // target: "http://localhost:8000",
         target: "https://chatty-server-production-1542.up.railway.app/",
-        changeOrigin: true
+        changeOrigin: true,
+        secure: true,
       }
     }
   },
