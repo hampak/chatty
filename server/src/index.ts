@@ -19,7 +19,8 @@ const app = express()
 app.use(express.json())
 app.use(cors({
   origin: `${CLIENT_URL}`,
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "DELETE", "PUT"]
 }))
 app.use(cookieParser())
 app.use(morgan("common"))
