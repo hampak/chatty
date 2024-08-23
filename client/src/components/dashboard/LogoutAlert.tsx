@@ -10,6 +10,9 @@ import {
 } from "../ui/alert-dialog"
 
 const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
+
+  const serverURL = import.meta.env.VITE_API_URL
+
   return (
     <AlertDialog>
       <AlertDialogTrigger>{children}</AlertDialogTrigger>
@@ -20,7 +23,7 @@ const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <a
-            href="/api/auth/logout"
+            href={serverURL ? `${serverURL}/api/auth/logout` : "/api/auth/logout"}
           >
             <AlertDialogAction>
               Log Out
