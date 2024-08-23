@@ -16,8 +16,6 @@ const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverP
   const { user } = useUser()
   const [open, setOpen] = useState(false)
 
-  console.log(participants)
-
   useEffect(() => {
     const closeOnLargeScreen = () => {
       if (window.innerWidth >= 768) {
@@ -30,6 +28,10 @@ const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverP
     return () => window.removeEventListener("resize", closeOnLargeScreen)
   }, [])
 
+  if (!participants) {
+    return null
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className="p-1 hover:bg-gray-100 rounded-lg transition-colors">{children}</PopoverTrigger>
@@ -41,7 +43,7 @@ const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverP
         <span className="text-sm font-semibold">Participants</span>
         <ul className="mt-1 space-y-1">
           {
-            participants?.map((p, index) => (
+            participants.map((p, index) => (
               <li
                 key={index}
                 className="text-sm text-gray-800"
