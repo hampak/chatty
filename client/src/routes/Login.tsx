@@ -3,7 +3,9 @@ import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
+const serverURL = import.meta.env.VITE_API_URL
 
+console.log(serverURL)
 
 const Login = () => {
   return (
@@ -13,7 +15,7 @@ const Login = () => {
         <CardContent className="w-full flex flex-col items-center space-y-4">
           <a
             className="flex items-center p-2 border rounded-lg px-4 w-3/4 text-center justify-evenly hover:bg-gray-100 transition-all hover:cursor-pointer"
-            href="/api/auth/google"
+            href={serverURL ? `${serverURL}/api/auth/google` : `/api/auth/google`}
           >
             <FaGoogle className="text-blue-500" />
             <span className="font-semibold">Start with Google</span>
