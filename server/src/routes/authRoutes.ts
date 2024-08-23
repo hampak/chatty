@@ -170,6 +170,7 @@ const authRoutes = express.Router()
   /* Check auth for route protection */
   .get("/check-auth", async (req, res) => {
 
+    // testing for production
     const token = await req.cookies.user
 
     try {
