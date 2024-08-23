@@ -5,11 +5,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: false,
-    unique: true
-  },
   userTag: {
     type: String,
     required: true,

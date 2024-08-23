@@ -28,6 +28,8 @@ const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverP
     return () => window.removeEventListener("resize", closeOnLargeScreen)
   }, [])
 
+  console.log(participants)
+
   if (participants?.length === 0) {
     return null
   }

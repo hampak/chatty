@@ -23,7 +23,6 @@ const userRoutes = express.Router()
             return res.status(200).json({
               id: user._id,
               name: user.name,
-              email: user.email,
               picture: user.image,
               online: user.online,
               userTag: user.userTag

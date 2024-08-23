@@ -7,6 +7,7 @@ const Chat = () => {
 
   const { chatId } = useParams()
   const { user } = useUser()
+
   const { data } = useGetChatInfo(chatId, user?.id)
 
   console.log(data)

@@ -8,13 +8,13 @@ const ChatList = () => {
 
   const { data } = useGetChatsList(user?.id)
 
-  console.log(data)
 
   if (!data) {
     return <div>Loading...</div>
   }
+  console.log(data.length)
 
-  if (data?.length === 0) {
+  if (data.length === 0) {
     return (
       <div>No chats yet! Create a new room :)</div>
     )

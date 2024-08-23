@@ -7,6 +7,7 @@ export function useGetChatsList(userId?: string) {
   return useQuery({
     queryKey: ["chat_list", userId],
     queryFn: async () => {
+      console.log(userId)
       if (!userId) {
         throw new Error("User ID is required")
       }

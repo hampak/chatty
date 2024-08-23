@@ -20,7 +20,7 @@ const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, RE
 const authRoutes = express.Router()
 
   /* Google auth */
-  .get("/google", (req, res, next) => {
+  .get("/google", (req, res) => {
 
     const token = req.cookies.user
 
@@ -102,6 +102,8 @@ const authRoutes = express.Router()
 
       const accessingUser = ticket.getPayload()
 
+      console.log("accessingUser", accessingUser)
+
       // check to see if user already exists
       const user = await User.findOne({
         google_id: accessingUser?.sub
@@ -116,7 +118,6 @@ const authRoutes = express.Router()
       if (!user) {
         const newUser = new User({
           name: accessingUser?.name,
-          email: accessingUser?.email,
           google_id: accessingUser?.sub,
           image: accessingUser?.picture,
           userTag
@@ -126,7 +127,6 @@ const authRoutes = express.Router()
         token = jwt.sign({
           user_id: savedUser?._id,
           name: savedUser?.name,
-          email: savedUser?.email,
           picture: savedUser?.image
         },
           JWT_SECRET!,
@@ -136,7 +136,6 @@ const authRoutes = express.Router()
         token = jwt.sign({
           user_id: user?._id,
           name: user?.name,
-          email: user?.email,
           picture: user?.image
         },
           JWT_SECRET!,
@@ -148,7 +147,7 @@ const authRoutes = express.Router()
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false,
         maxAge: 30 * 60 * 1000,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+        // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
 
       res.redirect(`${CLIENT_URL}/dashboard`)
