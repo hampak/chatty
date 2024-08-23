@@ -10,6 +10,8 @@ const UserContext = createContext<{ user: User | null; loading: boolean } | unde
 export default function UserProvider({
   children
 }: { children: React.ReactNode }) {
+
+  const serverURL = import.meta.env.VITE_API_URL
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -17,7 +19,7 @@ export default function UserProvider({
     const checkUser = async () => {
 
       try {
-        const response = await axios.get("/api/user", {
+        const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
           withCredentials: true,
         })
 
