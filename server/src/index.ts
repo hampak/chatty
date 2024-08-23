@@ -16,13 +16,13 @@ const CLIENT_URL = process.env.CLIENT_URL
 
 const app = express()
 
+app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
   origin: `${CLIENT_URL}`,
   credentials: true,
   methods: ["GET", "POST", "DELETE", "PUT"]
 }))
-app.use(cookieParser())
 app.use(morgan("common"))
 
 app.use("/api/auth", authRoutes)

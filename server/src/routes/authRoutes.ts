@@ -148,7 +148,7 @@ const authRoutes = express.Router()
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 30 * 60 * 1000,
-        // sameSite: "none"
+        sameSite: "none"
       })
 
       res.redirect(`${CLIENT_URL}/dashboard`)
