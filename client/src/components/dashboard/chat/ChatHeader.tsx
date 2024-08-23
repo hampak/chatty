@@ -1,4 +1,5 @@
 import { RxDotsHorizontal } from "react-icons/rx";
+import ChatInfoPopover from "./ChatInfoPopover";
 
 
 interface ChatHeaderProps {
@@ -12,7 +13,9 @@ const ChatHeader = ({ chatId, title }: ChatHeaderProps) => {
       <div className="h-[40px] bg-green-200s">
         {/* On small screens */}
         <div className="h-full md:hidden flex items-center justify-end px-2">
-          <RxDotsHorizontal className="text-lg" />
+          <ChatInfoPopover>
+            <RxDotsHorizontal className="text-lg" />
+          </ChatInfoPopover>
         </div>
 
         {/* On larger screens */}

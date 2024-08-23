@@ -5,10 +5,9 @@ import { cn } from "../../lib/utils"
 import { useSidebarStore } from "../../utils/zustand"
 import { useUser } from "../context/UserProvider"
 import { Avatar, AvatarImage } from "../ui/avatar"
-import { Button } from "../ui/button"
-import LogoutAlert from "./LogoutAlert"
-import CreateChatModal from "./CreateChatModal"
 import ChatList from "./ChatList"
+import CreateChatModal from "./CreateChatModal"
+import LogoutAlert from "./LogoutAlert"
 
 const Sidebar = () => {
 
