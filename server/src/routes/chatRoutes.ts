@@ -1,11 +1,12 @@
 import dotenv from "dotenv"
 import express from "express"
 import { ChatRoom, User } from "../db/models"
+import { checkAuthStatus } from "../utils/middleware"
 
 dotenv.config()
 
 const chatRoutes = express.Router()
-  .post("/add-friend", async (req, res) => {
+  .post("/add-friend", checkAuthStatus, async (req, res) => {
 
     const { friendUserTag, userId, userName, userTag, userImage } = await req.body
 

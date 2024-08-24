@@ -1,4 +1,14 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
+import axios from "axios"
+import { useState, useTransition } from 'react'
 import { useForm } from "react-hook-form"
+import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
+import { toast } from "sonner"
+import { z } from "zod"
+import { addFriendSchema } from "../../utils/zod"
+import { useUser } from "../context/UserProvider"
+import { Button } from "../ui/button"
 import {
   Dialog,
   DialogContent,
@@ -9,16 +19,6 @@ import {
 } from "../ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
-import { z } from "zod"
-import { addFriendSchema } from "../../utils/zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState, useTransition } from 'react';
-import { Button } from "../ui/button"
-import { useUser } from "../context/UserProvider"
-import { IoCopyOutline, IoCheckmarkOutline } from "react-icons/io5";
-import { toast } from "sonner"
-import axios from "axios"
-import { useQueryClient } from "@tanstack/react-query"
 
 
 
@@ -54,6 +54,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
           friendUserTag: values.friendUserTag
         })
           .then((response) => {
+
             setOpen(false)
             form.reset()
             queryClient.invalidateQueries({
@@ -64,6 +65,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
           })
           .catch((error) => {
             toast.error(`${error.response.data.message}`)
+            setTimeout(() => window.location.href = "/login", 1000)
           })
       } catch {
         toast.error("Couldn't add friend - please check if your friend's user tag is correct")
