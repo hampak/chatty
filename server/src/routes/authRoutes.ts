@@ -102,7 +102,7 @@ const authRoutes = express.Router()
 
       const accessingUser = ticket.getPayload()
 
-      console.log("accessingUser", accessingUser)
+      // console.log("accessingUser", accessingUser)
 
       // check to see if user already exists
       const user = await User.findOne({
@@ -171,11 +171,11 @@ const authRoutes = express.Router()
 
     // testing for production
     const token = await req.cookies.user
-    console.log("token", token)
+    // console.log("token", token)
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
-      console.log("decoded", decoded)
+      // console.log("decoded", decoded)
       if (typeof decoded !== "string" && decoded.user_id) {
         await User.findById(decoded.user_id).then(user => {
           if (user) {

@@ -11,11 +11,11 @@ const userRoutes = express.Router()
 
   .get("/", async (req, res) => {
     const token = await req.cookies.user
-    console.log("/api/user || token", token)
+    // console.log("/api/user || token", token)
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
-      console.log("/api/user || decoded", decoded)
+      // console.log("/api/user || decoded", decoded)
       if (typeof decoded !== "string" && decoded.user_id) {
         User.findById(decoded.user_id).then(user => {
           if (user) {

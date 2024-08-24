@@ -1,16 +1,14 @@
 import { useParams } from "react-router-dom"
+import { useUser } from "../components/context/UserProvider"
 import ChatHeader from "../components/dashboard/chat/ChatHeader"
 import { useGetChatInfo } from "../lib/data"
-import { useUser } from "../components/context/UserProvider"
 
 const Chat = () => {
 
   const { chatId } = useParams()
   const { user } = useUser()
 
-  const { data } = useGetChatInfo(chatId, user?.id)
-
-  console.log(data)
+  const { data, } = useGetChatInfo(chatId, user?.id)
 
   return (
     <div className="flex-1 h-full bg-green-100s p-2">

@@ -11,8 +11,6 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ title, participants, createdAt }: ChatHeaderProps) => {
 
-  console.log(participants)
-
   return (
     <>
       <div className="h-[40px] bg-green-200s">

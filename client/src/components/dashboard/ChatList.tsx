@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { useGetChatsList } from "../../lib/data";
 import { useUser } from "../context/UserProvider";
 import ChatRoomItem from "./ChatRoomItem";
@@ -8,13 +9,7 @@ const ChatList = () => {
 
   const { data } = useGetChatsList(user?.id)
 
-
-  if (!data) {
-    return <div>Loading...</div>
-  }
-  console.log(data.length)
-
-  if (data.length === 0) {
+  if (data?.length === 0) {
     return (
       <div>No chats yet! Create a new room :)</div>
     )
@@ -22,13 +17,19 @@ const ChatList = () => {
 
   return (
     <div className="mt-6 h-full w-full bg-green-700s space-y-2">
-      {data.map((room, index) => (
-        <div key={index} className="w-full">
-          <ChatRoomItem
-            data={room}
-          />
-        </div>
-      ))}
+      {
+        data ? (
+          data.map((room, index) => (
+            <div key={index} className="w-full">
+              <ChatRoomItem
+                data={room}
+              />
+            </div>
+          ))
+        ) : (
+          <Loader2 className="animate-spin" />
+        )
+      }
     </div>
   )
 }

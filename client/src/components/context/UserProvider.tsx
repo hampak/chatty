@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { redirect } from "react-router-dom";
 import { User } from "../../types";
 
-import axios from "axios"
+import axios from "axios";
 
-const UserContext = createContext<{ user: User | null; loading: boolean } | undefined>(undefined)
+const UserContext = createContext<{ user: User | null; loading: boolean } | null>(null)
 
 export default function UserProvider({
   children
@@ -50,8 +49,8 @@ export default function UserProvider({
 export const useUser = () => {
   const context = useContext(UserContext)
 
-  if (context === undefined) {
-    throw redirect("/login")
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider")
   }
 
   return context
