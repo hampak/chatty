@@ -1,7 +1,8 @@
+import { useCreateChat } from "@/lib/data"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
-import { useState, useTransition } from 'react'
+import { AxiosError } from "axios"
+import { useState } from 'react'
 import { useForm } from "react-hook-form"
 import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
 import { toast } from "sonner"
@@ -26,8 +27,6 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
   const { user } = useUser()
   const queryClient = useQueryClient()
-
-  const [isPending, startTransition] = useTransition()
   const [isCopied, setIsCopied] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -38,37 +37,38 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
     }
   })
 
+  const { mutate: createChat, isPending } = useCreateChat()
+
   const onSubmit = async (values: z.infer<typeof addFriendSchema>) => {
 
-    if (values.friendUserTag === user?.userTag) {
+    const friendUserTag = values.friendUserTag
+
+    if (friendUserTag === user?.userTag) {
       return toast.error("Cannot befriend yourself :/")
     }
 
-    startTransition(() => {
-      try {
-        axios.post('/api/chat/add-friend', {
-          userId: user?.id,
-          userName: user?.name,
-          userTag: user?.userTag,
-          userImage: user?.picture,
-          friendUserTag: values.friendUserTag
+    createChat({
+      userId: user?.id,
+      userName: user?.name,
+      userTag: user?.userTag,
+      userImage: user?.picture,
+      friendUserTag: friendUserTag
+    }, {
+      onSuccess: () => {
+        setOpen(false)
+        form.reset()
+        queryClient.invalidateQueries({
+          queryKey: ["chat_list", user?.id]
         })
-          .then((response) => {
-
-            setOpen(false)
-            form.reset()
-            queryClient.invalidateQueries({
-              queryKey: ["chat_list", user?.id]
-            })
-            const name = response.data.friendUserTag.split("#")[0]
-            toast.success(`Added ${name} as a friend :D`)
-          })
-          .catch((error) => {
-            toast.error(`${error.response.data.message}`)
-            setTimeout(() => window.location.href = "/login", 1000)
-          })
-      } catch {
-        toast.error("Couldn't add friend - please check if your friend's user tag is correct")
+        const name = friendUserTag.split("#")[0]
+        toast.success(`Added ${name} as a friend :D`)
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(`${error.response?.data.message}`)
+        } else {
+          toast.error(error.message)
+        }
       }
     })
   }

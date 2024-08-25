@@ -8,7 +8,7 @@ const Chat = () => {
   const { chatId } = useParams()
   const { user } = useUser()
 
-  const { data, } = useGetChatInfo(chatId, user?.id)
+  const { data } = useGetChatInfo({ chatId: chatId, userId: user?.id })
 
   return (
     <div className="flex-1 h-full bg-green-100s p-2">

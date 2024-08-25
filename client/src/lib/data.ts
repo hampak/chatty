@@ -1,8 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Chat, ChatList } from "../types";
 
-export function useGetChatsList(userId?: string) {
+
+type GetChats = {
+  userId?: string
+}
+
+type GetChatInfo = {
+  chatId?: string,
+  userId?: string
+}
+
+type CreateChat = {
+  userId?: string,
+  userName?: string,
+  userTag?: string,
+  userImage?: string,
+  friendUserTag?: string,
+}
+
+export function useGetChatsList({ userId }: GetChats) {
 
   return useQuery({
     queryKey: ["chat_list", userId],
@@ -23,7 +41,7 @@ export function useGetChatsList(userId?: string) {
 }
 
 
-export function useGetChatInfo(chatId?: string, userId?: string) {
+export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
   return useQuery({
     queryKey: ["chat_list", chatId],
     queryFn: async () => {
@@ -40,5 +58,28 @@ export function useGetChatInfo(chatId?: string, userId?: string) {
     },
     refetchOnWindowFocus: false,
     enabled: !!chatId && !!userId
+  })
+}
+
+
+export function useCreateChat() {
+
+  return useMutation({
+    mutationKey: ["create_chat"],
+    mutationFn: async ({
+      userId,
+      userName,
+      userTag,
+      userImage,
+      friendUserTag
+    }: CreateChat) => {
+      await axios.post('/api/chat/add-friend', {
+        userId,
+        userName,
+        userTag,
+        userImage,
+        friendUserTag
+      })
+    }
   })
 }

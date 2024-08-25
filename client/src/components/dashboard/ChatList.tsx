@@ -7,7 +7,7 @@ const ChatList = () => {
 
   const { user } = useUser()
 
-  const { data } = useGetChatsList(user?.id)
+  const { data } = useGetChatsList({ userId: user?.id })
 
   if (data?.length === 0) {
     return (
