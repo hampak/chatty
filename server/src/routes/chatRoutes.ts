@@ -90,7 +90,7 @@ const chatRoutes = express.Router()
     res.status(200).json(chatRooms)
   })
 
-  .get("/chat-info", async (req, res) => {
+  .get("/chat-info", checkAuthStatus, async (req, res) => {
     console.log("called")
     const { chatId, userId } = req.query
 

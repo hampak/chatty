@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Chat, ChatList } from "../types";
+import { toast } from "sonner";
 
 
 type GetChats = {
@@ -48,13 +49,21 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
       if (!chatId && !userId) {
         throw new Error("User ID is required")
       }
-      const response = await axios.get<Chat>("/api/chat/chat-info", {
-        params: {
-          chatId,
-          userId
+      try {
+        const response = await axios.get<Chat>("/api/chat/chat-info", {
+          params: {
+            chatId,
+            userId
+          }
+        })
+        return response.data
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(`${error.response?.data.message}`)
+          setTimeout(() => window.location.href = "/login", 1200)
         }
-      })
-      return response.data
+        return null
+      }
     },
     refetchOnWindowFocus: false,
     enabled: !!chatId && !!userId
