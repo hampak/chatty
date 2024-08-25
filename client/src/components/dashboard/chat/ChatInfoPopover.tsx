@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { useUser } from "../../context/UserProvider";
 import { Separator } from "@/components/ui/separator";
+import { useUser } from "../../context/UserProvider";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 
 
 interface ChatInfoPopoverProps {
@@ -14,19 +13,6 @@ interface ChatInfoPopoverProps {
 const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverProps) => {
 
   const { user } = useUser()
-  // const [open, setOpen] = useState(false)
-
-  // useEffect(() => {
-  //   const closeOnLargeScreen = () => {
-  //     if (window.innerWidth >= 768) {
-  //       setOpen(false)
-  //     }
-  //   }
-  //   window.addEventListener("resize", closeOnLargeScreen)
-  //   closeOnLargeScreen()
-
-  //   return () => window.removeEventListener("resize", closeOnLargeScreen)
-  // }, [])
 
   return (
     <Popover>

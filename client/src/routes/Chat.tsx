@@ -12,7 +12,6 @@ const Chat = () => {
 
   return (
     <div className="flex-1 h-full bg-green-100s p-2">
-      {/* {chatId} */}
       <ChatHeader
         chatId={chatId!}
         title={data?.title}
