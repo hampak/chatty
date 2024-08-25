@@ -12,6 +12,7 @@ import NotFound from './routes/NotFound'
 import { Toaster } from './components/ui/sonner'
 import TanstackProvider from './components/provider/TanstackProvider'
 import Chat from './routes/Chat'
+import DashboardLayout from './components/DashboardLayout'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -26,21 +27,32 @@ const router = createBrowserRouter(createRoutesFromElements(
         </UserProvider>
       }
     />
+
     <Route
       path="login"
       element={<Login />}
     />
+
     <Route
       path="dashboard"
       element={
         <UserProvider>
-          <Dashboard />
+          <DashboardLayout />
         </UserProvider>
       }
       loader={async () => await checkAuthStatus()}
     >
+      <Route
+        path=""
+        element={
+          <UserProvider>
+            <Dashboard />
+          </UserProvider>
+        }
+      />
       <Route path="chat/:chatId" element={<Chat />} />
     </Route>
+
     <Route
       path="*"
       element={<NotFound />}

@@ -28,7 +28,7 @@ const Sidebar = () => {
   }, [openSidebar])
 
   return (
-    <div className={cn("w-[330px] h-full bg-green-200s px-2 border-r-[1px]", isOpen ? "block" : "hidden")}>
+    <div className={cn("w-[300px] h-full bg-green-200s px-2 border-r-[1px]", isOpen ? "block " : "hidden")}>
       <div className="w-full h-[7%] bg-red-200s flex justify-between items-center border-b-[1px]">
         <span className="text-lg font-simbold">
           Chatty
