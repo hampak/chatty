@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 // import { useUser } from "./context/UserProvider"
 import { ImSpinner8 } from "react-icons/im";
 import { useUser } from "./context/UserProvider";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 
 const Navbar = () => {

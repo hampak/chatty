@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form"
 import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
 import { toast } from "sonner"
 import { z } from "zod"
-import { addFriendSchema } from "../../utils/zod"
-import { useUser } from "../context/UserProvider"
-import { Button } from "../ui/button"
+import { addFriendSchema } from "@/utils/zod"
+import { useUser } from "@/components/context/UserProvider"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "../ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
-import { Input } from "../ui/input"
+} from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 
 

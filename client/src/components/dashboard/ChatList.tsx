@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
-import { useGetChatsList } from "../../lib/data";
-import { useUser } from "../context/UserProvider";
+import { useGetChatsList } from "@/lib/data";
+import { useUser } from "@/components/context/UserProvider";
 import ChatRoomItem from "./ChatRoomItem";
 
 const ChatList = () => {
