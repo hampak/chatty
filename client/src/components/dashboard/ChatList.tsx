@@ -27,7 +27,9 @@ const ChatList = () => {
             </div>
           ))
         ) : (
-          <Loader2 className="animate-spin" />
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="animate-spin" />
+          </div>
         )
       }
     </div>
