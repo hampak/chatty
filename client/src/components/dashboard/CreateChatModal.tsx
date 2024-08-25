@@ -66,6 +66,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
       onError: (error) => {
         if (error instanceof AxiosError) {
           toast.error(`${error.response?.data.message}`)
+          setTimeout(() => window.location.href = "/login", 1200)
         } else {
           toast.error(error.message)
         }

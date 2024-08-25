@@ -14,25 +14,25 @@ interface ChatInfoPopoverProps {
 const ChatInfoPopover = ({ children, participants, createdAt }: ChatInfoPopoverProps) => {
 
   const { user } = useUser()
-  const [open, setOpen] = useState(false)
+  // const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    const closeOnLargeScreen = () => {
-      if (window.innerWidth >= 768) {
-        setOpen(false)
-      }
-    }
-    window.addEventListener("resize", closeOnLargeScreen)
-    closeOnLargeScreen()
+  // useEffect(() => {
+  //   const closeOnLargeScreen = () => {
+  //     if (window.innerWidth >= 768) {
+  //       setOpen(false)
+  //     }
+  //   }
+  //   window.addEventListener("resize", closeOnLargeScreen)
+  //   closeOnLargeScreen()
 
-    return () => window.removeEventListener("resize", closeOnLargeScreen)
-  }, [])
+  //   return () => window.removeEventListener("resize", closeOnLargeScreen)
+  // }, [])
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover>
       <PopoverTrigger className="p-1 hover:bg-gray-100 rounded-lg transition-colors">{children}</PopoverTrigger>
       <PopoverContent
-        className="md:hidden p-3"
+        className="p-3"
         align={"end"}
         alignOffset={-5}
       >
