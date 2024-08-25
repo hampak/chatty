@@ -25,7 +25,7 @@ const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
           <a
             href={serverURL ? `${serverURL}/api/auth/logout` : "/api/auth/logout"}
           >
-            <AlertDialogAction>
+            <AlertDialogAction className="w-full">
               Log Out
             </AlertDialogAction>
           </a>
