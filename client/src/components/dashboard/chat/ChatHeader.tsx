@@ -1,7 +1,6 @@
 import { RxDotsHorizontal } from "react-icons/rx";
 import ChatInfoPopover from "./ChatInfoPopover";
 
-
 interface ChatHeaderProps {
   chatId: string
   title?: string,

@@ -91,10 +91,7 @@ const chatRoutes = express.Router()
   })
 
   .get("/chat-info", checkAuthStatus, async (req, res) => {
-    console.log("called")
     const { chatId, userId } = req.query
-
-    console.log("chatId", chatId, "userId", userId)
 
     const chatRoomInfo = await ChatRoom.findById(chatId)
     const user = await User.findById(userId)
