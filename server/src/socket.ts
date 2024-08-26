@@ -14,12 +14,21 @@ const io = new Server(server, {
   cors: {
     origin: `${CLIENT_URL}`,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+    credentials: true,
   }
 })
 
 io.on("connection", async (socket) => {
   console.log("client is connected", socket.id)
+
+  // socket.on("userOnline", (userId) => {
+  //   io.emit("onlineStatus", { userId, status: "online" })
+  // })
+
+  const userId = socket.handshake.query.userId;
+  console.log(userId)
+
+  io.emit("userOnline", ({ userId }))
 })
 
 export {

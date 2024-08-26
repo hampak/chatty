@@ -1,7 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from 'socket.io-client';
+import { useUser } from "./UserProvider";
 
-const SocketContext = createContext<Socket | null>(null)
+interface SocketContextValue {
+  socket: Socket | null;
+  onlineFriends: Set<string>
+}
+
+const SocketContext = createContext<SocketContextValue | undefined>(undefined)
 
 const serverURL = import.meta.env.VITE_API_URL
 const url = serverURL ? `${serverURL}` : "http://localhost:8000"
@@ -12,32 +18,57 @@ export const SocketProvider = ({
   children: React.ReactNode
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null)
+  const [onlineFriends, setOnlineFriends] = useState<Set<string>>(new Set())
+
+  const { user } = useUser()
 
   useEffect(() => {
-    const newSocket = io(url, {
-      withCredentials: true
-    })
+    if (user) {
+      const newSocket = io(url, {
+        withCredentials: true,
+        autoConnect: true,
+        query: {
+          userId: user.id
+        }
+      })
+      setSocket(newSocket)
 
-    setSocket(newSocket)
+      newSocket.on("userOnline", ({ userId }) => {
+        setOnlineFriends((prev) => {
+          if (prev.has(userId)) {
+            return prev
+          }
 
-    newSocket.on("connect", () => {
-      console.log("Socket connected on client", newSocket.id)
-    })
+          if (userId === user.id) {
+            return prev
+          }
 
-    return () => {
-      newSocket.disconnect();
-      console.log('Socket DISCONNECTED on client', newSocket.id);
-    };
-  }, [])
+          return new Set([...prev, userId])
+        })
+      })
+
+      return () => {
+        newSocket.disconnect();
+        console.log('Socket DISCONNECTED on client', newSocket.id);
+      };
+    }
+
+
+    // newSocket.on("connect", () => {
+    //   console.log("Socket connected on client", newSocket.id)
+    // })
+
+    // newSocket.on("online")
+  }, [user])
 
   return (
-    <SocketContext.Provider value={socket}>
+    <SocketContext.Provider value={{ socket, onlineFriends }}>
       {children}
     </SocketContext.Provider>
   )
 }
 
-export const useSocket = (): Socket | null => {
+export const useSocket = (): SocketContextValue => {
   const context = useContext(SocketContext);
   if (context === undefined) {
     throw new Error('useSocket must be used within a SocketProvider');

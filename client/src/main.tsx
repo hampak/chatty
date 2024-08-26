@@ -37,11 +37,11 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route
       path="dashboard"
       element={
-        <SocketProvider>
-          <UserProvider>
+        <UserProvider>
+          <SocketProvider>
             <DashboardLayout />
-          </UserProvider>
-        </SocketProvider>
+          </SocketProvider>
+        </UserProvider>
       }
       loader={async () => await checkAuthStatus()}
     >

@@ -28,7 +28,7 @@ const Sidebar = () => {
     }
   }, [openSidebar])
 
-  const socket = useSocket()
+  const { socket } = useSocket()
 
   console.log(socket)
 
