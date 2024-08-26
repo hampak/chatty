@@ -21,14 +21,14 @@ const io = new Server(server, {
 io.on("connection", async (socket) => {
   console.log("client is connected", socket.id)
 
-  // socket.on("userOnline", (userId) => {
-  //   io.emit("onlineStatus", { userId, status: "online" })
-  // })
-
   const userId = socket.handshake.query.userId;
-  console.log(userId)
+  console.log("current User ID", userId)
 
-  io.emit("userOnline", ({ userId }))
+  socket.on("disconnect", () => {
+    console.log("disconnected client of ID:", socket.id)
+  })
+
+  // io.emit("userOnline", ({ userId }))
 })
 
 export {

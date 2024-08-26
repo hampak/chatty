@@ -37,7 +37,7 @@ export default function UserProvider({
     }
 
     checkUser()
-  }, [])
+  }, [serverURL])
 
   return (
     <UserContext.Provider value={{ user, loading }}>
