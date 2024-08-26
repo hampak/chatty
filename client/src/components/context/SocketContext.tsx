@@ -22,39 +22,69 @@ export const SocketProvider = ({
 
   const { user } = useUser()
 
+  // const handleUserOnline = useCallback(({ userId }: { userId: string }) => {
+  //   setOnlineFriends((prev) => {
+  //     if (prev.has(userId) || userId === user?.id) {
+  //       return prev
+  //     }
+  //     return new Set([...prev, userId])
+  //   })
+  // }, [user?.id])
+
+  // const handleUserOffline = useCallback(({ userId }: { userId: string }) => {
+  //   setOnlineFriends((prev) => {
+  //     const updatedFriends = new Set(prev);
+  //     updatedFriends.delete(userId);
+  //     return updatedFriends;
+  //   });
+  // }, []);
+
   useEffect(() => {
-    if (user) {
-      const newSocket = io(url, {
-        withCredentials: true,
-        autoConnect: true,
-        query: {
-          userId: user.id
-        }
-      })
-      setSocket(newSocket)
+    // if (user) {
+    //   const newSocket = io(url, {
+    //     withCredentials: true,
+    //     autoConnect: true,
+    //     query: {
+    //       userId: user.id
+    //     }
+    //   })
+    //   setSocket(newSocket)
 
-      newSocket.on("userOnline", ({ userId }) => {
-        setOnlineFriends((prev) => {
-          if (prev.has(userId)) {
-            return prev
-          }
+    //   // newSocket.on("userOnline", ({ userId }) => {
+    //   //   setOnlineFriends((prev) => {
+    //   //     if (prev.has(userId)) {
+    //   //       return prev
+    //   //     }
 
-          if (userId === user.id) {
-            return prev
-          }
+    //   //     if (userId === user.id) {
+    //   //       return prev
+    //   //     }
 
-          return new Set([...prev, userId])
-        })
-      })
+    //   //     return new Set([...prev, userId])
+    //   //   })
+    //   // })
 
-      newSocket.on("connect", () => {
-        console.log("Socket connected on client", newSocket.id)
-      })
-      return () => {
-        newSocket.disconnect();
-        console.log('Socket DISCONNECTED on client', newSocket.id);
-      };
-    }
+    //   // newSocket.on("userOnline", handleUserOnline)
+    //   // newSocket.on("userOffline", handleUserOffline)
+
+    //   // console.log(onlineFriends)
+
+    //   // newSocket.on("connect", () => {
+    //   //   console.log("Socket connected on client", newSocket.id)
+    //   // })
+    //   // return () => {
+    //   //   newSocket.disconnect();
+    //   //   console.log('Socket DISCONNECTED on client', newSocket.id);
+    //   // };
+    // }
+    const newSocket = io(url, {
+      withCredentials: true,
+      autoConnect: true,
+      query: {
+        userId: user?.id
+      }
+    })
+    setSocket(newSocket)
   }, [user])
 
   return (
