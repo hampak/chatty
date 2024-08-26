@@ -47,18 +47,14 @@ export const SocketProvider = ({
         })
       })
 
+      newSocket.on("connect", () => {
+        console.log("Socket connected on client", newSocket.id)
+      })
       return () => {
         newSocket.disconnect();
         console.log('Socket DISCONNECTED on client', newSocket.id);
       };
     }
-
-
-    // newSocket.on("connect", () => {
-    //   console.log("Socket connected on client", newSocket.id)
-    // })
-
-    // newSocket.on("online")
   }, [user])
 
   return (
