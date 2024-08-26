@@ -1,16 +1,16 @@
-import express from "express"
-import dotenv from "dotenv"
-import cors from "cors"
 import cookieParser from "cookie-parser"
+import cors from "cors"
+import dotenv from "dotenv"
+import express from "express"
 import morgan from "morgan"
 import connectToMongoDb from "./db/db"
 
-import { app, io, server } from "./socket"
+import { app, server } from "./socket"
 
 /* route Imports */
 import authRoutes from "./routes/authRoutes"
-import userRoutes from "./routes/userRoutes"
 import chatRoutes from "./routes/chatRoutes"
+import userRoutes from "./routes/userRoutes"
 
 dotenv.config()
 const PORT = process.env.PORT ? process.env.PORT : 8000

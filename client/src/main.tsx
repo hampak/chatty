@@ -1,19 +1,18 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
+import DashboardLayout from './components/DashboardLayout'
 import RootLayout from './components/RootLayout'
+import UserProvider from './components/context/UserProvider'
+import TanstackProvider from './components/provider/TanstackProvider'
+import { Toaster } from './components/ui/sonner'
 import './index.css'
+import Chat from './routes/Chat'
+import Dashboard from './routes/Dashboard'
 import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
-import Dashboard from './routes/Dashboard'
-import { checkAuthStatus } from './utils'
-import UserProvider from './components/context/UserProvider'
 import NotFound from './routes/NotFound'
-import { Toaster } from './components/ui/sonner'
-import TanstackProvider from './components/provider/TanstackProvider'
-import Chat from './routes/Chat'
-import DashboardLayout from './components/DashboardLayout'
-import { SocketProvider } from './components/context/SocketContext'
+import { checkAuthStatus } from './utils'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -38,9 +37,7 @@ const router = createBrowserRouter(createRoutesFromElements(
       path="dashboard"
       element={
         <UserProvider>
-          <SocketProvider>
-            <DashboardLayout />
-          </SocketProvider>
+          <DashboardLayout />
         </UserProvider>
       }
       loader={async () => await checkAuthStatus()}

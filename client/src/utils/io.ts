@@ -1,8 +1,21 @@
-// import { useUser } from "@/components/context/UserProvider"
-// import io, { Socket } from "socket.io-client"
+import io from "socket.io-client"
 
-// const serverURL = import.meta.env.VITE_API_URL
-// const url = serverURL ? `${serverURL}` : "http://localhost:8000"
+const serverURL = import.meta.env.VITE_API_URL
+const url = serverURL ? `${serverURL}` : "http://localhost:8000"
+
+export const socket = io(url, {
+  withCredentials: true,
+  autoConnect: true
+})
+
+// socket.on("connect", () => {
+//   console.log("HI")
+// })
+
+// socket.on("userOnline", (userId) => {
+//   console.log(userId)
+// })
+
 
 // // export let socket: Socket | null = null;
 

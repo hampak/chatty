@@ -1,34 +1,56 @@
-import { Loader2 } from "lucide-react";
-import { useGetChatsList } from "@/lib/data";
 import { useUser } from "@/components/context/UserProvider";
+import { useGetChatsList } from "@/lib/data";
+import { Loader2 } from "lucide-react";
 import ChatRoomItem from "./ChatRoomItem";
+import { useEffect, useState } from "react";
+import { socket } from "@/utils/io";
 
 const ChatList = () => {
 
   const { user } = useUser()
 
   const { data } = useGetChatsList({ userId: user?.id })
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
 
-  if (data?.length === 0) {
-    return (
-      <div>No chats yet! Create a new room :)</div>
-    )
-  }
+  console.log(onlineUsers)
 
-  // console.log(data)
+  useEffect(() => {
+    const handleUserOnline = (userId: string) => {
+      if (userId !== user?.id) {
+        setOnlineUsers((prev) => new Set(prev).add(userId));
+      }
+    };
+
+    // Initial setup for socket events
+    socket.on("userOnline", handleUserOnline);
+
+    // Cleanup socket events on component unmount
+    return () => {
+      socket.off("userOnline", handleUserOnline);
+    };
+  }, [user?.id]);
+
+  const isUserOnline = (userId: string) => {
+    return onlineUsers.has(userId);
+  };
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
       {
         data ? (
-          data.map((room, index) => (
-            <div key={index} className="w-full">
-              <ChatRoomItem
-                data={room}
-                user={user}
-              />
-            </div>
-          ))
+          data.length === 0 ? (
+            <div>No Chats Yet! Invite a friend :)</div>
+          ) : (
+            data.map((room, index) => (
+              <div key={index} className="w-full">
+                <ChatRoomItem
+                  data={room}
+                  user={user}
+                  isFriendOnline={(room.participants || []).some(participantId => isUserOnline(participantId))}
+                />
+              </div>
+            ))
+          )
         ) : (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="animate-spin" />

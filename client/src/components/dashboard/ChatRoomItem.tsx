@@ -1,8 +1,7 @@
-import { Link, useParams } from "react-router-dom"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
-import { useSocket } from "../context/SocketContext"
 import { User } from "@/types"
+import { Link, useParams } from "react-router-dom"
 
 interface ChatRoomItem {
   data: {
@@ -13,25 +12,18 @@ interface ChatRoomItem {
     updatedAt: Date,
     image: string
   },
-  user: User | null
+  user: User | null,
+  isFriendOnline: boolean
 }
 
-const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
+const ChatRoomItem = ({ data, user, isFriendOnline }: ChatRoomItem) => {
   const { chatId } = useParams()
-  // const { onlineFriends } = useSocket()
 
   if (!user) {
-    return
+    return null
   }
 
-  const { title, image, id, participants } = data
-  // const { id: currentUserId } = user
-
-  // const friendId = participants.find(p_id => p_id !== currentUserId)
-  // const isFriendOnline = friendId ? onlineFriends.has(friendId) : false
-
-  // console.log("data.id", id)
-  // console.log("onlineFriends", onlineFriends)
+  const { title, image, id } = data
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>
@@ -39,9 +31,9 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
         <Avatar>
           <AvatarImage src={image} />
         </Avatar>
-        {/* {
+        {
           isFriendOnline ? <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" /> : <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
-        } */}
+        }
       </div>
       <div className="mr-auto">
         <span className="text-sm font-semibold">{title}</span>

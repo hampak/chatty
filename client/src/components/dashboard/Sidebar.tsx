@@ -8,7 +8,8 @@ import { RxHamburgerMenu } from "react-icons/rx"
 import ChatList from "./ChatList"
 import CreateChatModal from "./CreateChatModal"
 import LogoutAlert from "./LogoutAlert"
-import { useSocket } from "../context/SocketContext"
+// import { useSocket } from "../context/SocketContext"
+import { socket } from "@/utils/io"
 
 const Sidebar = () => {
 
@@ -27,8 +28,6 @@ const Sidebar = () => {
       window.removeEventListener("resize", handleResize)
     }
   }, [openSidebar])
-
-  const { socket } = useSocket()
 
   return (
     <div className={cn("w-[300px] h-full bg-green-200s px-2 border-r-[1px]", isOpen ? "block " : "hidden")}>
@@ -67,7 +66,7 @@ const Sidebar = () => {
                   />
                 </Avatar>
                 {
-                  socket?.connected ? <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" /> : <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
+                  socket.connected ? <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" /> : <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
                 }
               </div>
             )
