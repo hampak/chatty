@@ -5,7 +5,9 @@ const url = serverURL ? `${serverURL}` : "http://localhost:8000"
 
 export const socket = io(url, {
   withCredentials: true,
-  autoConnect: true
+  autoConnect: true,
+  reconnectionAttempts: 2,
+  reconnectionDelay: 1500
 })
 
 // socket.on("connect", () => {

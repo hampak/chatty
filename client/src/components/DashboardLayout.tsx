@@ -1,10 +1,10 @@
-import { Outlet } from "react-router-dom"
-import Sidebar from "./dashboard/Sidebar"
-import { useSidebarStore } from "@/utils/zustand"
-import { RxHamburgerMenu } from "react-icons/rx"
-import LogoutAlert from "./dashboard/LogoutAlert"
-import { CiLogout } from "react-icons/ci"
 import { cn } from "@/lib/utils"
+import { useSidebarStore } from "@/utils/zustand"
+import { CiLogout } from "react-icons/ci"
+import { RxHamburgerMenu } from "react-icons/rx"
+import { Outlet } from "react-router-dom"
+import LogoutAlert from "./dashboard/LogoutAlert"
+import Sidebar from "./dashboard/Sidebar"
 
 const DashboardLayout = () => {
 

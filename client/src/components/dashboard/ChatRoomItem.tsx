@@ -2,7 +2,6 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { User } from "@/types"
 import { Link, useParams } from "react-router-dom"
-import { useSocket } from "../context/SocketContext"
 
 interface ChatRoomItem {
   data: {
@@ -18,24 +17,14 @@ interface ChatRoomItem {
 }
 
 const ChatRoomItem = ({ data, user, isFriendOnline }: ChatRoomItem) => {
+
   const { chatId } = useParams()
-
-  const { onlineFriends } = useSocket()
-
-  console.log(onlineFriends)
-
 
   const { title, image, id } = data
 
-  console.log(isFriendOnline)
-
-  const isOnline = onlineFriends.some(friend => friend.userId === id);
-
-  console.log(isOnline)
-
-  if (!user) {
-    return null
-  }
+  // if (!user) {
+  //   return null
+  // }
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>

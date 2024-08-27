@@ -73,7 +73,14 @@ io.on("connection", async (socket: CustomSocket) => {
   io.emit("userOnline", { userId })
   console.log("ID OF ONLINE USER", userId)
 
+  socket.on("accessChatHeader", async (title) => {
+    try {
+      if (!title) return
+      console.log(`Chat with ${title}`)
+    } catch (error) {
 
+    }
+  })
 
   // if (!userId) return
 
