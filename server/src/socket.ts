@@ -73,6 +73,8 @@ io.on("connection", async (socket: CustomSocket) => {
   io.emit("userOnline", { userId })
   console.log("ID OF ONLINE USER", userId)
 
+
+
   // if (!userId) return
 
   // onlineUsers.set(userId, socket.id)

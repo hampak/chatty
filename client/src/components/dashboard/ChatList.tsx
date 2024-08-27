@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import ChatRoomItem from "./ChatRoomItem";
 import { useEffect, useState } from "react";
 import { socket } from "@/utils/io";
+import { useSocket } from "../context/SocketContext";
 
 const ChatList = () => {
 
@@ -11,41 +12,13 @@ const ChatList = () => {
 
   const { data } = useGetChatsList({ userId: user?.id })
 
-  useEffect(() => {
-    socket.on("userOnline", (userId: string) => {
-      console.log(userId)
-    })
-  }, [])
-  // const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  // const { onlineFriends } = useSocket()
 
-  // console.log(onlineUsers)
+  // console.log(onlineFriends)
 
-  // useEffect(() => {
-  //   const handleUserOnline = (userId: string) => {
-  //     if (userId !== user?.id) {
-  //       setOnlineUsers((prev) => new Set(prev).add(userId));
-  //     }
-  //   };
-
-  //   // Initial setup for socket events
-  //   socket.on("userOnline", handleUserOnline);
-
-  //   // Cleanup socket events on component unmount
-  //   return () => {
-  //     socket.off("userOnline", handleUserOnline);
-  //   };
-  // }, [user?.id]);
-
-  // const isUserOnline = (userId: string) => {
-  //   return onlineUsers.has(userId);
-  // };
-
-  // useEffect(() => {
-  //   socket.on("userOnline", (userId: string) => {
-  //     setOnlineUsers((prev) => new Set(prev).add(userId))
-  //     console.log("USER CONNECTED ON CLIENT", userId)
-  //   })
-  // }, [user?.id])
+  // const isUserOnline = (participantIds: string[]) => {
+  //   return participantIds.some(participantId => onlineFriends.includes(participantId))
+  // }
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
@@ -59,7 +32,7 @@ const ChatList = () => {
                 <ChatRoomItem
                   data={room}
                   user={user}
-                // isFriendOnline={(room.participants || []).some(participantId => isUserOnline(participantId))}
+                // isFriendOnline={isUserOnline(room.participants)}
                 />
               </div>
             ))

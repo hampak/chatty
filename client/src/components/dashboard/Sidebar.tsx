@@ -8,13 +8,15 @@ import { RxHamburgerMenu } from "react-icons/rx"
 import ChatList from "./ChatList"
 import CreateChatModal from "./CreateChatModal"
 import LogoutAlert from "./LogoutAlert"
+import { useSocket } from "../context/SocketContext"
 // import { useSocket } from "../context/SocketContext"
-import { socket } from "@/utils/io"
 
 const Sidebar = () => {
 
   const { isOpen, toggleSidebar, openSidebar } = useSidebarStore()
   const { user, loading } = useUser()
+
+  const { socket } = useSocket()
 
   useEffect(() => {
     const handleResize = () => {
