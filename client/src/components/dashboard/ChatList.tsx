@@ -10,35 +10,42 @@ const ChatList = () => {
   const { user } = useUser()
 
   const { data } = useGetChatsList({ userId: user?.id })
-  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
-
-  console.log(onlineUsers)
 
   useEffect(() => {
-    const handleUserOnline = (userId: string) => {
-      if (userId !== user?.id) {
-        setOnlineUsers((prev) => new Set(prev).add(userId));
-      }
-    };
+    socket.on("userOnline", (userId: string) => {
+      console.log(userId)
+    })
+  }, [])
+  // const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
 
-    // Initial setup for socket events
-    socket.on("userOnline", handleUserOnline);
+  // console.log(onlineUsers)
 
-    // Cleanup socket events on component unmount
-    return () => {
-      socket.off("userOnline", handleUserOnline);
-    };
-  }, [user?.id]);
+  // useEffect(() => {
+  //   const handleUserOnline = (userId: string) => {
+  //     if (userId !== user?.id) {
+  //       setOnlineUsers((prev) => new Set(prev).add(userId));
+  //     }
+  //   };
 
-  const isUserOnline = (userId: string) => {
-    return onlineUsers.has(userId);
-  };
+  //   // Initial setup for socket events
+  //   socket.on("userOnline", handleUserOnline);
+
+  //   // Cleanup socket events on component unmount
+  //   return () => {
+  //     socket.off("userOnline", handleUserOnline);
+  //   };
+  // }, [user?.id]);
+
+  // const isUserOnline = (userId: string) => {
+  //   return onlineUsers.has(userId);
+  // };
 
   // useEffect(() => {
   //   socket.on("userOnline", (userId: string) => {
+  //     setOnlineUsers((prev) => new Set(prev).add(userId))
   //     console.log("USER CONNECTED ON CLIENT", userId)
   //   })
-  // }, [])
+  // }, [user?.id])
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
