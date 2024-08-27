@@ -13,7 +13,7 @@ interface ChatRoomItem {
     image: string
   },
   user: User | null,
-  isFriendOnline: boolean
+  isFriendOnline?: boolean
 }
 
 const ChatRoomItem = ({ data, user, isFriendOnline }: ChatRoomItem) => {

@@ -62,10 +62,10 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 io.use(authenticateSocket)
 
 io.on("connection", async (socket: CustomSocket) => {
-  console.log("client is connected", socket.id)
+  console.log("CLIENT IS CONNECTED", socket.id)
   const userId = socket.userId
-  socket.emit("userOnline", { userId })
-  console.log("current User ID", userId)
+  io.emit("userOnline", { userId })
+  console.log("ID OF ONLINE USER", userId)
 
   socket.on("disconnect", () => {
     console.log("disconnected client of ID:", socket.id)

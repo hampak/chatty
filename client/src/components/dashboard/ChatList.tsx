@@ -34,6 +34,12 @@ const ChatList = () => {
     return onlineUsers.has(userId);
   };
 
+  // useEffect(() => {
+  //   socket.on("userOnline", (userId: string) => {
+  //     console.log("USER CONNECTED ON CLIENT", userId)
+  //   })
+  // }, [])
+
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
       {
@@ -46,7 +52,7 @@ const ChatList = () => {
                 <ChatRoomItem
                   data={room}
                   user={user}
-                  isFriendOnline={(room.participants || []).some(participantId => isUserOnline(participantId))}
+                // isFriendOnline={(room.participants || []).some(participantId => isUserOnline(participantId))}
                 />
               </div>
             ))
