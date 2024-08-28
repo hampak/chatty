@@ -1,8 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { User } from "@/types"
-import { socket } from "@/utils/io"
-import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
 interface ChatRoomItem {

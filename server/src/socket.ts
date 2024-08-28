@@ -81,23 +81,24 @@ io.on("connection", async (socket: CustomSocket) => {
 
     const onlineUsers = await redis.smembers("online-users")
     const onlineFriends = onlineUsers.filter(user => friendIdsAsStrings.includes(user))
+    console.log("CONNECT - ", onlineFriends)
     io.emit("getOnlineFriends", onlineFriends)
   })
 
   socket.on("disconnect", async () => {
     console.log("disconnected client of ID:", socket.id)
+    await redis.srem("online-users", userId!)
+
     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
     const friendIds = chatRooms.flatMap(room =>
       room.participants.filter(pId => pId.toString() !== userId)
     )
 
-    const friendIdsAsStrings = friendIds.map(id => id.toString())
-
-    await redis.srem("online-users", userId!)
-
     const updatedOnlineUsers = await redis.smembers("online-users")
+    const friendIdsAsStrings = friendIds.map(id => id.toString())
     const updatedOnlineFriends = updatedOnlineUsers.filter(user => friendIdsAsStrings.includes(user))
 
+    console.log("DISCONNECT - ", updatedOnlineFriends)
     io.emit("getOnlineFriends", updatedOnlineFriends)
     // io.emit("user-offline", { userId })
   })

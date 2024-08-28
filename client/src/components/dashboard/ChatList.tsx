@@ -10,19 +10,21 @@ const ChatList = () => {
   const { user } = useUser()
   const { onlineFriends } = useSocket()
 
+  console.log(onlineFriends)
+
   const { data } = useGetChatsList({ userId: user?.id })
 
-  const isFriendOnline = (participantIds: string[]) => {
-    console.log(onlineFriends)
-    // const onlineFriendIds = onlineFriends
-    //   .map(id => console.log(id))
-    // .map(friend => friend.userId)
-    // .map(friend => console.log(friend))
-    // .filter(id => id == user?.id);
-    // console.log(onlineFriendIds)
-    // participantIds.some(id => onlineFriends.includes(id))
-    return participantIds.some(id => onlineFriends.includes(id))
-  }
+  // const isFriendOnline = (participantIds: string[]) => {
+  //   console.log(onlineFriends)
+  //   // const onlineFriendIds = onlineFriends
+  //   //   .map(id => console.log(id))
+  //   // .map(friend => friend.userId)
+  //   // .map(friend => console.log(friend))
+  //   // .filter(id => id == user?.id);
+  //   // console.log(onlineFriendIds)
+  //   // participantIds.some(id => onlineFriends.includes(id))
+  //   return participantIds.some(id => onlineFriends.includes(id))
+  // }
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
@@ -36,7 +38,7 @@ const ChatList = () => {
                 <ChatRoomItem
                   data={room}
                   user={user}
-                  isFriendOnline={isFriendOnline(room.participants)}
+                // isFriendOnline={isFriendOnline(room.participants)}
                 />
               </div>
             ))
