@@ -2,6 +2,8 @@ import { useUser } from "@/components/context/UserProvider";
 import { useGetChatsList } from "@/lib/data";
 import { Loader2 } from "lucide-react";
 import ChatRoomItem from "./ChatRoomItem";
+import { useEffect } from "react";
+import { socket } from "@/utils/io";
 
 const ChatList = () => {
 
@@ -22,6 +24,7 @@ const ChatList = () => {
                   data={room}
                   user={user}
                 // isFriendOnline={isUserOnline(room.participants)}
+                // isFriendOnline={ }
                 />
               </div>
             ))

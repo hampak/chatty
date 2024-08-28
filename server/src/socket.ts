@@ -70,17 +70,23 @@ io.on("connection", async (socket: CustomSocket) => {
 
   const userId = socket.userId
 
-  io.emit("userOnline", { userId })
-  console.log("ID OF ONLINE USER", userId)
+  onlineUsers.set(userId, socket.id)
 
-  socket.on("accessChatHeader", async (title) => {
-    try {
-      if (!title) return
-      console.log(`Chat with ${title}`)
-    } catch (error) {
+  socket.emit("online-users", Array.from(onlineUsers.keys()))
 
-    }
-  })
+  socket.broadcast.emit("user-online", { userId })
+
+  // io.emit("userOnline", { userId })
+  // console.log("ID OF ONLINE USER", userId)
+
+  // socket.on("accessChatHeader", async (title) => {
+  //   try {
+  //     if (!title) return
+  //     console.log(`Chat with ${title}`)
+  //   } catch (error) {
+
+  //   }
+  // })
 
   // if (!userId) return
 
@@ -124,7 +130,8 @@ io.on("connection", async (socket: CustomSocket) => {
 
   socket.on("disconnect", () => {
     console.log("disconnected client of ID:", socket.id)
-    io.emit("userOffline", { userId })
+    onlineUsers.delete(userId)
+    socket.broadcast.emit("user-offline", { userId })
   })
 })
 
