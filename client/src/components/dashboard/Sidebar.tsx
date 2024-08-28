@@ -9,7 +9,6 @@ import ChatList from "./ChatList"
 import CreateChatModal from "./CreateChatModal"
 import LogoutAlert from "./LogoutAlert"
 import { socket } from "@/utils/io"
-// import { useSocket } from "../context/SocketContext"
 
 const Sidebar = () => {
 

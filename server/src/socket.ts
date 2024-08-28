@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
 import { ChatRoom, User } from "./db/models";
 import { getUsersFriends } from "./utils/friends";
+import { redis } from "./db/redis";
 
 interface CustomSocket extends Socket {
   userId?: string
@@ -62,76 +63,22 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 
 io.use(authenticateSocket)
 
-const onlineUsers = new Map();
-
 io.on("connection", async (socket: CustomSocket) => {
 
   console.log("CLIENT IS CONNECTED", socket.id)
 
   const userId = socket.userId
 
-  onlineUsers.set(userId, socket.id)
+  redis.sadd("online-users", userId!)
 
-  socket.emit("online-users", Array.from(onlineUsers.keys()))
+  socket.emit("online-users", { userId })
 
   socket.broadcast.emit("user-online", { userId })
 
-  // io.emit("userOnline", { userId })
-  // console.log("ID OF ONLINE USER", userId)
-
-  // socket.on("accessChatHeader", async (title) => {
-  //   try {
-  //     if (!title) return
-  //     console.log(`Chat with ${title}`)
-  //   } catch (error) {
-
-  //   }
-  // })
-
-  // if (!userId) return
-
-  // onlineUsers.set(userId, socket.id)
-
-  // console.log(onlineUsers)
-
-
-  // const chatRooms = await ChatRoom.find({
-  //   participants: userId
-  // }).populate('participants')
-
-  // console.log("chatRooms", chatRooms)
-
-
-  // chatRooms.forEach(room => {
-  //   room.participants.forEach(participant => {
-  //     if (participant._id.toString() !== userId) {
-  //       console.log("participant", participant.toString())
-  //       if (!onlineUsers.has(participant._id.toString())) {
-  //         onlineUsers.set(participant.id.toString(), "")
-  //       }
-  //     }
-  //   })
-  // })
-
-  // console.log(onlineUsers)
-
-  // const userRoom = `userRoom_${userId}`
-  // socket.join(userRoom)
-  // chatRooms.forEach(room => {
-  //   room.participants.forEach(async participant => {
-  //     if (participant._id.toString() !== userId) {
-  //       const participantSocketId = onlineUsers.get(participant._id.toString())
-  //       if (participantSocketId) {
-  //         io.to(userRoom).emit("userOnline", { userId: participant._id.toString() })
-  //       }
-  //     }
-  //   })
-  // })
-
   socket.on("disconnect", () => {
     console.log("disconnected client of ID:", socket.id)
-    onlineUsers.delete(userId)
     socket.broadcast.emit("user-offline", { userId })
+    redis.srem("online-users", userId!)
   })
 })
 

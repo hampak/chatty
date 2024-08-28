@@ -8,6 +8,7 @@ import connectToMongoDb from "./db/db"
 import { app, server } from "./socket"
 
 /* route Imports */
+import { redis } from "./db/redis"
 import authRoutes from "./routes/authRoutes"
 import chatRoutes from "./routes/chatRoutes"
 import userRoutes from "./routes/userRoutes"
@@ -31,7 +32,16 @@ app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/chat", chatRoutes)
 
-server.listen(PORT, () => {
-  connectToMongoDb()
+server.listen(PORT, async () => {
+  await connectToMongoDb()
+  try {
+    const isConnectedToRedis = await redis.ping()
+    if (isConnectedToRedis) {
+      console.log("Connected to Redis")
+    }
+  } catch (error) {
+    console.log("Error connecting to Redis", error)
+  }
+  // connectToRedis()
   console.log(`Server running on port - ${PORT}`)
 })
