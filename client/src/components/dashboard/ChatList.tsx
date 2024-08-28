@@ -1,34 +1,28 @@
 import { useUser } from "@/components/context/UserProvider";
 import { useGetChatsList } from "@/lib/data";
 import { Loader2 } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
 import ChatRoomItem from "./ChatRoomItem";
-import { useEffect } from "react";
-import { socket } from "@/utils/io";
 
 const ChatList = () => {
 
+
   const { user } = useUser()
+  const { onlineFriends } = useSocket()
 
   const { data } = useGetChatsList({ userId: user?.id })
 
-  useEffect(() => {
-    // socket.on("online-users", (onlineFriends) => {
-    //   console.log(onlineFriends)
-    // })
-
-    socket.on("user-offline", (userId) => {
-      console.log(`${userId} is now offline`)
-    })
-
-    socket.on("update-online-users", (onlineFriends) => {
-      console.log(onlineFriends)
-    })
-
-    return (() => {
-      socket.off("update-online-users")
-      socket.off("user-offline")
-    })
-  }, [])
+  const isFriendOnline = (participantIds: string[]) => {
+    console.log(onlineFriends)
+    // const onlineFriendIds = onlineFriends
+    //   .map(id => console.log(id))
+    // .map(friend => friend.userId)
+    // .map(friend => console.log(friend))
+    // .filter(id => id == user?.id);
+    // console.log(onlineFriendIds)
+    // participantIds.some(id => onlineFriends.includes(id))
+    return participantIds.some(id => onlineFriends.includes(id))
+  }
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
@@ -42,8 +36,7 @@ const ChatList = () => {
                 <ChatRoomItem
                   data={room}
                   user={user}
-                // isFriendOnline={isUserOnline(room.participants)}
-                // isFriendOnline={ }
+                  isFriendOnline={isFriendOnline(room.participants)}
                 />
               </div>
             ))

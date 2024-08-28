@@ -3,13 +3,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { useUser } from "./UserProvider";
 
-interface OnlineFriend {
-  userId: string
-}
-
 interface SocketContextValue {
   socket: Socket;
-  onlineFriends: OnlineFriend[]
+  onlineFriends: string[]
 }
 
 const SocketContext = createContext<SocketContextValue | undefined>(undefined)
@@ -20,19 +16,29 @@ export const SocketProvider = ({
   children: React.ReactNode
 }) => {
 
-  const [onlineFriends, setOnlineFriends] = useState<OnlineFriend[]>([]);
+  const [onlineFriends, setOnlineFriends] = useState<string[]>([]);
   const { user } = useUser()
 
   useEffect(() => {
     if (user === null) return
     socket.emit("userOnline", user.id)
-    // socket.on("userOffline", (userId: string) => {
-    //   setOnlineFriends(prev => prev.filter(friend => friend.userId !== userId))
+
+    socket.on("getOnlineFriends", (online) => {
+      console.log(online)
+      setOnlineFriends(online)
+    })
+
+    // socket.on("user-offline", (userId) => {
+    //   setOnlineFriends(prev => prev.filter(friendId => friendId !== userId))
+    // })
+
+    // socket.on("message", (message) => {
+    //   console.log()
     // })
 
     return () => {
       socket.off("userOnline")
-      // socket.off("userOffline")
+      socket.off("getOnlineFriends")
     }
   }, [user])
 

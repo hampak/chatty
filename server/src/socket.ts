@@ -70,25 +70,36 @@ io.on("connection", async (socket: CustomSocket) => {
 
   redis.sadd("online-users", userId!)
 
-  const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-  const friendIds = chatRooms.flatMap(room =>
-    room.participants.filter(pId => pId.toString() !== userId)
-  )
 
-  const friendIdsAsStrings = friendIds.map(id => id.toString())
+  socket.on("userOnline", async (userId) => {
+    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    const friendIds = chatRooms.flatMap(room =>
+      room.participants.filter(pId => pId.toString() !== userId)
+    )
 
-  const onlineUsers = await redis.smembers("online-users")
-  const onlineFriends = onlineUsers.filter(user => friendIdsAsStrings.includes(user))
+    const friendIdsAsStrings = friendIds.map(id => id.toString())
 
-  socket.emit("online-users", onlineFriends)
+    const onlineUsers = await redis.smembers("online-users")
+    const onlineFriends = onlineUsers.filter(user => friendIdsAsStrings.includes(user))
+    io.emit("getOnlineFriends", onlineFriends)
+  })
 
-  io.emit("update-online-users", onlineFriends)
-  // socket.broadcast.emit("user-online", { userId })
-
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("disconnected client of ID:", socket.id)
-    socket.emit("user-offline", { userId })
-    redis.srem("online-users", userId!)
+    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    const friendIds = chatRooms.flatMap(room =>
+      room.participants.filter(pId => pId.toString() !== userId)
+    )
+
+    const friendIdsAsStrings = friendIds.map(id => id.toString())
+
+    await redis.srem("online-users", userId!)
+
+    const updatedOnlineUsers = await redis.smembers("online-users")
+    const updatedOnlineFriends = updatedOnlineUsers.filter(user => friendIdsAsStrings.includes(user))
+
+    io.emit("getOnlineFriends", updatedOnlineFriends)
+    // io.emit("user-offline", { userId })
   })
 })
 
