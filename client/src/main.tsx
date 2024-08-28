@@ -13,6 +13,7 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import NotFound from './routes/NotFound'
 import { checkAuthStatus } from './utils'
+import { SocketProvider } from './components/context/SocketContext'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -36,11 +37,11 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route
       path="dashboard"
       element={
-        //      <SocketProvider>
         <UserProvider>
-          <DashboardLayout />
+          <SocketProvider>
+            <DashboardLayout />
+          </SocketProvider>
         </UserProvider>
-        //        </SocketProvider>
       }
       loader={async () => await checkAuthStatus()}
     >

@@ -66,18 +66,28 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
 
   console.log("CLIENT IS CONNECTED", socket.id)
-
   const userId = socket.userId
 
   redis.sadd("online-users", userId!)
 
-  socket.emit("online-users", { userId })
+  const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+  const friendIds = chatRooms.flatMap(room =>
+    room.participants.filter(pId => pId.toString() !== userId)
+  )
 
-  socket.broadcast.emit("user-online", { userId })
+  const friendIdsAsStrings = friendIds.map(id => id.toString())
+
+  const onlineUsers = await redis.smembers("online-users")
+  const onlineFriends = onlineUsers.filter(user => friendIdsAsStrings.includes(user))
+
+  socket.emit("online-users", onlineFriends)
+
+  io.emit("update-online-users", onlineFriends)
+  // socket.broadcast.emit("user-online", { userId })
 
   socket.on("disconnect", () => {
     console.log("disconnected client of ID:", socket.id)
-    socket.broadcast.emit("user-offline", { userId })
+    socket.emit("user-offline", { userId })
     redis.srem("online-users", userId!)
   })
 })

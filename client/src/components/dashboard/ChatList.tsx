@@ -11,6 +11,25 @@ const ChatList = () => {
 
   const { data } = useGetChatsList({ userId: user?.id })
 
+  useEffect(() => {
+    // socket.on("online-users", (onlineFriends) => {
+    //   console.log(onlineFriends)
+    // })
+
+    socket.on("user-offline", (userId) => {
+      console.log(`${userId} is now offline`)
+    })
+
+    socket.on("update-online-users", (onlineFriends) => {
+      console.log(onlineFriends)
+    })
+
+    return (() => {
+      socket.off("update-online-users")
+      socket.off("user-offline")
+    })
+  }, [])
+
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
       {
