@@ -71,67 +71,41 @@ io.on("connection", async (socket: CustomSocket) => {
 
   redis.sadd("online-users", userId!)
 
-
   socket.on("userOnline", async (userId) => {
     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
     const friendIds = chatRooms.flatMap(room =>
-      room.participants.filter(pId => pId.toString() !== userId)
+      room.participants.map(pId => pId.toString())
     )
 
-    const friendIdsAsStrings = friendIds.map(id => id.toString())
+    if (!friendIds.includes(userId.toString())) {
+      friendIds.push(userId.toString())
+    }
 
     const onlineUsers = await redis.smembers("online-users")
     console.log("onlineUsers", onlineUsers)
-    const onlineFriends = onlineUsers.filter(user => friendIdsAsStrings.includes(user))
+    const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
     // console.log("CONNECT - ", onlineFriends)
     io.emit("getOnlineFriends", onlineFriends)
   })
 
-  // let disconnectTimeout: NodeJS.Timeout
-
-  // socket.on("disconnect", async () => {
-  //   disconnectTimeout = setTimeout(async () => {
-  //     console.log("disconnected client of ID:", socket.id);
-  //     await redis.srem("online-users", userId!)
-  //     const updatedOnlineUsers = await redis.smembers("online-users")
-
-  //     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-  //     const friendIds = chatRooms.flatMap(room =>
-  //       room.participants.filter(pId => pId.toString() !== userId)
-  //     )
-  //     const friendIdsAsStrings = friendIds.map(id => id.toString())
-  //     const updatedOnlineFriends = updatedOnlineUsers.filter(user => friendIdsAsStrings.includes(user))
-  //     io.emit("getOnlineFriends", updatedOnlineFriends)
-  //   }, 2000)
-  //   // console.log("disconnected client of ID:", socket.id)
-  //   // await redis.srem("online-users", userId!)
-
   socket.on("disconnect", async () => {
-    console.log("disconnected client of ID:", socket.id);
+    // console.log("disconnected client of ID:", socket.id);
     await redis.srem("online-users", userId!)
     const updatedOnlineUsers = await redis.smembers("online-users")
 
     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
     const friendIds = chatRooms.flatMap(room =>
-      room.participants.filter(pId => pId.toString() !== userId)
+      room.participants.map(pId => pId.toString())
     )
-    const friendIdsAsStrings = friendIds.map(id => id.toString())
-    const updatedOnlineFriends = updatedOnlineUsers.filter(user => friendIdsAsStrings.includes(user))
-    io.emit("getOnlineFriends", updatedOnlineFriends)
+
+    if (!friendIds.includes(userId!.toString())) {
+      friendIds.push(userId!.toString())
+    }
+    const onlineFriends = updatedOnlineUsers.filter(user => friendIds.includes(user))
+    io.emit("getOnlineFriends", onlineFriends)
   })
-
-
-
-  // // io.emit("user-offline", { userId })
+  // io.emit("user-offline", { userId })
 })
-
-// socket.on("reconnect", () => {
-//   // if (disconnectTimeout) {
-//   //   clearTimeout(disconnectTimeout)
-//   // }
-//   console.log("Reconnected")
-// })
-// })
 
 export {
   app,
