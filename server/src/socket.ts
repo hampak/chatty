@@ -26,7 +26,9 @@ const io = new Server(server, {
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
-  connectionStateRecovery: {}
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 2 * 60 * 1000
+  }
 })
 
 const authenticateSocket = async (socket: CustomSocket, next: any) => {
@@ -64,48 +66,78 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 
 io.use(authenticateSocket)
 
-io.on("connection", async (socket: CustomSocket) => {
+// const onlineUsers = new Set()
 
-  // console.log("CLIENT IS CONNECTED", socket.id)
+const onlineUsers: { [key: string]: boolean } = {}
+
+io.on("connection", async (socket: CustomSocket) => {
   const userId = socket.userId
 
-  redis.sadd("online-users", userId!)
+  // onlineUsers.add(userId)
 
-  socket.on("userOnline", async (userId) => {
-    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    const friendIds = chatRooms.flatMap(room =>
-      room.participants.map(pId => pId.toString())
-    )
+  // socket.emit("onlineUsers", Array.from(onlineUsers))
 
-    if (!friendIds.includes(userId.toString())) {
-      friendIds.push(userId.toString())
-    }
+  onlineUsers[userId!] = true
+  io.emit("newUserOnline", userId)
 
-    const onlineUsers = await redis.smembers("online-users")
-    console.log("onlineUsers", onlineUsers)
-    const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-    // console.log("CONNECT - ", onlineFriends)
-    io.emit("getOnlineFriends", onlineFriends)
+  if (socket.recovered) {
+    io.emit("newUserOnline", userId)
+  }
+
+
+  socket.on("disconnect", () => {
+    console.log(`${userId} has disconnected`)
+    // onlineUsers.delete(userId)
+    io.emit("userDisconnect", userId)
   })
 
-  socket.on("disconnect", async () => {
-    // console.log("disconnected client of ID:", socket.id);
-    await redis.srem("online-users", userId!)
-    const updatedOnlineUsers = await redis.smembers("online-users")
-
-    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    const friendIds = chatRooms.flatMap(room =>
-      room.participants.map(pId => pId.toString())
-    )
-
-    if (!friendIds.includes(userId!.toString())) {
-      friendIds.push(userId!.toString())
-    }
-    const onlineFriends = updatedOnlineUsers.filter(user => friendIds.includes(user))
-    io.emit("getOnlineFriends", onlineFriends)
+  socket.on("reconnect", () => {
+    console.log(`${userId} has reconnected`)
   })
-  // io.emit("user-offline", { userId })
 })
+
+// io.on("connection", async (socket: CustomSocket) => {
+
+//   // console.log("CLIENT IS CONNECTED", socket.id)
+//   const userId = socket.userId
+
+//   redis.sadd("online-users", userId!)
+
+//   socket.on("userOnline", async (userId) => {
+//     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+//     const friendIds = chatRooms.flatMap(room =>
+//       room.participants.map(pId => pId.toString())
+//     )
+
+//     if (!friendIds.includes(userId.toString())) {
+//       friendIds.push(userId.toString())
+//     }
+
+//     const onlineUsers = await redis.smembers("online-users")
+//     console.log("onlineUsers", onlineUsers)
+//     const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
+//     // console.log("CONNECT - ", onlineFriends)
+//     io.emit("getOnlineFriends", onlineFriends)
+//   })
+
+//   socket.on("disconnect", async () => {
+//     // console.log("disconnected client of ID:", socket.id);
+//     await redis.srem("online-users", userId!)
+//     const updatedOnlineUsers = await redis.smembers("online-users")
+
+//     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+//     const friendIds = chatRooms.flatMap(room =>
+//       room.participants.map(pId => pId.toString())
+//     )
+
+//     if (!friendIds.includes(userId!.toString())) {
+//       friendIds.push(userId!.toString())
+//     }
+//     const onlineFriends = updatedOnlineUsers.filter(user => friendIds.includes(user))
+//     io.emit("getOnlineFriends", onlineFriends)
+//   })
+//   // io.emit("user-offline", { userId })
+// })
 
 export {
   app,
