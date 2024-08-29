@@ -4,6 +4,7 @@ import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { User } from "../db/models";
+import { redis } from "../db/redis";
 
 
 dotenv.config()
@@ -161,8 +162,11 @@ const authRoutes = express.Router()
 
 
   /* Logout */
-  .get("/logout", (req, res) => {
+  .get("/logout", async (req, res) => {
+    const token = await req.cookies.user
+    const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
     res.clearCookie("user")
+    await redis.srem("online-users", decoded.user_id)
     res.redirect("/")
   })
 

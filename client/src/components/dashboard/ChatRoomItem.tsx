@@ -36,6 +36,16 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
     //   }
     // })
 
+    // socket.on("connect", () => {
+    //   socket.emit('checkOnlineStatus', friendId);
+    //   socket.on("newUserOnline", (userId) => {
+    //     console.log("newUserOnline", userId)
+    //     if (userId === friendId) {
+    //       setIsFriendOnline(true)
+    //     }
+    //   })
+    // })
+
     socket.on("newUserOnline", (userId) => {
       console.log("newUserOnline", userId)
       if (userId === friendId) {

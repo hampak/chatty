@@ -66,35 +66,55 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 
 io.use(authenticateSocket)
 
-// const onlineUsers = new Set()
-
-const onlineUsers: { [key: string]: boolean } = {}
-
 io.on("connection", async (socket: CustomSocket) => {
+
+  // console.log("CLIENT IS CONNECTED", socket.id)
   const userId = socket.userId
 
-  // onlineUsers.add(userId)
+  redis.sadd("online-users", userId!)
 
-  // socket.emit("onlineUsers", Array.from(onlineUsers))
+  socket.on("userOnline", async (userId) => {
+    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    const friendIds = chatRooms.flatMap(room =>
+      room.participants.map(pId => pId.toString())
+    )
 
-  onlineUsers[userId!] = true
-  io.emit("newUserOnline", userId)
+    if (!friendIds.includes(userId.toString())) {
+      friendIds.push(userId.toString())
+    }
 
-  if (socket.recovered) {
-    io.emit("newUserOnline", userId)
-  }
-
-
-  socket.on("disconnect", () => {
-    console.log(`${userId} has disconnected`)
-    // onlineUsers.delete(userId)
-    io.emit("userDisconnect", userId)
+    const onlineUsers = await redis.smembers("online-users")
+    console.log("onlineUsers", onlineUsers)
+    const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
+    // console.log("CONNECT - ", onlineFriends)
+    io.emit("getOnlineFriends", onlineFriends)
   })
 
-  socket.on("reconnect", () => {
-    console.log(`${userId} has reconnected`)
+  socket.on("disconnect", async () => {
+
+    // await redis.srem("online-users", userId!)
+    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    const friendIds = chatRooms.flatMap(room =>
+      room.participants.map(pId => pId.toString())
+    )
+
+    if (!friendIds.includes(userId!.toString())) {
+      friendIds.push(userId!.toString())
+    }
+
+    const onlineUsers = await redis.smembers("online-users")
+    console.log("onlineUsers", onlineUsers)
+    const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
+    // console.log("CONNECT - ", onlineFriends)
+    io.emit("getOnlineFriends", onlineFriends)
   })
 })
+
+export {
+  app,
+  io,
+  server
+};
 
 // io.on("connection", async (socket: CustomSocket) => {
 
@@ -139,8 +159,4 @@ io.on("connection", async (socket: CustomSocket) => {
 //   // io.emit("user-offline", { userId })
 // })
 
-export {
-  app,
-  io,
-  server
-};
+// So this was my original code. So as I've said above, the main problem I was having was distinguishing between if the user really closed the tab (or logged out) or if it was just a page refresh.
