@@ -10,7 +10,7 @@ const ChatList = () => {
   const { user } = useUser()
   const { onlineFriends } = useSocket()
 
-  console.log(onlineFriends)
+  console.log("onlineFriends", onlineFriends)
 
   const { data } = useGetChatsList({ userId: user?.id })
 
