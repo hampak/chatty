@@ -24,7 +24,6 @@ export const SocketProvider = ({
     socket.emit("userOnline", user.id)
 
     socket.on("getOnlineFriends", (online) => {
-      // console.log(online)
       setOnlineFriends(online)
     })
 

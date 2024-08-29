@@ -1,8 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { User } from "@/types"
-import { socket } from "@/utils/io"
-import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
 interface ChatRoomItem {
@@ -18,53 +16,26 @@ interface ChatRoomItem {
   isFriendOnline?: boolean
 }
 
-const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
+const ChatRoomItem = ({ data, isFriendOnline }: ChatRoomItem) => {
 
-  const [isFriendOnline, setIsFriendOnline] = useState(false)
+  // const [isFriendOnline, setIsFriendOnline] = useState(false)
   const { chatId } = useParams()
 
-  const { title, image, id, participants } = data
-  const friendId = participants.find(id => id !== user?.id)
+  const { title, image, id } = data
+  // const friendId = participants.find(id => id !== user?.id)
 
-  console.log(friendId)
+  // console.log(friendId)
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    // socket.on("onlineUsers", (onlineUsers) => {
-    //   if (onlineUsers.includes(friendId)) {
-    //     setIsFriendOnline(true)
-    //   }
-    // })
+  //   socket.on("onlineUsers", (onlineUsers) => {
+  //     if (onlineUsers.includes(friendId)) {
+  //       setIsFriendOnline(true)
+  //     }
+  //   })
 
-    // socket.on("connect", () => {
-    //   socket.emit('checkOnlineStatus', friendId);
-    //   socket.on("newUserOnline", (userId) => {
-    //     console.log("newUserOnline", userId)
-    //     if (userId === friendId) {
-    //       setIsFriendOnline(true)
-    //     }
-    //   })
-    // })
 
-    socket.on("newUserOnline", (userId) => {
-      console.log("newUserOnline", userId)
-      if (userId === friendId) {
-        setIsFriendOnline(true)
-      }
-    })
-
-    socket.on("userDisconnect", (userId) => {
-      if (userId === friendId) {
-        setIsFriendOnline(false)
-      }
-    })
-
-    return (() => {
-      socket.off("onlineUsers");
-      socket.off("newUserOnline");
-      socket.off("userDisconnect");
-    })
-  }, [friendId])
+  // }, [friendId])
 
 
   const content = (

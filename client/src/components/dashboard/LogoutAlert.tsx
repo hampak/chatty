@@ -8,10 +8,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
+import { socket } from "@/utils/io"
+import { useUser } from "../context/UserProvider"
 
 const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
 
   const serverURL = import.meta.env.VITE_API_URL
+  const { user } = useUser()
+
+  const handleLogout = () => {
+    socket.emit("logout", user?.id)
+
+    window.location.href = `${serverURL ? `${serverURL}/api/auth/logout` : "/api/auth/logout"}`
+  }
 
   return (
     <AlertDialog>
@@ -22,13 +31,13 @@ const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <a
+          {/* <a
             href={serverURL ? `${serverURL}/api/auth/logout` : "/api/auth/logout"}
-          >
-            <AlertDialogAction className="w-full">
-              Log Out
-            </AlertDialogAction>
-          </a>
+          > */}
+          <AlertDialogAction className="" onClick={handleLogout}>
+            Log Out
+          </AlertDialogAction>
+          {/* </a> */}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -67,8 +67,6 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 io.use(authenticateSocket)
 
 io.on("connection", async (socket: CustomSocket) => {
-
-  // console.log("CLIENT IS CONNECTED", socket.id)
   const userId = socket.userId
 
   redis.sadd("online-users", userId!)
@@ -84,15 +82,12 @@ io.on("connection", async (socket: CustomSocket) => {
     }
 
     const onlineUsers = await redis.smembers("online-users")
-    console.log("onlineUsers", onlineUsers)
     const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-    // console.log("CONNECT - ", onlineFriends)
     io.emit("getOnlineFriends", onlineFriends)
   })
 
-  socket.on("disconnect", async () => {
-
-    // await redis.srem("online-users", userId!)
+  socket.on("logout", async (userId) => {
+    await redis.srem("online-users", userId!)
     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
     const friendIds = chatRooms.flatMap(room =>
       room.participants.map(pId => pId.toString())
@@ -103,10 +98,23 @@ io.on("connection", async (socket: CustomSocket) => {
     }
 
     const onlineUsers = await redis.smembers("online-users")
-    console.log("onlineUsers", onlineUsers)
     const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-    // console.log("CONNECT - ", onlineFriends)
     io.emit("getOnlineFriends", onlineFriends)
+  })
+
+  socket.on("disconnect", async () => {
+    // const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    // const friendIds = chatRooms.flatMap(room =>
+    //   room.participants.map(pId => pId.toString())
+    // )
+
+    // if (!friendIds.includes(userId!.toString())) {
+    //   friendIds.push(userId!.toString())
+    // }
+
+    // const onlineUsers = await redis.smembers("online-users")
+    // const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
+    // io.emit("getOnlineFriends", onlineFriends)
   })
 })
 
