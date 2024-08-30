@@ -7,9 +7,12 @@ interface OnlineFriends {
   [userId: string]: "online" | "away"
 }
 
+
+
 interface SocketContextValue {
   socket: Socket;
-  onlineFriends: OnlineFriends
+  onlineFriends: OnlineFriends;
+  currentStatus: "online" | "away" | undefined
 }
 
 const SocketContext = createContext<SocketContextValue | undefined>(undefined)
@@ -21,14 +24,21 @@ export const SocketProvider = ({
 }) => {
 
   const [onlineFriends, setOnlineFriends] = useState<OnlineFriends>({});
+  const [currentStatus, setCurrentStatus] = useState<"online" | "away" | undefined>(undefined)
+
   const { user } = useUser()
 
   useEffect(() => {
     if (user === null) return
     socket.emit("userOnline", user.id)
 
-    socket.on("getOnlineFriends", (online) => {
+    socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }) => {
+      console.log(online)
       setOnlineFriends(online)
+
+      const userStatus = online[user.id]
+
+      setCurrentStatus(userStatus)
     })
 
     // socket.on("user-offline", (userId) => {
@@ -46,7 +56,7 @@ export const SocketProvider = ({
   }, [user])
 
   return (
-    <SocketContext.Provider value={{ socket, onlineFriends }}>
+    <SocketContext.Provider value={{ socket, onlineFriends, currentStatus }}>
       {children}
     </SocketContext.Provider>
   )
