@@ -9,6 +9,7 @@ import ChatList from "./ChatList"
 import CreateChatModal from "./CreateChatModal"
 import LogoutAlert from "./LogoutAlert"
 import { socket } from "@/utils/io"
+import UserSettingsModal from "./UserSettingsModal"
 // import { useSocket } from "../context/SocketContext"
 
 const Sidebar = () => {
@@ -60,11 +61,13 @@ const Sidebar = () => {
           {
             loading ? "" : (
               <div className="relative inline-block">
-                <Avatar>
-                  <AvatarImage
-                    src={user?.picture}
-                  />
-                </Avatar>
+                <UserSettingsModal>
+                  <Avatar>
+                    <AvatarImage
+                      src={user?.picture}
+                    />
+                  </Avatar>
+                </UserSettingsModal>
                 {
                   socket.connected ? <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" /> : <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
                 }
