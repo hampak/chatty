@@ -91,7 +91,7 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="w-full text-center">{children}</DialogTrigger>
+      <DialogTrigger className="w-full text-center focus:outline-none">{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader className="mb-4">
           <DialogTitle>Start a new chat by adding a friend :D</DialogTitle>
