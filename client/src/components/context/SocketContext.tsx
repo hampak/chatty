@@ -3,9 +3,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { useUser } from "./UserProvider";
 
+interface OnlineFriends {
+  [userId: string]: "online" | "away"
+}
+
 interface SocketContextValue {
   socket: Socket;
-  onlineFriends: string[]
+  onlineFriends: OnlineFriends
 }
 
 const SocketContext = createContext<SocketContextValue | undefined>(undefined)
@@ -16,7 +20,7 @@ export const SocketProvider = ({
   children: React.ReactNode
 }) => {
 
-  const [onlineFriends, setOnlineFriends] = useState<string[]>([]);
+  const [onlineFriends, setOnlineFriends] = useState<OnlineFriends>({});
   const { user } = useUser()
 
   useEffect(() => {

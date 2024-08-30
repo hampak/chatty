@@ -69,7 +69,7 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
   const userId = socket.userId
 
-  redis.sadd("online-users", userId!)
+  redis.hset("online-users", userId!, "online")
 
   socket.on("userOnline", async (userId) => {
     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
@@ -81,13 +81,16 @@ io.on("connection", async (socket: CustomSocket) => {
       friendIds.push(userId.toString())
     }
 
-    const onlineUsers = await redis.smembers("online-users")
-    const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-    io.emit("getOnlineFriends", onlineFriends)
+
+    const onlineUsers = await redis.hgetall("online-users")
+    io.emit("getOnlineFriends", onlineUsers)
   })
 
-  socket.on("logout", async (userId) => {
-    await redis.srem("online-users", userId!)
+  socket.on("logout", async (userId: string) => {
+
+    if (!userId) return
+
+    await redis.hdel("online-users", userId)
     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
     const friendIds = chatRooms.flatMap(room =>
       room.participants.map(pId => pId.toString())
@@ -97,24 +100,11 @@ io.on("connection", async (socket: CustomSocket) => {
       friendIds.push(userId!.toString())
     }
 
-    const onlineUsers = await redis.smembers("online-users")
-    const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-    io.emit("getOnlineFriends", onlineFriends)
+    const onlineUsers = await redis.hgetall("online-users")
+    io.emit("getOnlineFriends", onlineUsers)
   })
 
   socket.on("disconnect", async () => {
-    // const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    // const friendIds = chatRooms.flatMap(room =>
-    //   room.participants.map(pId => pId.toString())
-    // )
-
-    // if (!friendIds.includes(userId!.toString())) {
-    //   friendIds.push(userId!.toString())
-    // }
-
-    // const onlineUsers = await redis.smembers("online-users")
-    // const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-    // io.emit("getOnlineFriends", onlineFriends)
   })
 })
 

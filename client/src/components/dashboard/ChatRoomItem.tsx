@@ -13,29 +13,26 @@ interface ChatRoomItem {
     image: string
   },
   user: User | null,
-  isFriendOnline?: boolean
+  friendStatuses: { [friendId: string]: 'online' | 'away' };
 }
 
-const ChatRoomItem = ({ data, isFriendOnline }: ChatRoomItem) => {
+const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
 
-  // const [isFriendOnline, setIsFriendOnline] = useState(false)
   const { chatId } = useParams()
 
-  const { title, image, id } = data
-  // const friendId = participants.find(id => id !== user?.id)
+  const { title, image, id, participants } = data
 
-  // console.log(friendId)
+  const participantStatuses = participants
+    .filter(participantId => participantId !== user?.id)
+    .map(participantId => friendStatuses[participantId])
 
-  // useEffect(() => {
-
-  //   socket.on("onlineUsers", (onlineUsers) => {
-  //     if (onlineUsers.includes(friendId)) {
-  //       setIsFriendOnline(true)
-  //     }
-  //   })
-
-
-  // }, [friendId])
+  const statusIndicator = participantStatuses.includes('online') ? (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+  ) : participantStatuses.includes('away') ? (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
+  ) : (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
+  );
 
 
   const content = (
@@ -44,9 +41,7 @@ const ChatRoomItem = ({ data, isFriendOnline }: ChatRoomItem) => {
         <Avatar>
           <AvatarImage src={image} />
         </Avatar>
-        {
-          isFriendOnline ? <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" /> : <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
-        }
+        {statusIndicator}
       </div>
       <div className="mr-auto">
         <span className="text-sm font-semibold">{title}</span>

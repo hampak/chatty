@@ -166,7 +166,7 @@ const authRoutes = express.Router()
     const token = await req.cookies.user
     const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
     res.clearCookie("user")
-    await redis.srem("online-users", decoded.user_id)
+    // await redis.srem("online-users", decoded.user_id)
     res.redirect("/")
   })
 

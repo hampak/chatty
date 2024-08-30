@@ -10,15 +10,21 @@ const ChatList = () => {
   const { user } = useUser()
   const { onlineFriends } = useSocket()
 
-  console.log("onlineFriends", onlineFriends)
-
   const { data } = useGetChatsList({ userId: user?.id })
 
-  const isFriendOnline = (participantIds: string[]) => {
+  const getFriendStatus = (participantIds: string[]): { [friendId: string]: "online" | "away" } => {
+    if (!user || !onlineFriends) return {}
 
-    const friendIds = participantIds.filter(id => id !== user?.id)
+    const friendIds = participantIds.filter(id => id !== user.id);
+    const statuses = friendIds.reduce<{ [friendId: string]: 'online' | 'away' }>((acc, friendId) => {
+      const status = onlineFriends[friendId];
+      if (status) {
+        acc[friendId] = status;
+      }
+      return acc;
+    }, {});
 
-    return friendIds.some(id => onlineFriends.includes(id))
+    return statuses;
   }
 
   return (
@@ -28,15 +34,19 @@ const ChatList = () => {
           data.length === 0 ? (
             <div>No Chats Yet! Invite a friend :)</div>
           ) : (
-            data.map((room, index) => (
-              <div key={index} className="w-full">
-                <ChatRoomItem
-                  data={room}
-                  user={user}
-                  isFriendOnline={isFriendOnline(room.participants)}
-                />
-              </div>
-            ))
+            data.map((room, index) => {
+              const statuses = getFriendStatus(room.participants)
+              return (
+                <div key={index} className="w-full">
+                  <ChatRoomItem
+                    data={room}
+                    user={user}
+                    // isFriendOnline={isFriendOnline(room.participants)}
+                    friendStatuses={statuses}
+                  />
+                </div>
+              )
+            })
           )
         ) : (
           <div className="flex items-center justify-center h-full">
