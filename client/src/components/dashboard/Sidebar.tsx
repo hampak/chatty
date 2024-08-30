@@ -5,17 +5,17 @@ import { useSidebarStore } from "@/utils/zustand"
 import { useEffect } from "react"
 import { CiLogout } from "react-icons/ci"
 import { RxHamburgerMenu } from "react-icons/rx"
+import { useSocket } from "../context/SocketContext"
 import ChatList from "./ChatList"
 import CreateChatModal from "./CreateChatModal"
 import LogoutAlert from "./LogoutAlert"
-import { socket } from "@/utils/io"
 import UserSettingsModal from "./UserSettingsModal"
-// import { useSocket } from "../context/SocketContext"
 
 const Sidebar = () => {
 
   const { isOpen, toggleSidebar, openSidebar } = useSidebarStore()
   const { user, loading } = useUser()
+  const { currentStatus } = useSocket()
 
   useEffect(() => {
     const handleResize = () => {
@@ -29,6 +29,14 @@ const Sidebar = () => {
       window.removeEventListener("resize", handleResize)
     }
   }, [openSidebar])
+
+  const statusIndicator = currentStatus === "online" ? (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+  ) : currentStatus === "away" ? (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
+  ) : (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
+  );
 
   return (
     <div className={cn("w-[300px] h-full bg-green-200s px-2 border-r-[1px]", isOpen ? "block " : "hidden")}>
@@ -68,9 +76,7 @@ const Sidebar = () => {
                     />
                   </Avatar>
                 </UserSettingsModal>
-                {
-                  socket.connected ? <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" /> : <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
-                }
+                {statusIndicator}
               </div>
             )
           }
