@@ -86,6 +86,22 @@ io.on("connection", async (socket: CustomSocket) => {
     io.emit("getOnlineFriends", onlineUsers)
   })
 
+  socket.on("change-status", async (status, userId) => {
+    console.log(status, userId)
+    await redis.hset("online-users", userId, status)
+    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    const friendIds = chatRooms.flatMap(room =>
+      room.participants.map(pId => pId.toString())
+    )
+
+    if (!friendIds.includes(userId!.toString())) {
+      friendIds.push(userId!.toString())
+    }
+
+    const onlineUsers = await redis.hgetall("online-users")
+    io.emit("getOnlineFriends", onlineUsers)
+  })
+
   socket.on("logout", async (userId: string) => {
 
     if (!userId) return

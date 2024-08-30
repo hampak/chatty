@@ -7,8 +7,6 @@ interface OnlineFriends {
   [userId: string]: "online" | "away"
 }
 
-
-
 interface SocketContextValue {
   socket: Socket;
   onlineFriends: OnlineFriends;
@@ -41,14 +39,6 @@ export const SocketProvider = ({
       setCurrentStatus(userStatus)
     })
 
-    // socket.on("user-offline", (userId) => {
-    //   setOnlineFriends(prev => prev.filter(friendId => friendId !== userId))
-    // })
-
-    // socket.on("message", (message) => {
-    //   console.log()
-    // })
-
     return () => {
       socket.off("userOnline")
       socket.off("getOnlineFriends")
@@ -61,7 +51,6 @@ export const SocketProvider = ({
     </SocketContext.Provider>
   )
 }
-
 
 export const useSocket = (): SocketContextValue => {
   const context = useContext(SocketContext);

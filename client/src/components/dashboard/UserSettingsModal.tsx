@@ -16,14 +16,17 @@ import { useSocket } from "../context/SocketContext"
 import { cn } from "@/lib/utils"
 import { Form, FormControl, FormField, FormItem } from "../ui/form"
 import { useForm } from "react-hook-form"
+import { Loader2 } from "lucide-react"
 
 const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
 
   const { user } = useUser()
-  const { currentStatus } = useSocket()
+  const { currentStatus, socket } = useSocket()
+
   const [isCopied, setIsCopied] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<"online" | "away" | undefined>(undefined)
   const [open, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm({
     defaultValues: {
@@ -61,7 +64,12 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
   }
 
   const onSubmit = async (values: { status: "online" | "away" | undefined }) => {
-    alert(values.status)
+    setIsLoading(true)
+    socket.emit("change-status", values.status, user?.id)
+    setTimeout(() => {
+      setOpen(false)
+      setIsLoading(false)
+    }, 1000)
   }
 
   return (
@@ -77,6 +85,7 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-3"
             >
               <FormField
                 control={form.control}
@@ -133,14 +142,15 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
                 <Button
                   variant={"outline"}
                   onClick={() => setOpen(false)}
+                  type="button"
                 >
                   Close
                 </Button>
                 <Button
                   type="submit"
-                  disabled={(!isDirty || selectedStatusInForm === currentStatus)}
+                  disabled={(!isDirty || selectedStatusInForm === currentStatus) || isLoading}
                 >
-                  Save
+                  {isLoading ? <Loader2 className="animate-spin" /> : "Save"}
                 </Button>
               </div>
             </form>
