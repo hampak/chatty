@@ -69,21 +69,36 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
   const userId = socket.userId
 
-  redis.hset("online-users", userId!, "online")
-
   socket.on("userOnline", async (userId) => {
-    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    const friendIds = chatRooms.flatMap(room =>
-      room.participants.map(pId => pId.toString())
-    )
+    // const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
+    // const friendIds = chatRooms.flatMap(room =>
+    //   room.participants.map(pId => pId.toString())
+    // )
 
-    if (!friendIds.includes(userId.toString())) {
-      friendIds.push(userId.toString())
+    // if (!friendIds.includes(userId.toString())) {
+    //   friendIds.push(userId.toString())
+    // }
+
+    const status = await redis.hget("online-users", userId!)
+
+    if (status === null || status === "online") {
+      await redis.hset("online-users", userId!, "online")
+
+      const onlineUsers = await redis.hgetall("online-users")
+      return io.emit("getOnlineFriends", onlineUsers)
+    } else if (status === "away") {
+      const onlineUsers = await redis.hgetall("online-users")
+      return io.emit("getOnlineFriends", onlineUsers)
     }
 
+    // if (status === "away") {
+    //   const onlineUsers = await redis.hgetall("online-users")
+    //   return io.emit("getOnlineFriends", onlineUsers)
+    // } else if (status === "online") {
+    // }
 
-    const onlineUsers = await redis.hgetall("online-users")
-    io.emit("getOnlineFriends", onlineUsers)
+    // on initial load
+    // redis.hset("online-users", userId!, "online")
   })
 
   socket.on("change-status", async (status, userId) => {
