@@ -4,8 +4,7 @@ import express from "express";
 import { createServer } from "http";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
-import { ChatRoom, User } from "./db/models";
-import { getUsersFriends } from "./utils/friends";
+import { User } from "./db/models";
 import { redis } from "./db/redis";
 
 interface CustomSocket extends Socket {
@@ -67,54 +66,60 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 io.use(authenticateSocket)
 
 io.on("connection", async (socket: CustomSocket) => {
-  const userId = socket.userId
 
   socket.on("userOnline", async (userId) => {
-    // const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    // const friendIds = chatRooms.flatMap(room =>
-    //   room.participants.map(pId => pId.toString())
-    // )
 
-    // if (!friendIds.includes(userId.toString())) {
-    //   friendIds.push(userId.toString())
-    // }
-
-    const status = await redis.hget("online-users", userId!)
+    const status = await redis.hget("online-users", userId)
 
     if (status === null || status === "online") {
       await redis.hset("online-users", userId!, "online")
 
-      const onlineUsers = await redis.hgetall("online-users")
-      return io.emit("getOnlineFriends", onlineUsers)
+      const friends: string[] = await redis.smembers(`friends-${userId}`)
+      console.log("friends", friends)
+
+      const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
+      console.log("onlineUsers", onlineUsers)
+
+      const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+        const userStatus = onlineUsers[key]
+        if ((key === userId || friends.includes(key)) && userStatus) {
+          result[key] = userStatus
+        }
+        return result
+      }, {} as Record<string, string>)
+
+      return io.emit("getOnlineFriends", filteredOnlineFriends)
     } else if (status === "away") {
+      const friends: string[] = await redis.smembers(`friends-${userId}`)
+      console.log("friends", friends)
       const onlineUsers = await redis.hgetall("online-users")
-      return io.emit("getOnlineFriends", onlineUsers)
+
+      const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+        const userStatus = onlineUsers[key]
+        if ((key === userId || friends.includes(key)) && userStatus) {
+          result[key] = userStatus
+        }
+        return result
+      }, {} as Record<string, string>)
+      return io.emit("getOnlineFriends", filteredOnlineFriends)
     }
-
-    // if (status === "away") {
-    //   const onlineUsers = await redis.hgetall("online-users")
-    //   return io.emit("getOnlineFriends", onlineUsers)
-    // } else if (status === "online") {
-    // }
-
-    // on initial load
-    // redis.hset("online-users", userId!, "online")
   })
 
   socket.on("change-status", async (status, userId) => {
-    console.log(status, userId)
     await redis.hset("online-users", userId, status)
-    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    const friendIds = chatRooms.flatMap(room =>
-      room.participants.map(pId => pId.toString())
-    )
 
-    if (!friendIds.includes(userId!.toString())) {
-      friendIds.push(userId!.toString())
-    }
-
+    const friends: string[] = await redis.smembers(`friends-${userId}`)
+    console.log("friends", friends)
     const onlineUsers = await redis.hgetall("online-users")
-    io.emit("getOnlineFriends", onlineUsers)
+
+    const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+      const userStatus = onlineUsers[key]
+      if ((key === userId || friends.includes(key)) && userStatus) {
+        result[key] = userStatus
+      }
+      return result
+    }, {} as Record<string, string>)
+    io.emit("getOnlineFriends", filteredOnlineFriends)
   })
 
   socket.on("logout", async (userId: string) => {
@@ -122,17 +127,18 @@ io.on("connection", async (socket: CustomSocket) => {
     if (!userId) return
 
     await redis.hdel("online-users", userId)
-    const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-    const friendIds = chatRooms.flatMap(room =>
-      room.participants.map(pId => pId.toString())
-    )
-
-    if (!friendIds.includes(userId!.toString())) {
-      friendIds.push(userId!.toString())
-    }
-
+    const friends: string[] = await redis.smembers(`friends-${userId}`)
+    console.log("friends", friends)
     const onlineUsers = await redis.hgetall("online-users")
-    io.emit("getOnlineFriends", onlineUsers)
+
+    const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+      const userStatus = onlineUsers[key]
+      if ((key === userId || friends.includes(key)) && userStatus) {
+        result[key] = userStatus
+      }
+      return result
+    }, {} as Record<string, string>)
+    io.emit("getOnlineFriends", filteredOnlineFriends)
   })
 
   socket.on("disconnect", async () => {
@@ -144,48 +150,3 @@ export {
   io,
   server
 };
-
-// io.on("connection", async (socket: CustomSocket) => {
-
-//   // console.log("CLIENT IS CONNECTED", socket.id)
-//   const userId = socket.userId
-
-//   redis.sadd("online-users", userId!)
-
-//   socket.on("userOnline", async (userId) => {
-//     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-//     const friendIds = chatRooms.flatMap(room =>
-//       room.participants.map(pId => pId.toString())
-//     )
-
-//     if (!friendIds.includes(userId.toString())) {
-//       friendIds.push(userId.toString())
-//     }
-
-//     const onlineUsers = await redis.smembers("online-users")
-//     console.log("onlineUsers", onlineUsers)
-//     const onlineFriends = onlineUsers.filter(user => friendIds.includes(user))
-//     // console.log("CONNECT - ", onlineFriends)
-//     io.emit("getOnlineFriends", onlineFriends)
-//   })
-
-//   socket.on("disconnect", async () => {
-//     // console.log("disconnected client of ID:", socket.id);
-//     await redis.srem("online-users", userId!)
-//     const updatedOnlineUsers = await redis.smembers("online-users")
-
-//     const chatRooms = await ChatRoom.find({ participants: userId }).select("participants")
-//     const friendIds = chatRooms.flatMap(room =>
-//       room.participants.map(pId => pId.toString())
-//     )
-
-//     if (!friendIds.includes(userId!.toString())) {
-//       friendIds.push(userId!.toString())
-//     }
-//     const onlineFriends = updatedOnlineUsers.filter(user => friendIds.includes(user))
-//     io.emit("getOnlineFriends", onlineFriends)
-//   })
-//   // io.emit("user-offline", { userId })
-// })
-
-// So this was my original code. So as I've said above, the main problem I was having was distinguishing between if the user really closed the tab (or logged out) or if it was just a page refresh.
