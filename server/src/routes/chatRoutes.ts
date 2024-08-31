@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 import express from "express"
 import { ChatRoom, User } from "../db/models"
 import { checkAuthStatus } from "../utils/middleware"
+import { redis } from "../db/redis"
 
 dotenv.config()
 
@@ -41,6 +42,12 @@ const chatRoutes = express.Router()
         })
 
         await chatRoom.save()
+
+        // save friend as current user's friend in redis set
+        await redis.sadd(`friends-${userId}`, userWithUserTagExists._id.toString())
+
+        // save current user friend's friend in redis set
+        await redis.sadd(`friends-${userWithUserTagExists._id.toString()}`, userId)
 
         return res.status(200).json({
           friendUserTag
