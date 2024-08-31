@@ -64,10 +64,7 @@ const router = createBrowserRouter(createRoutesFromElements(
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TanstackProvider>
-      {/* <UserProvider> */}
       <RouterProvider router={router} />
-      <Toaster richColors />
-      {/* </UserProvider> */}
     </TanstackProvider>
   </StrictMode>
 )
