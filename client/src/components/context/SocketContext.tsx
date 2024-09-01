@@ -1,7 +1,7 @@
 import { socket } from "@/utils/io";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { useUser } from "./UserProvider";
+import { useUser } from "../provider/UserProvider";
 
 interface OnlineFriends {
   [userId: string]: "online" | "away"

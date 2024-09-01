@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
 import { socket } from "@/utils/io"
-import { useUser } from "../context/UserProvider"
+import { useUser } from "../provider/UserProvider"
 
 const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
 

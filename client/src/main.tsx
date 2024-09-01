@@ -4,7 +4,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import DashboardLayout from './components/DashboardLayout'
 import RootLayout from './components/RootLayout'
 import { SocketProvider } from './components/context/SocketContext'
-import UserProvider from './components/context/UserProvider'
+import UserProvider from './components/provider/UserProvider'
 import TanstackProvider from './components/provider/TanstackProvider'
 import './index.css'
 import Chat from './routes/Chat'
@@ -13,6 +13,7 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import NotFound from './routes/NotFound'
 import { checkAuthStatus } from './utils'
+import UserContext from './components/context/UserContext'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -63,7 +64,9 @@ const router = createBrowserRouter(createRoutesFromElements(
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TanstackProvider>
-      <RouterProvider router={router} />
+      <UserContext>
+        <RouterProvider router={router} />
+      </UserContext>
     </TanstackProvider>
   </StrictMode>
 )

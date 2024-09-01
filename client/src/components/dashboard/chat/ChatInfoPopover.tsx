@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { useUser } from "../../context/UserProvider";
+import { useUser } from "../../provider/UserProvider";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 
 

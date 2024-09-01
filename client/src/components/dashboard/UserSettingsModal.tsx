@@ -7,7 +7,7 @@ import {
 import { Separator } from "../ui/separator"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { Label } from "../ui/label"
-import { useUser } from "../context/UserProvider"
+import { useUser } from "../provider/UserProvider"
 import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
 import { toast } from "sonner"
 import { useEffect, useState } from "react"

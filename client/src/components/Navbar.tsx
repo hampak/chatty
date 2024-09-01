@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 // import { useUser } from "./context/UserProvider"
 import { ImSpinner8 } from "react-icons/im";
-import { useUser } from "./context/UserProvider";
+import { useUser } from "./provider/UserProvider";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 

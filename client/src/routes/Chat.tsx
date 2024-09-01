@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useUser } from "../components/context/UserProvider"
+import { useUser } from "../components/provider/UserProvider"
 import ChatHeader from "../components/dashboard/chat/ChatHeader"
 import { useGetChatInfo } from "../lib/data"
 
