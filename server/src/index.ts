@@ -22,7 +22,8 @@ const CLIENT_URL = process.env.CLIENT_URL
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
-  origin: `${CLIENT_URL}`,
+  // origin: `${CLIENT_URL}`,
+  origin: "https://chatty-server-production-8624.up.railway.app",
   credentials: true,
   methods: ["GET", "POST", "DELETE", "PUT"]
 }))
@@ -42,6 +43,5 @@ server.listen(PORT, async () => {
   } catch (error) {
     console.log("Error connecting to Redis", error)
   }
-  // connectToRedis()
   console.log(`Server running on port - ${PORT}`)
 })

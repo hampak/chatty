@@ -21,7 +21,8 @@ const server = createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: `${CLIENT_URL}`,
+    // origin: `${CLIENT_URL}`,
+    origin: "https://chatty-server-production-8624.up.railway.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     // credentials: true,
   }
