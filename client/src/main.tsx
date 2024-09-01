@@ -13,6 +13,7 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import NotFound from './routes/NotFound'
 import { checkAuthStatus } from './utils'
+import UserContext from './components/context/UserContext'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -37,9 +38,11 @@ const router = createBrowserRouter(createRoutesFromElements(
       path="dashboard"
       element={
         <UserProvider>
-          <SocketProvider>
-            <DashboardLayout />
-          </SocketProvider>
+          <UserContext>
+            <SocketProvider>
+              <DashboardLayout />
+            </SocketProvider>
+          </UserContext>
         </UserProvider>
       }
       loader={async () => await checkAuthStatus()}
