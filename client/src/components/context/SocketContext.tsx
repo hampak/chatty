@@ -26,11 +26,13 @@ export const SocketProvider = ({
 
   const { user } = useUser()
 
+
   useEffect(() => {
     if (user === null) return
     socket.emit("userOnline", user.id)
 
-    socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }) => {
+    socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }, responseTime) => {
+      console.log("reponseTime", responseTime, "ms")
       console.log(online)
       setOnlineFriends(online)
 

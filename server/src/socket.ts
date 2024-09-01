@@ -68,6 +68,7 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
 
   socket.on("userOnline", async (userId) => {
+    const start = process.hrtime();
 
     const status = await redis.hget("online-users", userId)
 
@@ -88,7 +89,10 @@ io.on("connection", async (socket: CustomSocket) => {
         return result
       }, {} as Record<string, string>)
 
-      return io.emit("getOnlineFriends", filteredOnlineFriends)
+      const end = process.hrtime(start)
+      const responseTime = (end[0] + 1e3 + end[1] / 1e6)
+
+      return io.emit("getOnlineFriends", filteredOnlineFriends, responseTime)
     } else if (status === "away") {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
       console.log("friends", friends)
@@ -101,7 +105,11 @@ io.on("connection", async (socket: CustomSocket) => {
         }
         return result
       }, {} as Record<string, string>)
-      return io.emit("getOnlineFriends", filteredOnlineFriends)
+
+      const end = process.hrtime(start)
+      const responseTime = (end[0] + 1e3 + end[1] / 1e6)
+
+      return io.emit("getOnlineFriends", filteredOnlineFriends, responseTime)
     }
   })
 
