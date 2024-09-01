@@ -4,8 +4,8 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import DashboardLayout from './components/DashboardLayout'
 import RootLayout from './components/RootLayout'
 import { SocketProvider } from './components/context/SocketContext'
-import UserProvider from './components/provider/UserProvider'
 import TanstackProvider from './components/provider/TanstackProvider'
+import UserProvider from './components/provider/UserProvider'
 import './index.css'
 import Chat from './routes/Chat'
 import Dashboard from './routes/Dashboard'
@@ -13,7 +13,6 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import NotFound from './routes/NotFound'
 import { checkAuthStatus } from './utils'
-import UserContext from './components/context/UserContext'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -24,9 +23,7 @@ const router = createBrowserRouter(createRoutesFromElements(
       index
       element={
         <UserProvider>
-          <UserContext>
-            <LandingPage />
-          </UserContext>
+          <LandingPage />
         </UserProvider>
       }
     />
@@ -40,11 +37,9 @@ const router = createBrowserRouter(createRoutesFromElements(
       path="dashboard"
       element={
         <UserProvider>
-          <UserContext>
-            <SocketProvider>
-              <DashboardLayout />
-            </SocketProvider>
-          </UserContext>
+          <SocketProvider>
+            <DashboardLayout />
+          </SocketProvider>
         </UserProvider>
       }
       loader={async () => await checkAuthStatus()}
