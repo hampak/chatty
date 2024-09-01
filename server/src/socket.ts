@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
 import { User } from "./db/models";
 import { redis } from "./db/redis";
+import cors from "cors"
 
 interface CustomSocket extends Socket {
   userId?: string
@@ -16,6 +17,14 @@ const CLIENT_URL = process.env.CLIENT_URL
 const JWT_SECRET = process.env.JWT_SECRET
 
 const app = express()
+
+app.use(cors({
+  // origin: `${CLIENT_URL}`,
+  origin: "https://chatty-server-production-8624.up.railway.app",
+  credentials: true,
+  methods: ["GET", "POST", "DELETE", "PUT"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}))
 
 const server = createServer(app)
 

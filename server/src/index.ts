@@ -1,5 +1,4 @@
 import cookieParser from "cookie-parser"
-import cors from "cors"
 import dotenv from "dotenv"
 import express from "express"
 import morgan from "morgan"
@@ -21,12 +20,13 @@ const CLIENT_URL = process.env.CLIENT_URL
 
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors({
-  // origin: `${CLIENT_URL}`,
-  origin: "https://chatty-server-production-8624.up.railway.app",
-  credentials: true,
-  methods: ["GET", "POST", "DELETE", "PUT"]
-}))
+// app.use(cors({
+//   // origin: `${CLIENT_URL}`,
+//   origin: "https://chatty-server-production-8624.up.railway.app",
+//   credentials: true,
+//   methods: ["GET", "POST", "DELETE", "PUT"],
+//   allowedHeaders: ["Content-Type", "Authorization"]
+// }))
 app.use(morgan("common"))
 
 app.use("/api/auth", authRoutes)
