@@ -23,10 +23,7 @@ const io = new Server(server, {
   cors: {
     origin: `${CLIENT_URL}`,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  },
-  connectionStateRecovery: {
-    maxDisconnectionDuration: 2 * 60 * 1000
+    // credentials: true,
   }
 })
 
