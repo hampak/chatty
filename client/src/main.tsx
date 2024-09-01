@@ -24,7 +24,9 @@ const router = createBrowserRouter(createRoutesFromElements(
       index
       element={
         <UserProvider>
-          <LandingPage />
+          <UserContext>
+            <LandingPage />
+          </UserContext>
         </UserProvider>
       }
     />
@@ -38,9 +40,11 @@ const router = createBrowserRouter(createRoutesFromElements(
       path="dashboard"
       element={
         <UserProvider>
-          <SocketProvider>
-            <DashboardLayout />
-          </SocketProvider>
+          <UserContext>
+            <SocketProvider>
+              <DashboardLayout />
+            </SocketProvider>
+          </UserContext>
         </UserProvider>
       }
       loader={async () => await checkAuthStatus()}
@@ -64,9 +68,7 @@ const router = createBrowserRouter(createRoutesFromElements(
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TanstackProvider>
-      <UserContext>
-        <RouterProvider router={router} />
-      </UserContext>
+      <RouterProvider router={router} />
     </TanstackProvider>
   </StrictMode>
 )
