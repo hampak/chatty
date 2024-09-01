@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 import DashboardLayout from './components/DashboardLayout'
 import RootLayout from './components/RootLayout'
+import { SocketProvider } from './components/context/SocketContext'
 import UserProvider from './components/context/UserProvider'
 import TanstackProvider from './components/provider/TanstackProvider'
-import { Toaster } from './components/ui/sonner'
 import './index.css'
 import Chat from './routes/Chat'
 import Dashboard from './routes/Dashboard'
@@ -13,7 +13,6 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import NotFound from './routes/NotFound'
 import { checkAuthStatus } from './utils'
-import { SocketProvider } from './components/context/SocketContext'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
