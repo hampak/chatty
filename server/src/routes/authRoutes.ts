@@ -148,6 +148,7 @@ const authRoutes = express.Router()
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false,
         maxAge: 30 * 60 * 1000,
+        sameSite: "none"
         // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
 
