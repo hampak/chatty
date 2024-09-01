@@ -61,9 +61,9 @@ const router = createBrowserRouter(createRoutesFromElements(
 ))
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <TanstackProvider>
-      <RouterProvider router={router} />
-    </TanstackProvider>
-  </StrictMode>
+  // <StrictMode>
+  <TanstackProvider>
+    <RouterProvider router={router} />
+  </TanstackProvider>
+  // </StrictMode>
 )

@@ -13,7 +13,7 @@ const Navbar = () => {
   return (
     <nav className="w-full p-5 border border-b flex justify-between items-center">
       <h1 className="text-xl font-semibold">Chatty</h1>
-      {/* {
+      {
         loading ? (
           <ImSpinner8 className="animate-spin h-6 w-6 text-gray-700" />
         ) : (
@@ -41,11 +41,11 @@ const Navbar = () => {
             </Button >
           )
         )
-      } */}
-      {
+      }
+      {/* {
         !user || loading ? (
           <Button>
-            <ImSpinner8 className="animate-spin h-6 w-6 text-gray-700" />
+            <ImSpinner8 className="animate-spin h-6 w-6 text-white" />
           </Button>
         ) : (
           <Button>
@@ -62,7 +62,7 @@ const Navbar = () => {
             </Link>
           </Button>
         )
-      }
+      } */}
     </nav >
   )
 }

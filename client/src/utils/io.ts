@@ -1,11 +1,11 @@
 import io from "socket.io-client"
 
-// const serverURL = import.meta.env.VITE_API_URL
-// const url = serverURL ? `${serverURL}` : "http://localhost:8000"
-const url = "https://chatty-server-production-8624.up.railway.app"
+const serverURL = import.meta.env.VITE_API_URL
+const url = serverURL ? `${serverURL}` : "http://localhost:8000"
+// const url = "https://chatty-server-production-8624.up.railway.app"
 
 export const socket = io(url, {
-  // withCredentials: true,
+  withCredentials: true,
   autoConnect: true
 })
 

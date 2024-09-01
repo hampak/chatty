@@ -103,8 +103,6 @@ const authRoutes = express.Router()
 
       const accessingUser = ticket.getPayload()
 
-      // console.log("accessingUser", accessingUser)
-
       // check to see if user already exists
       const user = await User.findOne({
         google_id: accessingUser?.sub
@@ -148,7 +146,7 @@ const authRoutes = express.Router()
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false,
         maxAge: 30 * 60 * 1000,
-        sameSite: "none"
+        // sameSite: "none"
         // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
 

@@ -20,7 +20,7 @@ const app = express()
 
 app.use(cors({
   // origin: `${CLIENT_URL}`,
-  origin: "https://tims-chatty.vercel.app",
+  origin: `${CLIENT_URL}`,
   credentials: true,
   methods: ["GET", "POST", "DELETE", "PUT"],
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -30,10 +30,9 @@ const server = createServer(app)
 
 const io = new Server(server, {
   cors: {
-    // origin: `${CLIENT_URL}`,
-    origin: "https://tims-chatty.vercel.app",
+    origin: `${CLIENT_URL}`,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    // credentials: true,
+    credentials: true,
   }
 })
 
@@ -52,7 +51,6 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
     if (typeof decoded !== "string" && decoded.user_id) {
       await User.findById(decoded.user_id).then(user => {
         if (user) {
-          // console.log("User verified - socket")
           socket.userId = user._id.toString()
           return next()
         } else {
