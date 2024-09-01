@@ -33,7 +33,7 @@ const authRoutes = express.Router()
             if (user) {
               return res.redirect(`${CLIENT_URL}/dashboard`)
             } else {
-              res.header("Access-Control-Allow-Origin", CLIENT_URL);
+              res.header("Access-Control-Allow-Origin", `${CLIENT_URL}`);
               res.header("Access-Control-Allow-Credentials", 'true');
               res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
@@ -46,7 +46,7 @@ const authRoutes = express.Router()
             }
           })
         } else {
-          res.header("Access-Control-Allow-Origin", CLIENT_URL);
+          res.header("Access-Control-Allow-Origin", `${CLIENT_URL}`);
           res.header("Access-Control-Allow-Credentials", 'true');
           res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
@@ -58,7 +58,7 @@ const authRoutes = express.Router()
           return res.redirect(authUrl)
         }
       } catch (error) {
-        res.header("Access-Control-Allow-Origin", CLIENT_URL);
+        res.header("Access-Control-Allow-Origin", `${CLIENT_URL}`);
         res.header("Access-Control-Allow-Credentials", 'true');
         res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
@@ -70,7 +70,7 @@ const authRoutes = express.Router()
         return res.redirect(authUrl)
       }
     } else {
-      res.header("Access-Control-Allow-Origin", CLIENT_URL);
+      res.header("Access-Control-Allow-Origin", `${CLIENT_URL}`);
       res.header("Access-Control-Allow-Credentials", 'true');
       res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
