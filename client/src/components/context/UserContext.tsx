@@ -4,7 +4,7 @@ const UserContext = ({ children }: { children: React.ReactNode }) => {
 
   const { loading, user } = useUser()
 
-  if (loading || !user) {
+  if (loading || user === null) {
     return null
   }
 
