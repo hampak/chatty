@@ -5,7 +5,7 @@ import io from "socket.io-client"
 const url = "https://chatty-server-production-8624.up.railway.app"
 
 export const socket = io(url, {
-  withCredentials: true,
+  // withCredentials: true,
   autoConnect: true
 })
 
