@@ -1,4 +1,4 @@
-import { useUser } from "@/components/context/UserProvider";
+import { useUser } from "@/components/provider/UserProvider";
 import { useGetChatsList } from "@/lib/data";
 import { Loader2 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";

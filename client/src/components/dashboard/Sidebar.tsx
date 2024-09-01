@@ -1,4 +1,4 @@
-import { useUser } from "@/components/context/UserProvider"
+import { useUser } from "@/components/provider/UserProvider";
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { useSidebarStore } from "@/utils/zustand"

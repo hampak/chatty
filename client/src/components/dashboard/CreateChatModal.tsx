@@ -8,7 +8,7 @@ import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
 import { toast } from "sonner"
 import { z } from "zod"
 import { addFriendSchema } from "@/utils/zod"
-import { useUser } from "@/components/context/UserProvider"
+import { useUser } from "@/components/provider/UserProvider";
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
