@@ -9,8 +9,9 @@ const ChatList = () => {
 
   const { user } = useUser()
   const { onlineFriends } = useSocket()
-
   const { data } = useGetChatsList({ userId: user?.id })
+
+  if (!user) return null
 
   const getFriendStatus = (participantIds: string[]): { [friendId: string]: "online" | "away" } => {
     if (!user || !onlineFriends) return {}
