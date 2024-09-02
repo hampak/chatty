@@ -44,30 +44,36 @@ export function useGetUser() {
 
 export function useGetChatsList({ userId }: GetChats) {
 
-  return useQuery<ChatList>({
+  return useQuery({
     queryKey: ["chat_list", userId],
     queryFn: async () => {
       if (!userId) {
         throw new Error("User ID is required")
       }
-      const response = await axios.get<ChatList>("/api/chat/chat-list", {
-        params: {
-          userId
-        },
-        headers: {
-          'Accept': 'application/json'
+      try {
+        const response = await axios.get<ChatList>("/api/chat/chat-list", {
+          params: {
+            userId
+          }
+        })
+        return response.data
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(`${error.response?.data.message}`)
+          setTimeout(() => window.location.href = "/login", 1200)
         }
-      })
-      return response.data
+        return null
+      }
     },
     refetchOnWindowFocus: false,
+    // enabled: !!userId
   })
 }
 
 
 export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
   return useQuery({
-    queryKey: ["chat_list", chatId],
+    queryKey: ["chat_info", chatId],
     queryFn: async () => {
       if (!chatId && !userId) {
         throw new Error("User ID is required")

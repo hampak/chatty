@@ -29,7 +29,7 @@ const ChatList = () => {
 
   if (isPending || !data) {
     return (
-      <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
+      <div className="mt-2 h-full w-full bg-green-700s">
         <div className="flex items-center justify-center h-full">
           <Loader2 className="animate-spin" />
         </div>
@@ -113,7 +113,7 @@ const ChatList = () => {
             )
           })
         ) : (
-          <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
+          <div className="mt-2 h-full w-full bg-green-700s">
             <div>No Chats Yet! Invite a friend :)</div>
           </div>
         )
