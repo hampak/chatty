@@ -2,13 +2,13 @@ import { useUser } from "@/components/provider/UserProvider"
 
 const Dashboard = () => {
 
-  const { user } = useUser()
+  const { user, loading } = useUser()
 
-  if (!user) {
+  if (!user || loading) {
     return null
   }
 
-  console.log(user)
+  // console.log("Dashboard", user)
 
   return (
     <div className="bg-blue-100s h-full w-full flex items-center justify-center">

@@ -23,13 +23,13 @@ const ChatList = () => {
       return acc;
     }, {});
 
-    console.log(statuses)
+    // console.log(statuses)
     return statuses;
   }
 
   if (isPending || !data) return null
 
-  console.log(data)
+  // console.log(data)
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">

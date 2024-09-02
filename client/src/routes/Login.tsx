@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const serverURL = import.meta.env.VITE_API_URL
 
-console.log(serverURL)
+// console.log(serverURL)
 
 const Login = () => {
   return (

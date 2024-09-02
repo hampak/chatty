@@ -15,13 +15,13 @@ const userRoutes = express.Router()
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
-      // console.log("/api/user || decoded", decoded)
       if (typeof decoded !== "string" && decoded.user_id) {
         User.findById(decoded.user_id).then(user => {
           if (user) {
             res.header("Cache-Control", "no-store")
+            console.log("user", user)
             return res.status(200).json({
-              id: user._id,
+              id: user._id.toString(),
               name: user.name,
               picture: user.image,
               online: user.online,
