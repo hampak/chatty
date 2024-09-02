@@ -27,7 +27,15 @@ const ChatList = () => {
     return statuses;
   }
 
-  if (isPending || !data) return null
+  if (isPending || !data) {
+    return (
+      <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="animate-spin" />
+        </div>
+      </div>
+    )
+  }
 
   console.log("data", data)
 
