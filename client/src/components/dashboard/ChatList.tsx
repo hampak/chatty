@@ -39,13 +39,13 @@ const ChatList = () => {
 
   console.log("data", data)
 
-  if (data.length === 0) {
-    return (
-      <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
-        <div>No Chats Yet! Invite a friend :)</div>
-      </div>
-    )
-  }
+  // if (data.length === 0) {
+  //   return (
+  //     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
+  //       <div>No Chats Yet! Invite a friend :)</div>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
@@ -99,18 +99,24 @@ const ChatList = () => {
         )
       } */}
       {
-        data.map((room, index) => {
-          const statuses = getFriendStatus(room.participants)
-          return (
-            <div key={index} className="w-full">
-              <ChatRoomItem
-                data={room}
-                user={user}
-                friendStatuses={statuses}
-              />
-            </div>
-          )
-        })
+        data && Array.isArray(data) && data.length > 0 ? (
+          data.map((room, index) => {
+            const statuses = getFriendStatus(room.participants)
+            return (
+              <div key={index} className="w-full">
+                <ChatRoomItem
+                  data={room}
+                  user={user}
+                  friendStatuses={statuses}
+                />
+              </div>
+            )
+          })
+        ) : (
+          <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
+            <div>No Chats Yet! Invite a friend :)</div>
+          </div>
+        )
       }
     </div>
   )
