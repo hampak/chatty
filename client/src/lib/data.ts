@@ -81,7 +81,7 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
         throw new Error("User ID is required")
       }
       try {
-        const response = await axios.get<Chat>("/api/chat/chat-info", {
+        const response = await axios.get<Chat>(serverURL ? `${serverURL}/api/chat/chat-info` : "/api/chat/chat-info", {
           params: {
             chatId,
             userId
