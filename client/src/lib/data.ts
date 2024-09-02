@@ -3,6 +3,8 @@ import axios, { AxiosError } from "axios";
 import { Chat, ChatList } from "../types";
 import { toast } from "sonner";
 
+const serverURL = import.meta.env.VITE_API_URL
+
 
 type GetChats = {
   userId?: string
@@ -51,7 +53,7 @@ export function useGetChatsList({ userId }: GetChats) {
         throw new Error("User ID is required")
       }
       try {
-        const response = await axios.get<ChatList>("/api/chat/chat-list", {
+        const response = await axios.get<ChatList>(serverURL ? `${serverURL}/api/chat/chat-list` : "/api/chat/chat-list", {
           params: {
             userId
           }
