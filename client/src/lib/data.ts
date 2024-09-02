@@ -21,6 +21,27 @@ type CreateChat = {
   friendUserTag?: string,
 }
 
+type User = {
+  userId: string,
+  name: string,
+  online: boolean,
+  picture: string,
+  userTag: string
+}
+
+
+export function useGetUser() {
+  return useQuery({
+    queryKey: ["get_user"],
+    queryFn: async () => {
+      const response = await axios.get<User>("/api/chat/chat-list")
+
+      return response.data
+    },
+    refetchOnWindowFocus: false
+  })
+}
+
 export function useGetChatsList({ userId }: GetChats) {
 
   return useQuery({

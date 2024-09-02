@@ -15,6 +15,7 @@ export default function UserProvider({
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+
     const checkUser = async () => {
 
       try {
@@ -23,6 +24,8 @@ export default function UserProvider({
         })
 
         const { data, status } = response
+
+        console.log(data)
 
         if (status === 200) {
           setUser(data)
