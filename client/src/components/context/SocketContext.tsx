@@ -33,7 +33,7 @@ export const SocketProvider = ({
 
     socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }, responseTime) => {
       console.log("reponseTime", responseTime, "ms")
-      console.log(online)
+      // console.log(online)
       setOnlineFriends(online)
 
       const userStatus = online[user.id]

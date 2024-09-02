@@ -74,27 +74,34 @@ const chatRoutes = express.Router()
 
     const { name, image } = user
 
-    const data = await ChatRoom.find({
-      participants: userId
-    })
+    try {
+      const data = await ChatRoom.find({
+        participants: userId
+      })
 
-    const chatRooms = data.map(room => {
+      const chatRooms = data.map(room => {
 
-      const allParticipants = room.room_title.split("|").map(p => p.trim())
-      const friendName = allParticipants.find(p => p !== name)
+        const allParticipants = room.room_title.split("|").map(p => p.trim())
+        const friendName = allParticipants.find(p => p !== name)
 
-      const friendImage = room.images.find(i => i !== image)
+        const friendImage = room.images.find(i => i !== image)
 
-      return {
-        id: room._id,
-        createdAt: room.createdAt,
-        updatedAt: room.updatedAt,
-        title: friendName,
-        participants: room.participants,
-        image: friendImage
-      }
-    })
-    res.status(200).json(chatRooms)
+        return {
+          id: room._id,
+          createdAt: room.createdAt,
+          updatedAt: room.updatedAt,
+          title: friendName,
+          participants: room.participants,
+          image: friendImage
+        }
+      })
+      console.log("chat-rooms", chatRooms)
+      res.status(200).json(chatRooms)
+    } catch (error) {
+      res.status(400).json({
+        message: "Error while querying your list of messages"
+      })
+    }
   })
 
   .get("/chat-info", checkAuthStatus, async (req, res) => {

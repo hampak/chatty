@@ -19,6 +19,12 @@ const router = createBrowserRouter(createRoutesFromElements(
     path="/"
     element={<RootLayout />}
   >
+
+    <Route
+      path="login"
+      element={<Login />}
+    />
+
     <Route
       index
       element={
@@ -26,11 +32,6 @@ const router = createBrowserRouter(createRoutesFromElements(
           <LandingPage />
         </UserProvider>
       }
-    />
-
-    <Route
-      path="login"
-      element={<Login />}
     />
 
     <Route

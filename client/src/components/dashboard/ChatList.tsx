@@ -23,10 +23,11 @@ const ChatList = () => {
       return acc;
     }, {});
 
+    console.log(statuses)
     return statuses;
   }
 
-  if (isPending) return null
+  if (isPending || !data) return null
 
   console.log(data)
 
@@ -73,7 +74,6 @@ const ChatList = () => {
                   <ChatRoomItem
                     data={room}
                     user={user}
-                    // isFriendOnline={isFriendOnline(room.participants)}
                     friendStatuses={statuses}
                   />
                 </div>

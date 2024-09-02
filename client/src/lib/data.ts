@@ -44,7 +44,7 @@ export function useGetUser() {
 
 export function useGetChatsList({ userId }: GetChats) {
 
-  return useQuery({
+  return useQuery<ChatList>({
     queryKey: ["chat_list", userId],
     queryFn: async () => {
       if (!userId) {
@@ -53,12 +53,14 @@ export function useGetChatsList({ userId }: GetChats) {
       const response = await axios.get<ChatList>("/api/chat/chat-list", {
         params: {
           userId
+        },
+        headers: {
+          'Accept': 'application/json'
         }
       })
       return response.data
     },
     refetchOnWindowFocus: false,
-    enabled: !!userId
   })
 }
 
