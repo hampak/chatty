@@ -26,6 +26,10 @@ const ChatList = () => {
     return statuses;
   }
 
+  if (isPending) return null
+
+  console.log(data)
+
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
       {/* {
