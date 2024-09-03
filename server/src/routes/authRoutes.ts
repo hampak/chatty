@@ -4,6 +4,7 @@ import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { User } from "../db/models";
+import { redis } from "../db/redis";
 
 
 dotenv.config()
@@ -130,6 +131,8 @@ const authRoutes = express.Router()
           JWT_SECRET!,
           { expiresIn: "30m" }
         )
+
+        redis.set(`sessionToken-${savedUser._id.toString()}`, token)
       } else {
         token = jwt.sign({
           user_id: user?._id,
@@ -139,6 +142,8 @@ const authRoutes = express.Router()
           JWT_SECRET!,
           { expiresIn: "30m" }
         )
+
+        redis.set(`sessionToken-${user._id.toString()}`, token)
       }
 
       res.cookie("user", token, {
@@ -172,24 +177,55 @@ const authRoutes = express.Router()
     const token = await req.cookies.user
     console.log("token", token)
 
+    // try {
+    //   const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
+    //   // console.log("decoded", decoded)
+    //   if (typeof decoded !== "string" && decoded.user_id) {
+    //     await User.findById(decoded.user_id).then(user => {
+    //       if (user) {
+    //         return res.status(200).json({
+    //           message: "Authenticated"
+    //         })
+    //       } else {
+    //         return res.status(401).json({
+    //           message: "User not found"
+    //         })
+    //       }
+    //     })
+    //   } else {
+    //     return res.status(401).json({
+    //       message: "Internal server error"
+    //     })
+    //   }
+    // } catch (error) {
+    //   return res.status(401).json({
+    //     message: "Invalid token / token doesn't exist"
+    //   })
+    // }
+
+    if (!token) {
+      return res.status(401).json({
+        message: "Unauthorized, please login"
+      })
+    }
+
+
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
-      // console.log("decoded", decoded)
       if (typeof decoded !== "string" && decoded.user_id) {
-        await User.findById(decoded.user_id).then(user => {
-          if (user) {
-            return res.status(200).json({
-              message: "Authenticated"
-            })
-          } else {
-            return res.status(401).json({
-              message: "User not found"
-            })
-          }
-        })
+        const isUserLoggedIn = await redis.get(`sessionToken-${decoded.user_id}`)
+        if (isUserLoggedIn) {
+          return res.status(200).json({
+            message: "Authenticated"
+          })
+        } else if (isUserLoggedIn === null) {
+          return res.status(401).json({
+            message: "User not found, please log in"
+          })
+        }
       } else {
         return res.status(401).json({
-          message: "Internal server error"
+          message: "Invalid token, please log in"
         })
       }
     } catch (error) {

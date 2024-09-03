@@ -61,7 +61,7 @@ const chatRoutes = express.Router()
     }
   })
 
-  .get("/chat-list", async (req, res) => {
+  .get("/chat-list", checkAuthStatus, async (req, res) => {
     const { userId } = req.query
 
     const user = await User.findById(userId)
