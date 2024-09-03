@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import express from "express"
 import morgan from "morgan"
 import connectToMongoDb from "./db/db"
-import cors from "cors"
 
 import { app, server } from "./socket"
 
