@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import express from "express"
 import morgan from "morgan"
 import connectToMongoDb from "./db/db"
+import cors from "cors"
 
 import { app, server } from "./socket"
 
@@ -18,15 +19,17 @@ const CLIENT_URL = process.env.CLIENT_URL
 
 // const app = express()
 
+app.use(cors({
+  // origin: `${CLIENT_URL}`,
+  origin: `${CLIENT_URL}`,
+  credentials: true,
+  methods: ["GET", "POST", "DELETE", "PUT"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}))
+
 app.use(cookieParser())
 app.use(express.json())
-// app.use(cors({
-//   // origin: `${CLIENT_URL}`,
-//   origin: "https://chatty-server-production-8624.up.railway.app",
-//   credentials: true,
-//   methods: ["GET", "POST", "DELETE", "PUT"],
-//   allowedHeaders: ["Content-Type", "Authorization"]
-// }))
+
 app.use(morgan("common"))
 
 app.use("/api/auth", authRoutes)
@@ -45,3 +48,10 @@ server.listen(PORT, async () => {
   }
   console.log(`Server running on port - ${PORT}`)
 })
+
+function cors(arg0: {
+  // origin: `${CLIENT_URL}`,
+  origin: string; credentials: boolean; methods: string[]; allowedHeaders: string[]
+}): any {
+  throw new Error("Function not implemented.")
+}

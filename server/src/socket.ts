@@ -18,13 +18,13 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 const app = express()
 
-app.use(cors({
-  // origin: `${CLIENT_URL}`,
-  origin: `${CLIENT_URL}`,
-  credentials: true,
-  methods: ["GET", "POST", "DELETE", "PUT"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}))
+// app.use(cors({
+//   // origin: `${CLIENT_URL}`,
+//   origin: `${CLIENT_URL}`,
+//   credentials: true,
+//   methods: ["GET", "POST", "DELETE", "PUT"],
+//   allowedHeaders: ["Content-Type", "Authorization"]
+// }))
 
 const server = createServer(app)
 
