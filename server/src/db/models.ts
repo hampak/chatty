@@ -19,11 +19,11 @@ const userSchema = new mongoose.Schema({
     required: false,
     unique: true
   },
-  github_id: {
-    type: String,
-    required: false,
-    unique: true
-  },
+  // github_id: {
+  //   type: String,
+  //   required: false,
+  //   unique: true
+  // },
   image: {
     type: String,
     required: false
