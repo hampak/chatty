@@ -112,7 +112,7 @@ export function useCreateChat() {
       userImage,
       friendUserTag
     }: CreateChat) => {
-      await axios.post('/api/chat/add-friend', {
+      await axios.post(serverURL ? `${serverURL}/api/chat/add-friend` : "/api/chat/add-friend", {
         userId,
         userName,
         userTag,
