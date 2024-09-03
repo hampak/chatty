@@ -19,7 +19,7 @@ const LogoutAlert = ({ children }: { children: React.ReactNode }) => {
   const handleLogout = () => {
     socket.emit("logout", user?.id)
 
-    window.location.href = `${serverURL ? `${serverURL}/api/auth/logout` : "/api/auth/logout"}`
+    window.location.href = serverURL ? `${serverURL}/api/auth/logout` : "/api/auth/logout"
   }
 
   return (

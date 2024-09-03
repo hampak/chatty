@@ -10,8 +10,6 @@ const JWT_SECRET = process.env.JWT_SECRET
 const checkAuthStatus = async (req: Request, res: Response, next: NextFunction) => {
   const token = await req.cookies.user
 
-  console.log("TOKEN FROM MIDDLEWARE", token)
-
   if (!token) {
     return res.status(401).json({
       message: "Unauthorized, please login"

@@ -9,10 +9,6 @@ dotenv.config()
 const chatRoutes = express.Router()
   .post("/add-friend", checkAuthStatus, async (req, res) => {
 
-    const token = await req.cookies.user
-
-    console.log("TOKEN FROM /ADD_FRIEND", token)
-
     const { friendUserTag, userId, userName, userTag, userImage } = await req.body
 
     // either null or entire user data
