@@ -4,7 +4,6 @@ import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { User } from "../db/models";
-import { redis } from "../db/redis";
 
 
 dotenv.config()
