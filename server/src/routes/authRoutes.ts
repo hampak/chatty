@@ -145,7 +145,7 @@ const authRoutes = express.Router()
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false,
         maxAge: 30 * 60 * 1000,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "none"
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
 
       res.redirect(`${CLIENT_URL}/dashboard`)
@@ -170,7 +170,7 @@ const authRoutes = express.Router()
 
     // testing for production
     const token = await req.cookies.user
-    // console.log("token", token)
+    console.log("token", token)
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
