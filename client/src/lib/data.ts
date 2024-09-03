@@ -56,7 +56,8 @@ export function useGetChatsList({ userId }: GetChats) {
         const response = await axios.get<ChatList>(serverURL ? `${serverURL}/api/chat/chat-list` : "/api/chat/chat-list", {
           params: {
             userId
-          }
+          },
+          withCredentials: true
         })
         return response.data
       } catch (error) {
@@ -84,7 +85,8 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
           params: {
             chatId,
             userId
-          }
+          },
+          withCredentials: true
         })
         return response.data
       } catch (error) {
