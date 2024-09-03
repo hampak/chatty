@@ -6,7 +6,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
 import { User } from "./db/models";
 import { redis } from "./db/redis";
-
 interface CustomSocket extends Socket {
   userId?: string
 }

@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import express from "express"
 import morgan from "morgan"
 import connectToMongoDb from "./db/db"
+import cors from "cors"
 
 import { app, server } from "./socket"
 
@@ -15,8 +16,6 @@ import userRoutes from "./routes/userRoutes"
 dotenv.config()
 const PORT = process.env.PORT ? process.env.PORT : 8000
 const CLIENT_URL = process.env.CLIENT_URL
-
-// const app = express()
 
 app.use(cors({
   // origin: `${CLIENT_URL}`,
@@ -47,10 +46,3 @@ server.listen(PORT, async () => {
   }
   console.log(`Server running on port - ${PORT}`)
 })
-
-function cors(arg0: {
-  // origin: `${CLIENT_URL}`,
-  origin: string; credentials: boolean; methods: string[]; allowedHeaders: string[]
-}): any {
-  throw new Error("Function not implemented.")
-}
