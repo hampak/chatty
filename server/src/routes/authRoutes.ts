@@ -161,11 +161,9 @@ const authRoutes = express.Router()
 
   /* Logout */
   .get("/logout", async (req, res) => {
-    const token = await req.cookies.user
-    const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
     res.clearCookie("user")
     // await redis.srem("online-users", decoded.user_id)
-    res.redirect("/")
+    res.redirect(`${CLIENT_URL}`)
   })
 
   /* Check auth for route protection */
