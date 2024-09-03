@@ -67,8 +67,7 @@ export function useGetChatsList({ userId }: GetChats) {
         return null
       }
     },
-    refetchOnWindowFocus: false,
-    // enabled: !!userId
+    refetchOnWindowFocus: false
   })
 }
 

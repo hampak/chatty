@@ -113,9 +113,7 @@ const ChatList = () => {
             )
           })
         ) : (
-          <div className="mt-2 h-full w-full bg-green-700s">
-            <div>No Chats Yet! Invite a friend :)</div>
-          </div>
+          <div>No Chats Yet! Invite a friend :)</div>
         )
       }
     </div>
