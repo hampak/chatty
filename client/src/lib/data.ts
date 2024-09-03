@@ -118,7 +118,11 @@ export function useCreateChat() {
         userTag,
         userImage,
         friendUserTag
-      })
+      },
+        {
+          withCredentials: true
+        }
+      )
     }
   })
 }
