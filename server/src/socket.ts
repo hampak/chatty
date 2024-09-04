@@ -62,6 +62,8 @@ io.use(authenticateSocket)
 
 io.on("connection", async (socket: CustomSocket) => {
 
+  const currentUserId = socket.userId
+
   socket.on("userOnline", async (userId) => {
 
     const status = await redis.hget("online-users", userId)
@@ -73,7 +75,7 @@ io.on("connection", async (socket: CustomSocket) => {
       console.log("friends", friends)
 
       if (friends.length === 0) {
-        const onlyCurrentUserOnline = { [userId]: "online" }
+        const onlyCurrentUserOnline = { [currentUserId!]: "online" }
         return io.emit("getOnlineFriends", onlyCurrentUserOnline)
       }
 
@@ -96,7 +98,7 @@ io.on("connection", async (socket: CustomSocket) => {
       console.log("friends", friends)
 
       if (friends.length === 0) {
-        const onlyCurrentUserOnline = { [userId]: "away" }
+        const onlyCurrentUserOnline = { [currentUserId!]: "away" }
         return io.emit("getOnlineFriends", onlyCurrentUserOnline)
       }
 
