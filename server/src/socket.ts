@@ -63,7 +63,6 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
 
   socket.on("userOnline", async (userId) => {
-    const start = process.hrtime();
 
     const status = await redis.hget("online-users", userId)
 
@@ -72,6 +71,11 @@ io.on("connection", async (socket: CustomSocket) => {
 
       const friends: string[] = await redis.smembers(`friends-${userId}`)
       console.log("friends", friends)
+
+      if (friends.length === 0) {
+        const onlyCurrentUserOnline = { [userId]: "online" }
+        return io.emit("getOnlineFriends", onlyCurrentUserOnline)
+      }
 
       const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
       console.log("onlineUsers", onlineUsers)
@@ -86,13 +90,16 @@ io.on("connection", async (socket: CustomSocket) => {
 
       console.log("filteredOnlineFriends", filteredOnlineFriends)
 
-      const end = process.hrtime(start)
-      const responseTime = (end[0] + 1e3 + end[1] / 1e6)
-
-      return io.emit("getOnlineFriends", filteredOnlineFriends, responseTime)
+      return io.emit("getOnlineFriends", filteredOnlineFriends)
     } else if (status === "away") {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
       console.log("friends", friends)
+
+      if (friends.length === 0) {
+        const onlyCurrentUserOnline = { [userId]: "away" }
+        return io.emit("getOnlineFriends", onlyCurrentUserOnline)
+      }
+
       const onlineUsers = await redis.hgetall("online-users")
 
       const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
@@ -103,10 +110,7 @@ io.on("connection", async (socket: CustomSocket) => {
         return result
       }, {} as Record<string, string>)
 
-      const end = process.hrtime(start)
-      const responseTime = (end[0] + 1e3 + end[1] / 1e6)
-
-      return io.emit("getOnlineFriends", filteredOnlineFriends, responseTime)
+      return io.emit("getOnlineFriends", filteredOnlineFriends)
     }
   })
 
