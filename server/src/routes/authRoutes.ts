@@ -132,7 +132,7 @@ const authRoutes = express.Router()
           { expiresIn: "30m" }
         )
 
-        redis.set(`sessionToken-${savedUser._id.toString()}`, token)
+        await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 1800)
       } else {
         token = jwt.sign({
           user_id: user?._id,
@@ -143,7 +143,7 @@ const authRoutes = express.Router()
           { expiresIn: "30m" }
         )
 
-        redis.set(`sessionToken-${user._id.toString()}`, token)
+        redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 1800)
       }
 
       res.cookie("user", token, {
@@ -165,43 +165,17 @@ const authRoutes = express.Router()
 
   /* Logout */
   .get("/logout", async (req, res) => {
+    const token = await req.cookies.user
+    const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
+
     res.clearCookie("user")
-    // await redis.srem("online-users", decoded.user_id)
+    await redis.del(`sessionToken-${decoded.user_id}`)
     res.redirect(`${CLIENT_URL}`)
   })
 
   /* Check auth for route protection */
   .get("/check-auth", async (req, res) => {
-
-    // testing for production
     const token = await req.cookies.user
-    console.log("token", token)
-
-    // try {
-    //   const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
-    //   // console.log("decoded", decoded)
-    //   if (typeof decoded !== "string" && decoded.user_id) {
-    //     await User.findById(decoded.user_id).then(user => {
-    //       if (user) {
-    //         return res.status(200).json({
-    //           message: "Authenticated"
-    //         })
-    //       } else {
-    //         return res.status(401).json({
-    //           message: "User not found"
-    //         })
-    //       }
-    //     })
-    //   } else {
-    //     return res.status(401).json({
-    //       message: "Internal server error"
-    //     })
-    //   }
-    // } catch (error) {
-    //   return res.status(401).json({
-    //     message: "Invalid token / token doesn't exist"
-    //   })
-    // }
 
     if (!token) {
       return res.status(401).json({
