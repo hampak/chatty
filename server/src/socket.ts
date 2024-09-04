@@ -16,14 +16,6 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 const app = express()
 
-// app.use(cors({
-//   // origin: `${CLIENT_URL}`,
-//   origin: `${CLIENT_URL}`,
-//   credentials: true,
-//   methods: ["GET", "POST", "DELETE", "PUT"],
-//   allowedHeaders: ["Content-Type", "Authorization"]
-// }))
-
 const server = createServer(app)
 
 const io = new Server(server, {
@@ -91,6 +83,8 @@ io.on("connection", async (socket: CustomSocket) => {
         }
         return result
       }, {} as Record<string, string>)
+
+      console.log("filteredOnlineFriends", filteredOnlineFriends)
 
       const end = process.hrtime(start)
       const responseTime = (end[0] + 1e3 + end[1] / 1e6)

@@ -25,8 +25,6 @@ export default function UserProvider({
 
         const { data, status } = response
 
-        // console.log("UserProvider", data)
-
         if (status === 200) {
           setUser(data)
         } else if (status === 401) {
