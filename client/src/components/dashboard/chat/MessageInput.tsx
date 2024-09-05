@@ -7,7 +7,11 @@ import { SendIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-const MessageInput = () => {
+interface MessageInputProps {
+  isConnected: boolean
+}
+
+const MessageInput = ({ isConnected }: MessageInputProps) => {
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -41,6 +45,7 @@ const MessageInput = () => {
                       placeholder="send message to your friend..."
                       {...field}
                       className="focus-visible:ring-1 px-2 focus-visible:ring-offset-0"
+                      disabled={!isConnected}
                     />
                   </FormControl>
                 </FormItem>
@@ -48,7 +53,7 @@ const MessageInput = () => {
             />
           </div>
           <Button
-            disabled={!lengthOfMessage}
+            disabled={!lengthOfMessage || !isConnected}
           >
             <SendIcon className="w-4 h-4" />
           </Button>

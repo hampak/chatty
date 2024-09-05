@@ -123,7 +123,7 @@ const chatRoutes = express.Router()
     }
 
     const { name } = user
-    const { room_title, participants, images, createdAt } = chatRoomInfo
+    const { room_title, createdAt, _id } = chatRoomInfo
 
     const allParticipants = room_title.split("|").map(p => p.trim())
     const friendName = allParticipants.find(p => p !== name)
@@ -140,6 +140,7 @@ const chatRoutes = express.Router()
     const formattedDate = date.toLocaleString(undefined, options)
 
     return res.status(200).json({
+      chatroomId: _id,
       title: friendName,
       participants: allParticipants,
       createdAt: formattedDate

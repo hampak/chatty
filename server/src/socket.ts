@@ -155,6 +155,13 @@ io.on("connection", async (socket: CustomSocket) => {
     return io.emit("getOnlineFriends", filteredOnlineFriends)
   })
 
+  socket.on("connected-to-room", async (chatroomId) => {
+    await socket.join(chatroomId);
+
+    io.to(chatroomId).emit("message", `${chatroomId} has joined the room`)
+  })
+
+
   socket.on("logout", async (userId: string) => {
 
     if (!userId) return
