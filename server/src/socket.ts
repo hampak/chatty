@@ -68,6 +68,7 @@ io.on("connection", async (socket: CustomSocket) => {
 
     const status = await redis.hget("online-users", userId)
 
+    // if the user is logging in || if the user already has a status of "online"
     if (status === null || status === "online") {
       await redis.hset("online-users", userId!, "online")
 
@@ -76,11 +77,12 @@ io.on("connection", async (socket: CustomSocket) => {
 
       if (friends.length === 0) {
         const onlyCurrentUserOnline = { [currentUserId!]: "online" }
-        return io.emit("getOnlineFriends", onlyCurrentUserOnline)
+        return socket.emit("getOnlineFriends", onlyCurrentUserOnline)
       }
 
       const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
       console.log("onlineUsers", onlineUsers)
+
 
       const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
         const userStatus = onlineUsers[key]
