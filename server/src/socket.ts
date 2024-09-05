@@ -135,6 +135,26 @@ io.on("connection", async (socket: CustomSocket) => {
     io.emit("getOnlineFriends", filteredOnlineFriends)
   })
 
+  socket.on("add-friend", async (userId: string) => {
+    const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
+    console.log("onlineUsers", onlineUsers)
+
+    const friends: string[] = await redis.smembers(`friends-${userId}`)
+    console.log("friends", friends)
+
+    const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+      const userStatus = onlineUsers[key]
+      if ((key === userId || friends.includes(key)) && userStatus) {
+        result[key] = userStatus
+      }
+      return result
+    }, {} as Record<string, string>)
+
+    console.log("filteredOnlineFriends", filteredOnlineFriends)
+
+    return io.emit("getOnlineFriends", filteredOnlineFriends)
+  })
+
   socket.on("logout", async (userId: string) => {
 
     if (!userId) return

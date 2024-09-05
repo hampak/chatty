@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { socket } from "@/utils/io"
 
 
 
@@ -54,14 +55,15 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
       userImage: user?.picture,
       friendUserTag: friendUserTag
     }, {
-      onSuccess: () => {
+      onSuccess: async () => {
         setOpen(false)
         form.reset()
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: ["chat_list", user?.id]
         })
         const name = friendUserTag.split("#")[0]
         toast.success(`Added ${name} as a friend :D`)
+        socket.emit("add-friend", user?.id)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {
