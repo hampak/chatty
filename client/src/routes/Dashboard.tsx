@@ -1,20 +1,9 @@
-import { useUser } from "@/components/provider/UserProvider"
-
 const Dashboard = () => {
-
-  const { user, loading } = useUser()
-
-  if (!user || loading) {
-    return null
-  }
-
-  // console.log("Dashboard", user)
 
   return (
     <div className="bg-blue-100s h-full w-full flex items-center justify-center">
       <span className="text-lg font-semibold">
-        Hello :) Create or continue with a chat!!!!
-        {user.id}
+        Hello :) Create or continue with a chat!
       </span>
     </div>
   )

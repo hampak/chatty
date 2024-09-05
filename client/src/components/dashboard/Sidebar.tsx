@@ -65,7 +65,7 @@ const Sidebar = () => {
         </div>
 
         {/* Sidebar footer */}
-        <div className="w-full bg-red-300s border-t-[1px] flex items-center justify-between bg-whites z-50 h-[8%]">
+        <div className="w-full bg-red-300s border-t-[1px] flex items-center justify-between bg-whites z-50 h-[8%] pt-2">
           {
             loading ? "" : (
               <div className="relative inline-block">
