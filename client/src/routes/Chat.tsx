@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom"
 import { useUser } from "../components/provider/UserProvider"
 import ChatHeader from "../components/dashboard/chat/ChatHeader"
 import { useGetChatInfo } from "../lib/data"
+import ChatContainer from "@/components/dashboard/chat/ChatContainer"
 
 const Chat = () => {
 
@@ -18,7 +19,7 @@ const Chat = () => {
         participants={data?.participants}
         createdAt={data?.createdAt}
       />
-      {/* <ChatContainer /> */}
+      <ChatContainer />
     </div>
   )
 }
