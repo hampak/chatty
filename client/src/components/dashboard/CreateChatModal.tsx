@@ -55,14 +55,11 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
       userImage: user?.picture,
       friendUserTag: friendUserTag
     }, {
-      onSuccess: async () => {
+      onSuccess: async (data) => {
         setOpen(false)
         form.reset()
-        await queryClient.invalidateQueries({
-          queryKey: ["chat_list", user?.id]
-        })
-        const name = friendUserTag.split("#")[0]
-        toast.success(`Added ${name} as a friend :D`)
+        await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
+        toast.success(`Added ${data.friendUserTag} as a friend :D`)
         socket.emit("add-friend", user?.id)
       },
       onError: (error) => {

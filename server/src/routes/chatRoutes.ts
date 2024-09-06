@@ -50,7 +50,8 @@ const chatRoutes = express.Router()
         await redis.sadd(`friends-${userWithUserTagExists._id.toString()}`, userId)
 
         return res.status(200).json({
-          friendUserTag
+          friendUserTag,
+          friendId: userWithUserTagExists._id.toString()
         })
       }
 

@@ -103,9 +103,14 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
 }
 
 
+interface ServerResponse {
+  friendUserTag: string;
+  friendId: string;
+}
+
 export function useCreateChat() {
 
-  return useMutation({
+  return useMutation<ServerResponse, Error, CreateChat>({
     mutationKey: ["create_chat"],
     mutationFn: async ({
       userId,
@@ -114,7 +119,7 @@ export function useCreateChat() {
       userImage,
       friendUserTag
     }: CreateChat) => {
-      await axios.post(serverURL ? `${serverURL}/api/chat/add-friend` : "/api/chat/add-friend", {
+      const response = await axios.post(serverURL ? `${serverURL}/api/chat/add-friend` : "/api/chat/add-friend", {
         userId,
         userName,
         userTag,
@@ -125,6 +130,7 @@ export function useCreateChat() {
           withCredentials: true
         }
       )
+      return response.data
     }
   })
 }

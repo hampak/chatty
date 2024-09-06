@@ -9,10 +9,17 @@ interface ChatContainerProps {
     title: string,
     participants: string[],
     createdAt: string
+  },
+  user: {
+    id: string,
+    name: string,
+    online: boolean,
+    picture: string,
+    userTag: string
   }
 }
 
-const ChatContainer = ({ data }: ChatContainerProps) => {
+const ChatContainer = ({ data, user }: ChatContainerProps) => {
 
   const [isConnected, setIsConnected] = useState(false)
 
@@ -31,7 +38,7 @@ const ChatContainer = ({ data }: ChatContainerProps) => {
 
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">
-      <MessagesContainer />
+      <MessagesContainer user={user} />
       <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} />
     </div>
   )

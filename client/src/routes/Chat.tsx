@@ -11,7 +11,7 @@ const Chat = () => {
 
   const { data } = useGetChatInfo({ chatId: chatId, userId: user?.id })
 
-  if (!data) return null
+  if (!data || !user) return null
 
   return (
     <div className="flex-1 h-full bg-green-100s p-2">
@@ -21,7 +21,7 @@ const Chat = () => {
         participants={data?.participants}
         createdAt={data?.createdAt}
       />
-      <ChatContainer data={data} />
+      <ChatContainer data={data} user={user} />
     </div>
   )
 }
