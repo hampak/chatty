@@ -158,7 +158,11 @@ io.on("connection", async (socket: CustomSocket) => {
   socket.on("connected-to-room", async (chatroomId) => {
     await socket.join(chatroomId);
 
-    io.to(chatroomId).emit("message", `${chatroomId} has joined the room`)
+    io.to(chatroomId).emit("joined-chatroom", `${chatroomId} has joined the room`)
+  })
+
+  socket.on("sendMessage", async (message, chatroomId) => {
+    io.to(chatroomId).emit("message", message)
   })
 
 

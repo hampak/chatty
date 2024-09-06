@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { socket } from "@/utils/io"
 import { messageSchema } from "@/utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SendIcon } from "lucide-react"
@@ -8,10 +9,11 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 interface MessageInputProps {
-  isConnected: boolean
+  isConnected: boolean;
+  chatroomId: string
 }
 
-const MessageInput = ({ isConnected }: MessageInputProps) => {
+const MessageInput = ({ isConnected, chatroomId }: MessageInputProps) => {
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -24,7 +26,7 @@ const MessageInput = ({ isConnected }: MessageInputProps) => {
   const lengthOfMessage = getValues("message")
 
   const onSubmit = async (values: z.infer<typeof messageSchema>) => {
-    alert(values.message)
+    socket.emit("sendMessage", values.message, chatroomId)
   }
 
   return (

@@ -21,7 +21,7 @@ const ChatContainer = ({ data }: ChatContainerProps) => {
   useEffect(() => {
     socket.emit("connected-to-room", chatroomId)
 
-    socket.on("message", (message) => {
+    socket.on("joined-chatroom", (message) => {
       setIsConnected(true)
       console.log(message)
     })
@@ -32,7 +32,7 @@ const ChatContainer = ({ data }: ChatContainerProps) => {
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">
       <MessagesContainer />
-      <MessageInput isConnected={isConnected} />
+      <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} />
     </div>
   )
 }
