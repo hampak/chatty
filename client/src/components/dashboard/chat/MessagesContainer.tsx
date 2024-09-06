@@ -41,7 +41,7 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
   }, [])
 
   return (
-    <div className="bg-blue-300s h-[93%]">
+    <div className="bg-blue-300s h-[93%] overflow-y-auto">
       {
         messageList.map((m, index) => (
           <div key={index} className={cn(m.senderId === user.id ? "flex flex-col items-end" : "flex items-start")}>

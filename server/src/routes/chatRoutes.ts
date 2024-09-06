@@ -123,7 +123,15 @@ const chatRoutes = express.Router()
       })
     }
 
-    const messages = await redis.zrange(`messages-${chatId}`, 0, -1, "WITHSCORES")
+    const rawMessages = await redis.zrange(`messages-${chatId}`, 0, -1, "WITHSCORES")
+    const messages = []
+    for (let i = 0; i < rawMessages.length; i += 2) {
+      const messageJson = rawMessages[i]
+      const score = rawMessages[i + 1]
+      const message = JSON.parse(messageJson!)
+      message.timeStamp = parseInt(score!, 10);
+      messages.push(message)
+    }
 
     const { name } = user
     const { room_title, createdAt, _id } = chatRoomInfo
