@@ -123,6 +123,8 @@ const chatRoutes = express.Router()
       })
     }
 
+    const messages = await redis.zrange(`messages-${chatId}`, 0, -1, "WITHSCORES")
+
     const { name } = user
     const { room_title, createdAt, _id } = chatRoomInfo
 
@@ -144,7 +146,8 @@ const chatRoutes = express.Router()
       chatroomId: _id,
       title: friendName,
       participants: allParticipants,
-      createdAt: formattedDate
+      createdAt: formattedDate,
+      messages
     })
   })
 

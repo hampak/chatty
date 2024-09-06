@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
 import { User } from "./db/models";
 import { redis } from "./db/redis";
+import { timeStamp } from "console";
 interface CustomSocket extends Socket {
   userId?: string
 }
@@ -161,8 +162,18 @@ io.on("connection", async (socket: CustomSocket) => {
     io.to(chatroomId).emit("joined-chatroom", `${chatroomId} has joined the room`)
   })
 
-  socket.on("sendMessage", async (message, chatroomId) => {
-    io.to(chatroomId).emit("message", message)
+  socket.on("sendMessage", async (message, chatroomId, senderId) => {
+    try {
+      const timestamp = Date.now()
+      await redis.zadd(`messages-${chatroomId}`, timestamp, JSON.stringify({
+        message: message,
+        senderId: senderId,
+        timestamp
+      }))
+      return io.to(chatroomId).emit("message", message, senderId, timestamp)
+    } catch (error) {
+      console.log(error)
+    }
   })
 
 

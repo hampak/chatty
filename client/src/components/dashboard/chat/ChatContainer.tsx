@@ -2,14 +2,10 @@ import { useEffect, useState } from "react"
 import MessageInput from "./MessageInput"
 import MessagesContainer from "./MessagesContainer"
 import { socket } from "@/utils/io"
+import { Chat } from "@/types"
 
 interface ChatContainerProps {
-  data: {
-    chatroomId: string,
-    title: string,
-    participants: string[],
-    createdAt: string
-  },
+  data: Chat,
   user: {
     id: string,
     name: string,
@@ -38,8 +34,8 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
 
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">
-      <MessagesContainer user={user} />
-      <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} />
+      <MessagesContainer user={user} messages={data.messages} />
+      <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} user={user} />
     </div>
   )
 }

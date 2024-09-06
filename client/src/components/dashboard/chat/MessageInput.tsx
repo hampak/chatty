@@ -10,10 +10,17 @@ import { z } from "zod"
 
 interface MessageInputProps {
   isConnected: boolean;
-  chatroomId: string
+  chatroomId: string,
+  user: {
+    id: string,
+    name: string,
+    online: boolean,
+    picture: string,
+    userTag: string
+  }
 }
 
-const MessageInput = ({ isConnected, chatroomId }: MessageInputProps) => {
+const MessageInput = ({ isConnected, chatroomId, user }: MessageInputProps) => {
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -26,7 +33,8 @@ const MessageInput = ({ isConnected, chatroomId }: MessageInputProps) => {
   const lengthOfMessage = getValues("message")
 
   const onSubmit = async (values: z.infer<typeof messageSchema>) => {
-    socket.emit("sendMessage", values.message, chatroomId)
+    socket.emit("sendMessage", values.message, chatroomId, user.id)
+    form.reset()
   }
 
   return (

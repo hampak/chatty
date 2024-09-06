@@ -1,5 +1,5 @@
+import { cn } from "@/lib/utils"
 import { socket } from "@/utils/io"
-import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 
 interface MessagesContainerProps {
@@ -9,33 +9,43 @@ interface MessagesContainerProps {
     online: boolean,
     picture: string,
     userTag: string
-  }
+  },
+  messages: {
+    message: string,
+    senderId: string,
+    timestamp: string
+  }[]
 }
 
-const MessagesContainer = ({ user }: MessagesContainerProps) => {
+interface Message {
+  message: string;
+  senderId: string;
+  timestamp: string
+}
 
-  const [messages, setMessages] = useState([])
-  const queryClient = useQueryClient()
+const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
+
+  const [messageList, setMessageList] = useState<Message[]>([])
+
+  console.log(messages)
 
   useEffect(() => {
-    socket.on("message", async (message) => {
-      if (messages.length === 0) {
-        setMessages((prevState) => prevState.concat(message))
-        await queryClient.invalidateQueries({
-          queryKey: ["chat_list", user.id]
-        })
-      } else {
-        setMessages((prevState) => prevState.concat(message))
-      }
+    setMessageList(messages)
+  }, [messages])
+
+  useEffect(() => {
+    socket.on("message", async (message, senderId, timestamp) => {
+      const newMessage: Message = { message, senderId, timestamp }
+      setMessageList((prevState) => [...prevState, newMessage])
     })
-  }, [messages.length, queryClient, user.id])
+  }, [])
 
   return (
     <div className="bg-blue-300s h-[93%]">
       {
-        messages.map((m, index) => (
-          <div key={index}>
-            {m}
+        messageList.map((m, index) => (
+          <div key={index} className={cn(m.senderId === user.id ? "flex flex-col items-end" : "flex items-start")}>
+            {m.message}
           </div>
         ))
       }

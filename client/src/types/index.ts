@@ -19,5 +19,10 @@ export type Chat = {
   chatroomId: string,
   title: string,
   participants: string[],
-  createdAt: string
+  createdAt: string,
+  messages: {
+    message: string,
+    senderId: string,
+    timestamp: string
+  }[]
 }

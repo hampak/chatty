@@ -10,7 +10,6 @@ const Chat = () => {
   const { user } = useUser()
 
   const { data } = useGetChatInfo({ chatId: chatId, userId: user?.id })
-
   if (!data || !user) return null
 
   return (
