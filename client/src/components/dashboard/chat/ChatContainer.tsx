@@ -28,6 +28,8 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
       setIsConnected(true)
       console.log(message)
     })
+
+    // need to handle the case where the user navigates to another chatroom. Because right now, chats are being sent to another room
   }, [chatroomId])
 
   console.log("data", data)

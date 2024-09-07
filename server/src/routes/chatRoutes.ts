@@ -127,10 +127,12 @@ const chatRoutes = express.Router()
     const messages = []
     for (let i = 0; i < rawMessages.length; i += 2) {
       const messageJson = rawMessages[i]
-      const score = rawMessages[i + 1]
-      const message = JSON.parse(messageJson!)
-      message.timeStamp = parseInt(score!, 10);
-      messages.push(message)
+      const timestamp = rawMessages[i + 1]
+      if (messageJson && timestamp) {
+        const message = JSON.parse(messageJson!)
+        message.timeStamp = parseInt(timestamp!, 10)
+        messages.push(message)
+      }
     }
 
     const { name } = user
