@@ -38,9 +38,6 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
     return new Date(timestamp).toLocaleDateString(undefined, options);
   };
 
-
-  // console.log(messages)
-
   useEffect(() => {
     setMessageList(messages)
   }, [messages])
