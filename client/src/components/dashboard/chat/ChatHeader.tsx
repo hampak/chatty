@@ -1,7 +1,5 @@
 import { RxDotsHorizontal } from "react-icons/rx";
 import ChatInfoPopover from "./ChatInfoPopover";
-import { socket } from "@/utils/io";
-import { useEffect } from "react";
 
 interface ChatHeaderProps {
   chatId: string
@@ -11,10 +9,6 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader = ({ title, participants, createdAt }: ChatHeaderProps) => {
-
-  useEffect(() => {
-    socket.emit("accessChatHeader", title)
-  }, [title])
 
   return (
     <>

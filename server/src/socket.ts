@@ -162,6 +162,10 @@ io.on("connection", async (socket: CustomSocket) => {
     io.to(chatroomId).emit("joined-chatroom", `${chatroomId} has joined the room`)
   })
 
+  socket.on("leave-chatroom", async (chatroomId) => {
+    await socket.leave(chatroomId)
+  })
+
   socket.on("sendMessage", async (message, chatroomId, senderId) => {
     try {
       const timestamp = Date.now()

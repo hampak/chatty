@@ -23,6 +23,6 @@ export type Chat = {
   messages: {
     message: string,
     senderId: string,
-    timestamp: string
+    timestamp: number
   }[]
 }
