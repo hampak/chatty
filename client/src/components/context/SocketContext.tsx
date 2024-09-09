@@ -34,6 +34,7 @@ export const SocketProvider = ({
 
     // socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }, responseTime) => {
     socket.on("getOnlineFriends", async (online: { [userId: string]: "online" | "away" }) => {
+      console.log("getOnlineFriends")
       setOnlineFriends(online)
       console.log("onlineFriends", online)
 

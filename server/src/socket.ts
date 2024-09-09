@@ -174,7 +174,8 @@ io.on("connection", async (socket: CustomSocket) => {
         senderId: senderId,
         timestamp
       }))
-      return io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
+      io.to(chatroomId).emit("lastMessage", message, chatroomId)
+      io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
     } catch (error) {
       console.log(error)
     }

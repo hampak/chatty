@@ -39,10 +39,15 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
 
   useEffect(() => {
 
-    socket.on("message", async (message, senderId, timestamp, chatroomId) => {
+    socket.on("lastMessage", async (message, chatroomId) => {
+      console.log(message)
       if (data.id === chatroomId) {
         setLastMesage(message)
       }
+    })
+
+    return (() => {
+      socket.off("lastMessage")
     })
   }, [data.id, lastMessage])
 
