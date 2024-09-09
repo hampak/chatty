@@ -44,10 +44,6 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
         setLastMesage(message)
       }
     })
-
-    return () => {
-      socket.off("message")
-    }
   }, [data.id, lastMessage])
 
   const content = (
