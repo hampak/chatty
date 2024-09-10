@@ -3,6 +3,7 @@ import { Separator } from "../ui/separator"
 import { AvatarImage } from "../ui/avatar"
 import { Plus } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import AddFriendModal from "./AddFriendModal"
 
 const Label = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -34,11 +35,13 @@ const FriendsList = () => {
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">
       {/* Add Friend Modal */}
       <div className="space-y-2 h-[9%] flex flex-col items-center bg-blue-400s">
-        <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
-          <Label>
-            <Plus className="text-white" />
-          </Label>
-        </div>
+        <AddFriendModal>
+          <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
+            <Label>
+              <Plus className="text-white" />
+            </Label>
+          </div>
+        </AddFriendModal>
         <Separator className="h-1 rounded-lg w-[60%]" />
       </div>
 
