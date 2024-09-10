@@ -1,16 +1,16 @@
 import { useUser } from "@/components/provider/UserProvider";
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { cn } from "@/lib/utils"
-import { useSidebarStore } from "@/utils/zustand"
-import { useEffect } from "react"
-import { CiLogout } from "react-icons/ci"
-import { RxHamburgerMenu } from "react-icons/rx"
-import { useSocket } from "../context/SocketContext"
-import ChatList from "./ChatList"
-import CreateChatModal from "./CreateChatModal"
-import LogoutAlert from "./LogoutAlert"
-import UserSettingsModal from "./UserSettingsModal"
-import { Separator } from "../ui/separator";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { useSidebarStore } from "@/utils/zustand";
+import { useEffect } from "react";
+import { CiLogout } from "react-icons/ci";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { useSocket } from "../context/SocketContext";
+import ChatList from "./ChatList";
+import CreateChatModal from "./CreateChatModal";
+import FriendsList from "./FriendsList";
+import LogoutAlert from "./LogoutAlert";
+import UserSettingsModal from "./UserSettingsModal";
 
 const Sidebar = () => {
 
@@ -43,21 +43,8 @@ const Sidebar = () => {
     <div className={cn("w-[400px] h-full bg-green-200s py-2 border-r-[1px] bg-white", isOpen ? "flex " : "hidden")}>
 
       {/* Friends List */}
-      <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">
-        {/* Add Friend Modal */}
-        <div className="space-y-2 h-[10%] flex flex-col items-center bg-blue-400s">
-          <div className="w-[85%] aspect-square bg-blue-200 rounded-full">
+      <FriendsList />
 
-          </div>
-
-          <Separator className="h-1 rounded-lg w-[60%]" />
-        </div>
-
-        {/* Friend List Component */}
-        <div className="bg-red-200 w-full h-[90%]">
-
-        </div>
-      </div>
 
       <div className="w-[82%] h-full bg-green-200s px-1">
         <div className="w-full h-[7%] bg-red-200s flex justify-between items-center border-b-[1px]">
