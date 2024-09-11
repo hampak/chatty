@@ -3,19 +3,49 @@ import express from "express"
 import { redis } from "../db/redis"
 import { checkAuthStatus } from "../utils/middleware";
 import { User } from "../db/models";
+import { Document } from "mongoose";
 
 dotenv.config()
+
+interface IUser extends Document {
+  name: string;
+  userTag: string;
+  image: string;
+  friends: IUser[];
+}
+
 
 const friendRoutes = express.Router()
 
   .get("/", checkAuthStatus, async (req, res) => {
-    const { userId } = req.query
+    try {
+      const { userId } = req.query
 
-    const user = await User.findById(userId)
+      // const user = await User.findById(userId).populate("friends", "name image userTag")
 
-    if (!user) {
-      return res.status(401).json({
-        message: "Unauthenticated, please login first"
+      const user = await User.findById(userId)
+
+      if (!user) {
+        return res.status(401).json({
+          message: "Unauthenticated, please login first"
+        })
+      }
+
+      const friendsList = await User.find({
+        _id: { $in: user.friends }
+      }).select("_id name image userTag")
+
+      const friends = friendsList.map(friend => ({
+        userId: friend._id,
+        name: friend.name,
+        image: friend.image,
+        userTag: friend.userTag
+      }))
+
+      return res.status(200).json(friends)
+    } catch (error) {
+      return res.status(500).json({
+        message: "Internal server error"
       })
     }
   })

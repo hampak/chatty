@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Chat, ChatList } from "../types";
+import { Chat, ChatList, FriendsList } from "../types";
 
 const serverURL = import.meta.env.VITE_API_URL
 
@@ -49,7 +49,7 @@ export function useGetUser() {
   })
 }
 
-export function useGetFriendsList({ userId }: { userId: string }) {
+export function useGetFriendsList({ userId }: { userId?: string }) {
   return useQuery({
     queryKey: ["friend_list", userId],
     queryFn: async () => {
@@ -58,7 +58,7 @@ export function useGetFriendsList({ userId }: { userId: string }) {
       }
 
       try {
-        const response = await axios.get(serverURL ? `${serverURL}/api/friend` : "/api/friend", {
+        const response = await axios.get<FriendsList>(serverURL ? `${serverURL}/api/friend` : "/api/friend", {
           params: {
             userId
           },

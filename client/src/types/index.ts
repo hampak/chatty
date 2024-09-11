@@ -26,3 +26,10 @@ export type Chat = {
     timestamp: number
   }[]
 }
+
+export type FriendsList = {
+  userId: string,
+  name: string,
+  image: string,
+  userTag: string
+}[]
