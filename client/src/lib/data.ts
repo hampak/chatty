@@ -58,15 +58,23 @@ export function useGetFriendsList({ userId }: { userId: string }) {
       }
 
       try {
-        const response = await axios.get("")
+        const response = await axios.get(serverURL ? `${serverURL}/api/friend` : "/api/friend", {
+          params: {
+            userId
+          },
+          withCredentials: true
+        })
 
         return response.data
       } catch (error) {
         if (error instanceof AxiosError) {
           toast.error(`${error.response?.data.message}`)
+          setTimeout(() => window.location.href = "/login", 1200)
         }
+        return null
       }
-    }
+    },
+    refetchOnWindowFocus: false
   })
 }
 

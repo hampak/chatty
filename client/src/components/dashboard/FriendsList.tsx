@@ -4,6 +4,7 @@ import { AvatarImage } from "../ui/avatar"
 import { Plus } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import AddFriendModal from "./AddFriendModal"
+import { useGetFriendsList } from "@/lib/data"
 
 const Label = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -27,9 +28,9 @@ const Label = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const FriendsList = () => {
+const FriendsList = ({ userId }: { userId: string }) => {
 
-
+  const { data, isPending } = useGetFriendsList({ userId: userId })
 
   return (
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">

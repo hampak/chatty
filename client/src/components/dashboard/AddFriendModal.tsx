@@ -45,7 +45,7 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
       onSuccess: async (data) => {
         setOpen(false)
         form.reset()
-        // await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
+        await queryClient.invalidateQueries({ queryKey: ["friend_list", user?.id] })
         toast.success(`Added ${data.friendName} as a friend :D`)
       },
       onError: (error) => {
