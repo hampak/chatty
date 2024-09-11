@@ -12,6 +12,7 @@ import { redis } from "./db/redis"
 import authRoutes from "./routes/authRoutes"
 import chatRoutes from "./routes/chatRoutes"
 import userRoutes from "./routes/userRoutes"
+import friendRoutes from "./routes/friendRoutes"
 
 dotenv.config()
 const PORT = process.env.PORT ? process.env.PORT : 8000
@@ -33,6 +34,7 @@ app.use(morgan("common"))
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/chat", chatRoutes)
+app.use("/api/friend", friendRoutes)
 
 server.listen(PORT, async () => {
   await connectToMongoDb()
