@@ -5,8 +5,10 @@ import { Loader2, Plus } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import AddFriendModal from "./AddFriendModal"
 import { useGetFriendsList } from "@/lib/data"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { Button } from "../ui/button"
 
-const Label = ({ children }: { children: React.ReactNode }) => {
+const AddFriendLabel = ({ children }: { children: React.ReactNode }) => {
   return (
     <TooltipProvider
       delayDuration={0}
@@ -16,7 +18,7 @@ const Label = ({ children }: { children: React.ReactNode }) => {
           {children}
         </TooltipTrigger>
         <TooltipContent
-          side={"right"}
+          side="right"
           sideOffset={10}
           align="center"
           className="bg-black"
@@ -28,6 +30,28 @@ const Label = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
+interface FriendDropdownProps {
+  children: React.ReactNode;
+  name: string
+}
+
+const FriendDropdown = ({ children, name }: FriendDropdownProps) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="w-full h-full flex items-center justify-center">{children}</DropdownMenuTrigger>
+      <DropdownMenuContent
+        side="right"
+        sideOffset={6}
+        className="space-y-2"
+      >
+        <h1 className="text-sm font-semibold">{name}</h1>
+        <Button className="w-full h-6" size="sm">Chat</Button>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+
 const FriendsList = ({ userId }: { userId?: string }) => {
 
   const { data, isPending } = useGetFriendsList({ userId: userId })
@@ -38,9 +62,9 @@ const FriendsList = ({ userId }: { userId?: string }) => {
       <div className="space-y-2 h-[9%] flex flex-col items-center bg-blue-400s">
         <AddFriendModal>
           <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
-            <Label>
+            <AddFriendLabel>
               <Plus className="text-white" />
-            </Label>
+            </AddFriendLabel>
           </div>
         </AddFriendModal>
         <Separator className="h-1 rounded-lg w-[60%]" />
@@ -54,11 +78,15 @@ const FriendsList = ({ userId }: { userId?: string }) => {
           ) : (
             Array.isArray(data) && data.length > 0 ? (
               data.map(f => (
-                <Avatar className="h-12 w-12 mb-2">
-                  <AvatarImage
-                    className="rounded-3xl hover:rounded-xl transition-all duration-150 cursor-pointer"
-                    src={f.image}
-                  />
+                <Avatar className="h-12 w-12 mb-2" key={f.userId}>
+                  <FriendDropdown
+                    name={f.name}
+                  >
+                    <AvatarImage
+                      className="rounded-3xl hover:rounded-xl transition-all duration-150 hover:cursor-pointer"
+                      src={f.image}
+                    />
+                  </FriendDropdown>
                 </Avatar>
               ))
             ) : (
