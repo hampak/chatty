@@ -1,18 +1,17 @@
-import { useQueryClient } from "@tanstack/react-query"
-import { useUser } from "../provider/UserProvider"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { useAddFriend } from "@/lib/data"
 import { addFriendSchema } from "@/utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useCreateChat } from "@/lib/data"
-import { toast } from "sonner"
-import { socket } from "@/utils/io"
+import { useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
+import { toast } from "sonner"
+import { z } from "zod"
+import { useUser } from "../provider/UserProvider"
 import { Button } from "../ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
 
 const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
@@ -29,7 +28,7 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
     }
   })
 
-  const { mutate: createChat, isPending } = useCreateChat()
+  const { mutate: addFriend, isPending } = useAddFriend()
 
   const onSubmit = async (values: z.infer<typeof addFriendSchema>) => {
 
@@ -39,24 +38,24 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
       return toast.error("Cannot befriend yourself :/")
     }
 
-    createChat({
+    addFriend({
       userId: user?.id,
-      userName: user?.name,
-      userTag: user?.userTag,
-      userImage: user?.picture,
       friendUserTag: friendUserTag
     }, {
       onSuccess: async (data) => {
         setOpen(false)
         form.reset()
-        await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
-        toast.success(`Added ${data.friendUserTag} as a friend :D`)
-        socket.emit("add-friend", user?.id)
+        // await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
+        toast.success(`Added ${data.friendName} as a friend :D`)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {
-          toast.error(`${error.response?.data.message}`)
-          setTimeout(() => window.location.href = "/login", 1200)
+          if (error.response!.status === 401) {
+            toast.error(`${error.response?.data.message}`)
+            setTimeout(() => window.location.href = "/login", 1200)
+          } else {
+            toast.error(`${error.response?.data.message}`)
+          }
         } else {
           toast.error(error.message)
         }
