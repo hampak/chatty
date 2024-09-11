@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useUser } from "../provider/UserProvider"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { addFriendSchema } from "@/utils/zod"
@@ -79,6 +79,12 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
       })
   }
 
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+    }
+  }, [open, form])
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full h-full flex items-center justify-center">{children}</DialogTrigger>
@@ -117,7 +123,7 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
                   {
                     isCopied ? (
                       <IoCheckmarkOutline
-                        className="text-black"
+                        className="text-green-700"
                       />
                     ) : (
                       <IoCopyOutline
@@ -131,12 +137,15 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
                   type="submit"
                   disabled={isPending}
                 >
-                  Start New Chat
+                  Add Friend
                 </Button>
               </div>
             </form>
           </Form>
         </div>
+        <p className="text-xs text-red-600">
+          <span className="font-semibold underline">Please Read!!</span> As this is a portfolio project of mine, you may be here just to test my app out (maybe you're a recruiter? 👀). In that case, this is my user tag. Feel free to add me as your friend so you can test this app 😊
+        </p>
       </DialogContent>
     </Dialog>
   )
