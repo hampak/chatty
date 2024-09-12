@@ -90,11 +90,11 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="w-full text-center focus:outline-none">{children}</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger className="w-full h-full flex items-center justify-center focus:outline-none">{children}</DialogTrigger>
+      <DialogContent className="min-h-fit max-h-[400px]">
         <DialogHeader className="mb-4">
-          <DialogTitle>Start a new chat by adding a friend :D</DialogTitle>
-          <DialogDescription>When adding your friends user tag, be sure to paste it correctly!</DialogDescription>
+          <DialogTitle>Start a new chat</DialogTitle>
+          <DialogDescription>You can start a 1 on 1 chat with a single friend or a group chat!</DialogDescription>
         </DialogHeader>
         <div>
           <Form {...form}>
@@ -120,25 +120,10 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
                 )}
               />
               <div className="flex justify-between items-center">
-                <div className="text-sm text-gray-500 flex items-center">
-                  <span className="mr-2">Your user tag</span>
-                  <span className="underline underline-offset-2 mr-2">{user?.userTag}</span>
-                  {
-                    isCopied ? (
-                      <IoCheckmarkOutline
-                        className="text-black"
-                      />
-                    ) : (
-                      <IoCopyOutline
-                        className="hover:cursor-pointer text-gray-500 hover:text-black"
-                        onClick={() => copyToClipboard(user?.userTag || "")}
-                      />
-                    )
-                  }
-                </div>
                 <Button
                   type="submit"
                   disabled={isPending}
+                  className="w-full"
                 >
                   Start New Chat
                 </Button>

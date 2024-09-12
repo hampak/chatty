@@ -7,7 +7,6 @@ import { CiLogout } from "react-icons/ci";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useSocket } from "../context/SocketContext";
 import ChatList from "./ChatList";
-import CreateChatModal from "./CreateChatModal";
 import FriendsList from "./FriendsList";
 import LogoutAlert from "./LogoutAlert";
 import UserSettingsModal from "./UserSettingsModal";
@@ -61,11 +60,11 @@ const Sidebar = () => {
 
           {/* Chat */}
           <div className="w-full h-[92%] flex-1 bg-green-300s">
-            <CreateChatModal>
+            {/* <CreateChatModal>
               <div className="h-[10%] bg-black text-white p-2 rounded-lg">
                 Start a new chat
               </div>
-            </CreateChatModal>
+            </CreateChatModal> */}
             <div className="h-[90%]">
               <ChatList />
             </div>

@@ -1,14 +1,14 @@
+import { useGetFriendsList } from "@/lib/data"
 import { Avatar } from "@radix-ui/react-avatar"
-import { Separator } from "../ui/separator"
+import { Loader2, MessageCirclePlus, Plus } from "lucide-react"
 import { AvatarImage } from "../ui/avatar"
-import { Loader2, Plus } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { Separator } from "../ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import AddFriendModal from "./AddFriendModal"
-import { useGetFriendsList } from "@/lib/data"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu"
-import { Button } from "../ui/button"
+import CreateChatModal from "./CreateChatModal"
 
-const AddFriendLabel = ({ children }: { children: React.ReactNode }) => {
+const Label = ({ children, title }: { children: React.ReactNode, title: string }) => {
   return (
     <TooltipProvider
       delayDuration={0}
@@ -23,7 +23,7 @@ const AddFriendLabel = ({ children }: { children: React.ReactNode }) => {
           align="center"
           className="bg-black"
         >
-          <span className="text-white">Add a friend</span>
+          <span className="text-white">{title}</span>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -38,14 +38,14 @@ interface FriendDropdownProps {
 const FriendDropdown = ({ children, name }: FriendDropdownProps) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="w-full h-full flex items-center justify-center">{children}</DropdownMenuTrigger>
+      <DropdownMenuTrigger className="w-full h-full flex items-center justify-center focus:outline-none">{children}</DropdownMenuTrigger>
       <DropdownMenuContent
         side="right"
         sideOffset={6}
         className="space-y-2"
       >
         <h1 className="text-sm font-semibold">{name}</h1>
-        <Button className="w-full h-6" size="sm">Chat</Button>
+        {/* <Button className="w-full h-6" size="sm">Chat</Button> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -57,28 +57,35 @@ const FriendsList = ({ userId }: { userId?: string }) => {
   const { data, isPending } = useGetFriendsList({ userId: userId })
 
   return (
-    <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col space-y-3">
+    <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">
       {/* Add Friend Modal */}
-      <div className="space-y-2 h-[9%] flex flex-col items-center bg-blue-400s">
-        <AddFriendModal>
-          <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
-            <AddFriendLabel>
-              <Plus className="text-white" />
-            </AddFriendLabel>
-          </div>
-        </AddFriendModal>
+      <div className="h-[18%] flex flex-col items-center justify-evenly bg-blue-400s">
+        <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
+          <AddFriendModal>
+            <Label title="Add a Friend">
+              <Plus className="text-white" size={22} />
+            </Label>
+          </AddFriendModal>
+        </div>
+        <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
+          <CreateChatModal>
+            <Label title="Create a Chat">
+              <MessageCirclePlus className="text-white" size={22} />
+            </Label>
+          </CreateChatModal>
+        </div>
         <Separator className="h-1 rounded-lg w-[60%]" />
       </div>
 
       {/* Friend List Component */}
-      <div className="bg-red-200s w-full h-[91%] flex flex-col space-y-2 items-center overflow-y-auto scrollbar-hide">
+      <div className="bg-red-200s w-full h-[82%] flex flex-col space-y-1 items-center overflow-y-auto scrollbar-hide">
         {
           !data || isPending ? (
             <Loader2 className="animate-spin h-5 w-5" />
           ) : (
             Array.isArray(data) && data.length > 0 ? (
               data.map(f => (
-                <Avatar className="h-12 w-12 mb-2" key={f.userId}>
+                <Avatar className="h-12 w-12 mb-1.5" key={f.userId}>
                   <FriendDropdown
                     name={f.name}
                   >
