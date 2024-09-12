@@ -40,7 +40,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className={cn("w-[400px] h-full bg-green-200s py-2 border-r-[1px] bg-white", isOpen ? "flex " : "hidden")}>
+    <div className={cn("w-[400px] h-full bg-green-200s py-2 border-r-[1px] bg-white inline-flex", isOpen ? "fixed left-0 md:relative" : "hidden")}>
 
       {/* Friends List */}
       <FriendsList userId={user?.id} />
