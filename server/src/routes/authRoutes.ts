@@ -204,13 +204,62 @@ const authRoutes = express.Router()
         }
       })
 
-      const { avatar_url, name } = userResponse.data
+      const { avatar_url, name, id } = userResponse.data
 
-      console.log("userResponse.data", avatar_url, name)
+      // check to see if user already exists
+      const user = await User.findOne({
+        github_id: id
+      })
 
-      return res.status(200).json({ avatar_url, name })
-    } catch (error) {
+      let token
 
+      const fullUUID = crypto.randomUUID()
+      const tag = fullUUID.slice(0, 5)
+      const userTag = `${name}#${tag}`
+
+      if (!user) {
+        const newUser = new User({
+          name: name,
+          github_id: id,
+          image: avatar_url,
+          userTag
+        })
+        const savedUser = await newUser.save()
+
+        token = jwt.sign({
+          user_id: savedUser?._id,
+          name: savedUser?.name,
+          picture: savedUser?.image
+        },
+          JWT_SECRET!,
+          { expiresIn: "30m" }
+        )
+
+        await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 1800)
+      } else {
+        token = jwt.sign({
+          user_id: user?._id,
+          name: user?.name,
+          picture: user?.image
+        },
+          JWT_SECRET!,
+          { expiresIn: "30m" }
+        )
+
+        redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 1800)
+      }
+
+      res.cookie("user", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        maxAge: 30 * 60 * 1000,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+      })
+
+      res.redirect(`${CLIENT_URL}/dashboard`)
+    } catch (err) {
+      console.error('Error during authentication', err);
+      res.status(500).send('Authentication failed');
     }
   })
 
