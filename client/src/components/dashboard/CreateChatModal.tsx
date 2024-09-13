@@ -33,6 +33,9 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
     }
   })
 
+  const { watch } = form
+  const selectedFriends = watch("userId", [])
+
   const onSubmit = (values: z.infer<typeof startChatWithFriendSchema>) => {
     alert(values.userId)
   }
@@ -103,10 +106,12 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
               <div className="flex justify-between items-center">
                 <Button
                   type="submit"
-                  // disabled={isPending}
+                  disabled={selectedFriends.length === 0}
                   className="w-full mt-4"
                 >
-                  Start New Chat
+                  {selectedFriends.length === 0 ? "Start New Chat" : (
+                    selectedFriends.length === 1 ? "1 on 1 Chat" : `Group chat with ${selectedFriends.length} friends`
+                  )}
                 </Button>
               </div>
             </form>
