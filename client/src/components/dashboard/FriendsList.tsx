@@ -78,19 +78,19 @@ const FriendsList = ({ userId }: { userId?: string }) => {
       </div>
 
       {/* Friend List Component */}
-      <div className="bg-red-200s w-full h-[82%] flex flex-col space-y-1 items-center overflow-y-auto scrollbar-hide">
+      <div className="bg-red-200s w-full h-[82%] flex flex-col space-y-2.5 items-center overflow-y-auto scrollbar-hide">
         {
           !data || isPending ? (
             <Loader2 className="animate-spin h-5 w-5" />
           ) : (
             Array.isArray(data) && data.length > 0 ? (
               data.map(f => (
-                <Avatar className="h-12 w-12 mb-1.5" key={f.userId}>
+                <Avatar className="h-12 w-12" key={f.userId}>
                   <FriendDropdown
                     name={f.name}
                   >
                     <AvatarImage
-                      className="rounded-3xl hover:rounded-xl transition-all duration-150 hover:cursor-pointer"
+                      className="rounded-3xl hover:rounded-xl transition-all duration-150 hover:cursor-pointer border border-gray-200"
                       src={f.image}
                     />
                   </FriendDropdown>

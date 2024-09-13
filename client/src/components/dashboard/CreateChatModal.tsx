@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { FriendsList } from "@/types"
 import { startChatWithFriendSchema } from "@/utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Avatar, AvatarImage } from "../ui/avatar"
@@ -39,6 +39,12 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
   const onSubmit = (values: z.infer<typeof startChatWithFriendSchema>) => {
     alert(values.userId)
   }
+
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+    }
+  }, [open, form])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
