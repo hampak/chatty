@@ -20,10 +20,13 @@ const Login = () => {
             <FaGoogle className="text-blue-500" />
             <span className="font-semibold">Start with Google</span>
           </a>
-          <div className="flex items-center p-2 border rounded-lg px-4 w-3/4 text-center justify-evenly hover:bg-gray-100 transition-all hover:cursor-pointer">
+          <a
+            className="flex items-center p-2 border rounded-lg px-4 w-3/4 text-center justify-evenly hover:bg-gray-100 transition-all hover:cursor-pointer"
+            href={serverURL ? `${serverURL}/api/auth/github` : `/api/auth/github`}
+          >
             <FaGithub className="text-gray-700" />
             <span className="font-semibold">Start with Github</span>
-          </div>
+          </a>
         </CardContent>
         <CardFooter>
           <Link

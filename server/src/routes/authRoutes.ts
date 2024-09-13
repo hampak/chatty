@@ -5,17 +5,23 @@ import { OAuth2Client } from "google-auth-library";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { User } from "../db/models";
 import { redis } from "../db/redis";
+import axios from "axios";
 
 
 dotenv.config()
 
 const CLIENT_URL = process.env.CLIENT_URL
+
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
-const REDIRECT_URI = process.env.REDIRECT_URI
+const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI
+
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
+
 const JWT_SECRET = process.env.JWT_SECRET
 
-const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI)
+const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI)
 
 
 const authRoutes = express.Router()
@@ -161,6 +167,52 @@ const authRoutes = express.Router()
   })
 
   /* Github Auth */
+
+  .get("/github", async (req, res) => {
+    const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=http://localhost:8000/api/auth/github/callback&scope=user`
+
+    res.redirect(redirectUrl)
+  })
+
+  .get("/github/callback", async (req, res) => {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.status(400).send("No code provided")
+    }
+
+    try {
+      const tokenResponse = await axios.post(
+        "https://github.com/login/oauth/access_token",
+        {
+          client_id: GITHUB_CLIENT_ID,
+          client_secret: GITHUB_CLIENT_SECRET,
+          code
+        },
+        {
+          headers: {
+            accept: "application/json"
+          }
+        }
+      )
+
+      const accessToken = tokenResponse.data.access_token
+
+      const userResponse = await axios.get("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      const { avatar_url, name } = userResponse.data
+
+      console.log("userResponse.data", avatar_url, name)
+
+      return res.status(200).json({ avatar_url, name })
+    } catch (error) {
+
+    }
+  })
 
 
   /* Logout */
