@@ -32,4 +32,4 @@ export type FriendsList = {
   name: string,
   image: string,
   userTag: string
-}[]
+}[] | undefined

@@ -7,20 +7,19 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { FriendsList } from "@/types"
 import { startChatWithFriendSchema } from "@/utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from 'react'
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Checkbox } from "../ui/checkbox"
 import { Avatar, AvatarImage } from "../ui/avatar"
+import { Checkbox } from "../ui/checkbox"
 
 
 
-const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: FriendsList }) => {
+const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: FriendsList | null }) => {
 
   // const { user } = useUser()
   // const queryClient = useQueryClient()
@@ -34,8 +33,8 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
     }
   })
 
-  const onSubmit = () => {
-
+  const onSubmit = (values: z.infer<typeof startChatWithFriendSchema>) => {
+    alert(values.userId)
   }
 
   return (
@@ -50,7 +49,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-5"
+              className="space-y-2"
             >
               <FormField
                 control={form.control}
@@ -63,10 +62,10 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
                           const isChecked = field.value.includes(f.userId)
                           return (
                             <FormItem
-                              className="px-1 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all"
+                              className="px-3 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all space-y-0 cursor-pointer"
                               key={f.userId}
                             >
-                              <FormLabel className="flex items-center">
+                              <FormLabel className="flex items-center bg-green-200s w-full cursor-pointer">
                                 <Avatar className="mr-3">
                                   <AvatarImage
                                     src={f.image}
@@ -76,8 +75,9 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
                                   {f.name}
                                 </h2>
                               </FormLabel>
-                              <FormControl className="place-items-center">
+                              <FormControl>
                                 <Checkbox
+                                  className=""
                                   checked={isChecked}
                                   onCheckedChange={(checked) => {
                                     if (checked) {
@@ -104,7 +104,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
                 <Button
                   type="submit"
                   // disabled={isPending}
-                  className="w-full"
+                  className="w-full mt-4"
                 >
                   Start New Chat
                 </Button>
