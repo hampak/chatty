@@ -12,7 +12,12 @@ const messageSchema = z.object({
   })
 })
 
+const startChatWithFriendSchema = z.object({
+  userId: z.string().array()
+})
+
 export {
   addFriendSchema,
-  messageSchema
+  messageSchema,
+  startChatWithFriendSchema
 }

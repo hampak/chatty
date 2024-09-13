@@ -1,14 +1,3 @@
-import { useCreateChat } from "@/lib/data"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
-import { AxiosError } from "axios"
-import { useState } from 'react'
-import { useForm } from "react-hook-form"
-import { IoCheckmarkOutline, IoCopyOutline } from "react-icons/io5"
-import { toast } from "sonner"
-import { z } from "zod"
-import { addFriendSchema } from "@/utils/zod"
-import { useUser } from "@/components/provider/UserProvider";
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,72 +9,33 @@ import {
 } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { socket } from "@/utils/io"
+import { FriendsList } from "@/types"
+import { startChatWithFriendSchema } from "@/utils/zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from 'react'
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Checkbox } from "../ui/checkbox"
+import { Avatar, AvatarImage } from "../ui/avatar"
 
 
 
-const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
+const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: FriendsList }) => {
 
-  const { user } = useUser()
-  const queryClient = useQueryClient()
-  const [isCopied, setIsCopied] = useState(false)
+  // const { user } = useUser()
+  // const queryClient = useQueryClient()
+  // const [isCopied, setIsCopied] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const form = useForm<z.infer<typeof addFriendSchema>>({
-    resolver: zodResolver(addFriendSchema),
+  const form = useForm<z.infer<typeof startChatWithFriendSchema>>({
+    resolver: zodResolver(startChatWithFriendSchema),
     defaultValues: {
-      friendUserTag: ""
+      userId: []
     }
   })
 
-  const { mutate: createChat, isPending } = useCreateChat()
+  const onSubmit = () => {
 
-  const onSubmit = async (values: z.infer<typeof addFriendSchema>) => {
-
-    const friendUserTag = values.friendUserTag
-
-    if (friendUserTag === user?.userTag) {
-      return toast.error("Cannot befriend yourself :/")
-    }
-
-    createChat({
-      userId: user?.id,
-      userName: user?.name,
-      userTag: user?.userTag,
-      userImage: user?.picture,
-      friendUserTag: friendUserTag
-    }, {
-      onSuccess: async (data) => {
-        setOpen(false)
-        form.reset()
-        await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
-        toast.success(`Added ${data.friendUserTag} as a friend :D`)
-        socket.emit("add-friend", user?.id)
-      },
-      onError: (error) => {
-        if (error instanceof AxiosError) {
-          toast.error(`${error.response?.data.message}`)
-          setTimeout(() => window.location.href = "/login", 1200)
-        } else {
-          toast.error(error.message)
-        }
-      }
-    })
-  }
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-      .then(() => {
-        setIsCopied(true)
-        toast.success("Your user tag has been copied to the clipboard! You can share it with your friends :D")
-
-        setTimeout(() => {
-          setIsCopied(false)
-        }, 2000)
-      })
-      .catch(() => {
-        toast.error("Failed to copy your user tag to the clipboard :/")
-      })
   }
 
   return (
@@ -104,25 +54,56 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
             >
               <FormField
                 control={form.control}
-                name="friendUserTag"
+                name="userId"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Friend's User Tag</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="usertag#12345"
-                        {...field}
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <>
+                    {
+                      Array.isArray(data) && data.length > 0 ? (
+                        data.map(f => {
+                          const isChecked = field.value.includes(f.userId)
+                          return (
+                            <FormItem
+                              className="px-1 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all"
+                              key={f.userId}
+                            >
+                              <FormLabel className="flex items-center">
+                                <Avatar className="mr-3">
+                                  <AvatarImage
+                                    src={f.image}
+                                  />
+                                </Avatar>
+                                <h2>
+                                  {f.name}
+                                </h2>
+                              </FormLabel>
+                              <FormControl className="place-items-center">
+                                <Checkbox
+                                  checked={isChecked}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) {
+                                      field.onChange([...field.value, f.userId]); // Add userId to the list
+                                    } else {
+                                      field.onChange(
+                                        field.value.filter((id) => id !== f.userId) // Remove userId from the list
+                                      );
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )
+                        })
+                      ) : (
+                        <></>
+                      )
+                    }
+                  </>
                 )}
               />
               <div className="flex justify-between items-center">
                 <Button
                   type="submit"
-                  disabled={isPending}
+                  // disabled={isPending}
                   className="w-full"
                 >
                   Start New Chat
@@ -132,8 +113,44 @@ const CreateChatModal = ({ children }: { children: React.ReactNode }) => {
           </Form>
         </div>
       </DialogContent>
-    </Dialog>
+    </Dialog >
   )
 }
 
 export default CreateChatModal
+
+
+// const { mutate: createChat, isPending } = useCreateChat()
+
+//   const onSubmit = async (values: z.infer<typeof addFriendSchema>) => {
+
+//     const friendUserTag = values.friendUserTag
+
+//     if (friendUserTag === user?.userTag) {
+//       return toast.error("Cannot befriend yourself :/")
+//     }
+
+//     createChat({
+//       userId: user?.id,
+//       userName: user?.name,
+//       userTag: user?.userTag,
+//       userImage: user?.picture,
+//       friendUserTag: friendUserTag
+//     }, {
+//       onSuccess: async (data) => {
+//         setOpen(false)
+//         form.reset()
+//         await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
+//         toast.success(`Added ${data.friendUserTag} as a friend :D`)
+//         socket.emit("add-friend", user?.id)
+//       },
+//       onError: (error) => {
+//         if (error instanceof AxiosError) {
+//           toast.error(`${error.response?.data.message}`)
+//           setTimeout(() => window.location.href = "/login", 1200)
+//         } else {
+//           toast.error(error.message)
+//         }
+//       }
+//     })
+//   }

@@ -68,7 +68,7 @@ const FriendsList = ({ userId }: { userId?: string }) => {
           </AddFriendModal>
         </div>
         <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
-          <CreateChatModal>
+          <CreateChatModal data={data}>
             <Label title="Create a Chat">
               <MessageCirclePlus className="text-white" size={22} />
             </Label>
