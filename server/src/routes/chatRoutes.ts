@@ -6,19 +6,26 @@ import { redis } from "../db/redis"
 
 dotenv.config()
 
+type Friend = {
+  friendId: string;
+  friendName: string;
+  friendPicture: string
+}
+
 const chatRoutes = express.Router()
   .post("/create-chat", checkAuthStatus, async (req, res) => {
 
     const { friendData, currentUserId, currentUserName, currentUserPicture } = await req.body
-    console.log(friendData)
 
     try {
+      // when client sends a request without selecting any friends
       if (friendData.length === 0) {
         return res.status(400).json({
           message: "Please choose at least one friend to start a chat with!"
         })
       }
 
+      // when creating a 1 on 1 chat
       if (friendData.length === 1) {
         const chatroomAlreadyExists = await ChatRoom.findOne({
           participants: { $all: [friendData[0].friendId, currentUserId] }
@@ -42,82 +49,31 @@ const chatRoutes = express.Router()
         })
       }
 
+      // when creating a group chat
+      if (friendData.length > 1) {
+
+        const userNames = friendData.map((friend: Friend) => friend.friendName)
+        const roomTitle = `${currentUserName}, ${userNames.join(", ")}`
+
+        const chatRoom = new ChatRoom({
+          room_title: roomTitle,
+          images: [currentUserPicture, ...friendData.map((friend: Friend) => friend.friendPicture)],
+          participants: [currentUserId, ...friendData.map((friend: Friend) => friend.friendId)],
+        })
+
+        await chatRoom.save()
+
+        return res.status(200).json({
+          message: `Created a group chat with ${userNames.length} friends!`
+        })
+      }
+
 
     } catch (error) {
       return res.status(400).json({
         message: "Internal server error"
       })
     }
-
-    // try {
-    //   const { friendData, currentUserId } = await req.body
-
-    //   console.log(friendData)
-
-    //   if (friendData.length === 0) {
-    //     return res.status(400).json({
-    //       message: "Please choose at least one friend to start a chat with!"
-    //     })
-    //   }
-
-    //   // if the user is trying to start a 1 on 1 chat
-    //   if (friendData.length === 1) {
-    //     const chatroomAlreadyExists = await ChatRoom.findOne({
-    //       participants: { $all: [currentUserId, userIdArray[0]] }
-    //     })
-
-    //     // redirect user to the chatroom page with this specific user
-    //     if (chatroomAlreadyExists) {
-    //       return res.redirect("")
-    //     }
-    //   }
-
-    //   const chatRoom = new ChatRoom({
-
-    //   })
-    // } catch (error) {
-
-    // }
-
-
-
-    // if (userWithUserTagExists) {
-
-    //   // check if user is already friends with the other user
-    //   const userAlreadyFriends = await ChatRoom.findOne({
-    //     participants: { $all: [userId, userWithUserTagExists._id] }
-    //   })
-
-    //   if (userAlreadyFriends) {
-    //     return res.status(400).json({
-    //       message: "You're already friends with this user!"
-    //     })
-    //   } else {
-    //     const chatRoom = new ChatRoom({
-    //       room_title: `${userWithUserTagExists.name}|${userName}`,
-    //       participants: [userId, userWithUserTagExists._id],
-    //       images: [userImage, userWithUserTagExists.image]
-    //     })
-
-    //     await chatRoom.save()
-
-    //     // save friend as current user's friend in redis set
-    //     await redis.sadd(`friends-${userId}`, userWithUserTagExists._id.toString())
-
-    //     // save current user friend's friend in redis set
-    //     await redis.sadd(`friends-${userWithUserTagExists._id.toString()}`, userId)
-
-    //     return res.status(200).json({
-    //       friendUserTag,
-    //       friendId: userWithUserTagExists._id.toString()
-    //     })
-    //   }
-
-    // } else if (userWithUserTagExists === null) {
-    //   return res.status(400).json({
-    //     message: "A user with that user tag doesn't exist :( Please check again"
-    //   })
-    // }
   })
 
   .get("/chat-list", checkAuthStatus, async (req, res) => {
