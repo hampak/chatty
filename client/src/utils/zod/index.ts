@@ -13,7 +13,13 @@ const messageSchema = z.object({
 })
 
 const startChatWithFriendSchema = z.object({
-  userIdArray: z.string().array()
+  friendData: z.array(
+    z.object({
+      friendId: z.string(),
+      friendPicture: z.string(),
+      friendName: z.string()
+    })
+  )
 })
 
 export {

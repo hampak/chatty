@@ -9,12 +9,75 @@ dotenv.config()
 const chatRoutes = express.Router()
   .post("/create-chat", checkAuthStatus, async (req, res) => {
 
-    try {
-      const { userIdArray } = await req.body
-      console.log(userIdArray)
-    } catch (error) {
+    const { friendData, currentUserId, currentUserName, currentUserPicture } = await req.body
+    console.log(friendData)
 
+    try {
+      if (friendData.length === 0) {
+        return res.status(400).json({
+          message: "Please choose at least one friend to start a chat with!"
+        })
+      }
+
+      if (friendData.length === 1) {
+        const chatroomAlreadyExists = await ChatRoom.findOne({
+          participants: { $all: [friendData[0].friendId, currentUserId] }
+        })
+
+        if (chatroomAlreadyExists) {
+          // return user to the chatroom page with that specific user
+          return res.redirect("")
+        }
+
+        const chatRoom = new ChatRoom({
+          room_title: `${currentUserName}, ${friendData[0].friendName}`,
+          images: [currentUserPicture, friendData[0].friendPicture],
+          participants: [currentUserId, friendData[0].friendId]
+        })
+
+        await chatRoom.save()
+
+        return res.status(200).json({
+          message: `Created a chatroom with ${friendData[0].friendName}`
+        })
+      }
+
+
+    } catch (error) {
+      return res.status(400).json({
+        message: "Internal server error"
+      })
     }
+
+    // try {
+    //   const { friendData, currentUserId } = await req.body
+
+    //   console.log(friendData)
+
+    //   if (friendData.length === 0) {
+    //     return res.status(400).json({
+    //       message: "Please choose at least one friend to start a chat with!"
+    //     })
+    //   }
+
+    //   // if the user is trying to start a 1 on 1 chat
+    //   if (friendData.length === 1) {
+    //     const chatroomAlreadyExists = await ChatRoom.findOne({
+    //       participants: { $all: [currentUserId, userIdArray[0]] }
+    //     })
+
+    //     // redirect user to the chatroom page with this specific user
+    //     if (chatroomAlreadyExists) {
+    //       return res.redirect("")
+    //     }
+    //   }
+
+    //   const chatRoom = new ChatRoom({
+
+    //   })
+    // } catch (error) {
+
+    // }
 
 
 

@@ -34,19 +34,22 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
   const form = useForm<z.infer<typeof startChatWithFriendSchema>>({
     resolver: zodResolver(startChatWithFriendSchema),
     defaultValues: {
-      userIdArray: []
+      friendData: []
     }
   })
 
   const { watch } = form
-  const selectedFriends = watch("userIdArray", [])
+  const selectedFriends = watch("friendData", [])
 
   const { mutate: createChat, isPending } = useCreateChat()
 
   const onSubmit = (values: z.infer<typeof startChatWithFriendSchema>) => {
 
     createChat({
-      userIdArray: values.userIdArray
+      friendData: values.friendData,
+      currentUserId: user!.id,
+      currentUserName: user!.name,
+      currentUserPicture: user!.picture
     }, {
       onSuccess: async (data) => {
         setOpen(false)
@@ -93,13 +96,14 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
               <div className="overflow-y-auto h-[200px] custom-scrollbar">
                 <FormField
                   control={form.control}
-                  name="userIdArray"
+                  name="friendData"
                   render={({ field }) => (
                     <>
                       {
                         Array.isArray(data) && data.length > 0 ? (
                           data.map(f => {
-                            const isChecked = field.value.includes(f.userId)
+                            // const isChecked = field.value.includes(f.userId)
+                            const isChecked = field.value.some(friend => friend.friendId === f.userId)
                             return (
                               <FormItem
                                 className="px-3 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all space-y-0 cursor-pointer mb-1"
@@ -122,10 +126,12 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
                                     checked={isChecked}
                                     onCheckedChange={(checked) => {
                                       if (checked) {
-                                        field.onChange([...field.value, f.userId]); // Add userId to the list
+                                        // field.onChange([...field.value, f.userId]); // Add userId to the list
+                                        field.onChange([...field.value, { friendId: f.userId, friendPicture: f.image, friendName: f.name }])
                                       } else {
                                         field.onChange(
-                                          field.value.filter((id) => id !== f.userId) // Remove userId from the list
+                                          // field.value.filter((id) => id !== f.userId) // Remove userId from the list
+                                          field.value.filter((friend) => friend.friendId !== f.userId)
                                         );
                                       }
                                     }}
@@ -145,7 +151,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
               <div className="flex justify-between items-center">
                 <Button
                   type="submit"
-                  disabled={selectedFriends.length === 0 || isPending}
+                  disabled={selectedFriends.length === 0 || isPending || !user}
                   className="w-full mt-4"
                 >
                   {selectedFriends.length === 0 ? "Start New Chat" : (
