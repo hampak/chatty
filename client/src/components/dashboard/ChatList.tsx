@@ -1,6 +1,6 @@
 import { useUser } from "@/components/provider/UserProvider";
 import { useGetChatsList } from "@/lib/data";
-import { Loader2 } from "lucide-react";
+import { Loader2, MessageCirclePlus } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 import ChatRoomItem from "./ChatRoomItem";
 
@@ -52,7 +52,9 @@ const ChatList = () => {
             )
           })
         ) : (
-          <div>No Chats Yet! Invite a friend :)</div>
+          <div className="h-full flex items-center justify-center">
+            <p className="w-[80%] text-center">No Chats Yet! Start one by clicking on the <MessageCirclePlus className="inline-flex " size={18} /> icon</p>
+          </div>
         )
       }
     </div>

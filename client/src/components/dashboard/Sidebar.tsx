@@ -44,10 +44,9 @@ const Sidebar = () => {
       {/* Friends List */}
       <FriendsList userId={user?.id} />
 
-
       <div className="w-[82%] h-full bg-green-200s px-1">
-        <div className="w-full h-[7%] bg-red-200s flex justify-between items-center border-b-[1px]">
-          <span className="text-lg font-simbold">
+        <div className="w-full h-[7%] bg-red-200s flex justify-between items-center border-b-[1px] px-3">
+          <span className="text-lg font-semibold">
             Chatty
           </span>
           <RxHamburgerMenu
@@ -60,18 +59,13 @@ const Sidebar = () => {
 
           {/* Chat */}
           <div className="w-full h-[92%] flex-1 bg-green-300s">
-            {/* <CreateChatModal>
-              <div className="h-[10%] bg-black text-white p-2 rounded-lg">
-                Start a new chat
-              </div>
-            </CreateChatModal> */}
             <div className="h-[90%]">
               <ChatList />
             </div>
           </div>
 
           {/* Sidebar footer */}
-          <div className="w-full bg-red-300s border-t-[1px] flex items-center justify-between bg-whites z-50 h-[8%] pt-2">
+          <div className="w-full bg-red-300s border-t-[1px] flex items-center justify-between bg-whites z-50 h-[8%] pt-2 px-3">
             {
               loading ? "" : (
                 <div className="relative inline-block">
