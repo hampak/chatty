@@ -9,13 +9,16 @@ interface ChatRoomItem {
   data: {
     id: string,
     title: string,
-    participants: string[],
+    participants: {
+      participantId: string,
+      participantPicture: string
+    }[],
     createdAt: Date,
     updatedAt: Date,
     image: string
   },
   user: User | null,
-  friendStatuses: { [friendId: string]: 'online' | 'away' };
+  friendStatuses?: { [friendId: string]: 'online' | 'away' };
 }
 
 const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
@@ -27,17 +30,17 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
 
   console.log(data.image)
 
-  const participantStatuses = participants
-    .filter(participantId => participantId !== user?.id)
-    .map(participantId => friendStatuses[participantId])
+  // const participantStatuses = participants
+  //   .filter(participantId => participantId !== user?.id)
+  //   .map(participantId => friendStatuses[participantId])
 
-  const statusIndicator = participantStatuses.includes('online') ? (
-    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-  ) : participantStatuses.includes('away') ? (
-    <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
-  ) : (
-    <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
-  );
+  // const statusIndicator = participantStatuses.includes('online') ? (
+  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+  // ) : participantStatuses.includes('away') ? (
+  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
+  // ) : (
+  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
+  // );
 
   useEffect(() => {
 
@@ -58,31 +61,33 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
       <div className="mr-2 relative inline-block">
         {
           data.participants.length === 2 ? (
-            <>
-              <Avatar>
-                <AvatarImage src={image} />
-              </Avatar>
-              {data.participants.length === 2 ? statusIndicator : null}
-            </>
-          ) : (
-            <div className="flex items-center space-x-[-25px]">
-              {
-                data.participants.slice(0, 4).map((participant, index) => (
-                  <Avatar
-                    key={index}
-                    className={`relative border border-white z-[${4 - index}]`}
-                  >
-                    <AvatarImage src={image} />
-                  </Avatar>
-                ))
-              }
-              {data.participants.length > 4 && (
-                <div className="relative z-0 w-8 h-8 rounded-full bg-gray-200 text-xs font-medium flex items-center justify-center border border-white">
-                  +{data.participants.length - 4}
-                </div>
-              )}
-            </div>
+            data.participants
+              .filter(participant => participant.participantId !== user?.id)
+              .map((participant, index) => (
+                <Avatar key={index}>
+                  <AvatarImage src={participant.participantPicture} />
+                </Avatar>
+              ))
           )
+            : (
+              <div className="flex items-center space-x-[-25px]">
+                {
+                  data.participants.slice(0, 4).map((participant, index) => (
+                    <Avatar
+                      key={index}
+                      className={`relative border border-white z-[${4 - index}]`}
+                    >
+                      <AvatarImage src={participant.participantPicture} />
+                    </Avatar>
+                  ))
+                }
+                {data.participants.length > 4 && (
+                  <div className="relative z-0 w-8 h-8 rounded-full bg-gray-200 text-xs font-medium flex items-center justify-center border border-white">
+                    +{data.participants.length - 4}
+                  </div>
+                )}
+              </div>
+            )
         }
       </div>
       <div className="mr-auto w-full">

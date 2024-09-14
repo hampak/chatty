@@ -118,8 +118,6 @@ const chatRoutes = express.Router()
 
       const chatRooms = data.map(room => {
 
-        console.log("room", room)
-
         const allParticipants = room.room_title.split("|").map(p => p.trim())
         const friendName = allParticipants.find(p => p !== name)
 

@@ -11,6 +11,8 @@ const ChatList = () => {
   const { onlineFriends } = useSocket()
   const { data, isPending } = useGetChatsList({ userId: user?.id })
 
+  console.log("data", data)
+
   const getFriendStatus = (participantIds: string[]): { [friendId: string]: "online" | "away" } => {
     if (!user || !onlineFriends) return {}
 
@@ -40,13 +42,13 @@ const ChatList = () => {
       {
         data && Array.isArray(data) && data.length > 0 ? (
           data.map((room, index) => {
-            const statuses = getFriendStatus(room.participants)
+            // const statuses = getFriendStatus(room.participants)
             return (
               <div key={index} className="w-full">
                 <ChatRoomItem
                   data={room}
                   user={user}
-                  friendStatuses={statuses}
+                // friendStatuses={statuses}
                 />
               </div>
             )

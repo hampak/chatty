@@ -9,7 +9,12 @@ export type User = {
 export type ChatList = {
   id: string,
   title: string,
-  participants: string[],
+  participants: [
+    {
+      participantId: string,
+      participantPicture: string
+    }
+  ],
   createdAt: Date,
   updatedAt: Date,
   image: string
