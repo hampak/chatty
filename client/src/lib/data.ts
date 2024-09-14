@@ -16,11 +16,7 @@ type GetChatInfo = {
 }
 
 type CreateChat = {
-  userId?: string,
-  userName?: string,
-  userTag?: string,
-  userImage?: string,
-  friendUserTag?: string,
+  userIdArray?: string[]
 }
 
 type User = {
@@ -165,18 +161,10 @@ export function useCreateChat() {
   return useMutation<ServerResponse, Error, CreateChat>({
     mutationKey: ["create_chat"],
     mutationFn: async ({
-      userId,
-      userName,
-      userTag,
-      userImage,
-      friendUserTag
+      userIdArray
     }: CreateChat) => {
-      const response = await axios.post(serverURL ? `${serverURL}/api/chat/add-friend` : "/api/chat/add-friend", {
-        userId,
-        userName,
-        userTag,
-        userImage,
-        friendUserTag
+      const response = await axios.post(serverURL ? `${serverURL}/api/chat/create-chat` : "/api/chat/create-chat", {
+        userIdArray
       },
         {
           withCredentials: true

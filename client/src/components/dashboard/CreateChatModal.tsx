@@ -16,28 +16,54 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Avatar, AvatarImage } from "../ui/avatar"
 import { Checkbox } from "../ui/checkbox"
+import { Separator } from "../ui/separator"
+import { useQueryClient } from "@tanstack/react-query"
+import { useCreateChat } from "@/lib/data"
+import { useUser } from "../provider/UserProvider"
+import { AxiosError } from "axios"
+import { toast } from "sonner"
 
 
 
 const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: FriendsList | null }) => {
 
-  // const { user } = useUser()
-  // const queryClient = useQueryClient()
-  // const [isCopied, setIsCopied] = useState(false)
+  const { user } = useUser()
+  const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
 
   const form = useForm<z.infer<typeof startChatWithFriendSchema>>({
     resolver: zodResolver(startChatWithFriendSchema),
     defaultValues: {
-      userId: []
+      userIdArray: []
     }
   })
 
   const { watch } = form
-  const selectedFriends = watch("userId", [])
+  const selectedFriends = watch("userIdArray", [])
+
+  const { mutate: createChat, isPending } = useCreateChat()
 
   const onSubmit = (values: z.infer<typeof startChatWithFriendSchema>) => {
-    alert(values.userId)
+
+    createChat({
+      userIdArray: values.userIdArray
+    }, {
+      onSuccess: async (data) => {
+        setOpen(false)
+        form.reset()
+        await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
+        toast.success(`Added ${data.friendUserTag} as a friend :D`)
+        // socket.emit("add-friend", user?.id)
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(`${error.response?.data.message}`)
+          setTimeout(() => window.location.href = "/login", 1200)
+        } else {
+          toast.error(error.message)
+        }
+      }
+    })
   }
 
   useEffect(() => {
@@ -48,71 +74,78 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="w-full h-full flex items-center justify-center focus:outline-none">{children}</DialogTrigger>
-      <DialogContent className="min-h-fit max-h-[400px]">
-        <DialogHeader className="mb-4">
+      <DialogTrigger
+        className="w-full h-full flex items-center justify-center focus:outline-none"
+      >
+        {children}
+      </DialogTrigger>
+      <DialogContent className="min-h-fit">
+        <DialogHeader className="mb-2">
           <DialogTitle>Start a new chat</DialogTitle>
           <DialogDescription>You can start a 1 on 1 chat with a single friend or a group chat!</DialogDescription>
+          <Separator />
         </DialogHeader>
         <div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2"
             >
-              <FormField
-                control={form.control}
-                name="userId"
-                render={({ field }) => (
-                  <>
-                    {
-                      Array.isArray(data) && data.length > 0 ? (
-                        data.map(f => {
-                          const isChecked = field.value.includes(f.userId)
-                          return (
-                            <FormItem
-                              className="px-3 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all space-y-0 cursor-pointer"
-                              key={f.userId}
-                            >
-                              <FormLabel className="flex items-center bg-green-200s w-full cursor-pointer">
-                                <Avatar className="mr-3">
-                                  <AvatarImage
-                                    src={f.image}
+              <div className="overflow-y-auto h-[200px] custom-scrollbar">
+                <FormField
+                  control={form.control}
+                  name="userIdArray"
+                  render={({ field }) => (
+                    <>
+                      {
+                        Array.isArray(data) && data.length > 0 ? (
+                          data.map(f => {
+                            const isChecked = field.value.includes(f.userId)
+                            return (
+                              <FormItem
+                                className="px-3 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all space-y-0 cursor-pointer mb-1"
+                                key={f.userId}
+                              >
+                                <FormLabel className="flex items-center bg-green-200s w-full cursor-pointer">
+                                  <Avatar className="mr-3">
+                                    <AvatarImage
+                                      src={f.image}
+                                      className="border"
+                                    />
+                                  </Avatar>
+                                  <h2>
+                                    {f.name}
+                                  </h2>
+                                </FormLabel>
+                                <FormControl>
+                                  <Checkbox
+                                    className=""
+                                    checked={isChecked}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        field.onChange([...field.value, f.userId]); // Add userId to the list
+                                      } else {
+                                        field.onChange(
+                                          field.value.filter((id) => id !== f.userId) // Remove userId from the list
+                                        );
+                                      }
+                                    }}
                                   />
-                                </Avatar>
-                                <h2>
-                                  {f.name}
-                                </h2>
-                              </FormLabel>
-                              <FormControl>
-                                <Checkbox
-                                  className=""
-                                  checked={isChecked}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      field.onChange([...field.value, f.userId]); // Add userId to the list
-                                    } else {
-                                      field.onChange(
-                                        field.value.filter((id) => id !== f.userId) // Remove userId from the list
-                                      );
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )
-                        })
-                      ) : (
-                        <></>
-                      )
-                    }
-                  </>
-                )}
-              />
+                                </FormControl>
+                              </FormItem>
+                            )
+                          })
+                        ) : (
+                          <></>
+                        )
+                      }
+                    </>
+                  )}
+                />
+              </div>
               <div className="flex justify-between items-center">
                 <Button
                   type="submit"
-                  disabled={selectedFriends.length === 0}
+                  disabled={selectedFriends.length === 0 || isPending}
                   className="w-full mt-4"
                 >
                   {selectedFriends.length === 0 ? "Start New Chat" : (

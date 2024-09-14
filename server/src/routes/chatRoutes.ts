@@ -7,59 +7,54 @@ import { redis } from "../db/redis"
 dotenv.config()
 
 const chatRoutes = express.Router()
-  .post("/add-friend", checkAuthStatus, async (req, res) => {
+  .post("/create-chat", checkAuthStatus, async (req, res) => {
 
-    const { friendUserTag, userId, userName, userTag, userImage } = await req.body
+    try {
+      const { userIdArray } = await req.body
+      console.log(userIdArray)
+    } catch (error) {
 
-    // either null or entire user data
-    const userWithUserTagExists = await User.findOne({
-      userTag: friendUserTag
-    })
-
-    // check to see if the user is trying to befriend him/herself
-    if (friendUserTag === userTag) {
-      return res.status(400).json({
-        message: "Cannot befriend yourself :/"
-      })
     }
 
-    if (userWithUserTagExists) {
 
-      // check if user is already friends with the other user
-      const userAlreadyFriends = await ChatRoom.findOne({
-        participants: { $all: [userId, userWithUserTagExists._id] }
-      })
 
-      if (userAlreadyFriends) {
-        return res.status(400).json({
-          message: "You're already friends with this user!"
-        })
-      } else {
-        const chatRoom = new ChatRoom({
-          room_title: `${userWithUserTagExists.name}|${userName}`,
-          participants: [userId, userWithUserTagExists._id],
-          images: [userImage, userWithUserTagExists.image]
-        })
+    // if (userWithUserTagExists) {
 
-        await chatRoom.save()
+    //   // check if user is already friends with the other user
+    //   const userAlreadyFriends = await ChatRoom.findOne({
+    //     participants: { $all: [userId, userWithUserTagExists._id] }
+    //   })
 
-        // save friend as current user's friend in redis set
-        await redis.sadd(`friends-${userId}`, userWithUserTagExists._id.toString())
+    //   if (userAlreadyFriends) {
+    //     return res.status(400).json({
+    //       message: "You're already friends with this user!"
+    //     })
+    //   } else {
+    //     const chatRoom = new ChatRoom({
+    //       room_title: `${userWithUserTagExists.name}|${userName}`,
+    //       participants: [userId, userWithUserTagExists._id],
+    //       images: [userImage, userWithUserTagExists.image]
+    //     })
 
-        // save current user friend's friend in redis set
-        await redis.sadd(`friends-${userWithUserTagExists._id.toString()}`, userId)
+    //     await chatRoom.save()
 
-        return res.status(200).json({
-          friendUserTag,
-          friendId: userWithUserTagExists._id.toString()
-        })
-      }
+    //     // save friend as current user's friend in redis set
+    //     await redis.sadd(`friends-${userId}`, userWithUserTagExists._id.toString())
 
-    } else if (userWithUserTagExists === null) {
-      return res.status(400).json({
-        message: "A user with that user tag doesn't exist :( Please check again"
-      })
-    }
+    //     // save current user friend's friend in redis set
+    //     await redis.sadd(`friends-${userWithUserTagExists._id.toString()}`, userId)
+
+    //     return res.status(200).json({
+    //       friendUserTag,
+    //       friendId: userWithUserTagExists._id.toString()
+    //     })
+    //   }
+
+    // } else if (userWithUserTagExists === null) {
+    //   return res.status(400).json({
+    //     message: "A user with that user tag doesn't exist :( Please check again"
+    //   })
+    // }
   })
 
   .get("/chat-list", checkAuthStatus, async (req, res) => {
