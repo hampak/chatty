@@ -55,13 +55,13 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
         setOpen(false)
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
-        toast.success(`Added ${data.friendUserTag} as a friend :D`)
+        toast.success(data.message)
         // socket.emit("add-friend", user?.id)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {
           toast.error(`${error.response?.data.message}`)
-          setTimeout(() => window.location.href = "/login", 1200)
+          // setTimeout(() => window.location.href = "/login", 1200)
         } else {
           toast.error(error.message)
         }

@@ -42,17 +42,20 @@ const chatRoomSchema = new mongoose.Schema({
     required: true
   },
   participants: [{
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: true
+    participantId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true
+    },
+    participantPicture: {
+      type: String,
+      required: true
+    }
   }],
   last_message: {
     type: mongoose.Schema.ObjectId,
     ref: "Chat"
-  },
-  images: [{
-    type: String
-  }]
+  }
 }, {
   timestamps: true
 })

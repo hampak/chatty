@@ -12,6 +12,8 @@ type Friend = {
   friendPicture: string
 }
 
+const CLIENT_URL = process.env.CLIENT_URL
+
 const chatRoutes = express.Router()
   .post("/create-chat", checkAuthStatus, async (req, res) => {
 
@@ -28,21 +30,34 @@ const chatRoutes = express.Router()
       // when creating a 1 on 1 chat
       if (friendData.length === 1) {
         const chatroomAlreadyExists = await ChatRoom.findOne({
-          participants: { $all: [friendData[0].friendId, currentUserId] }
+          // participants: { $all: [friendData[0].friendId, currentUserId] }
+          participants: {
+            $all: [
+              { $elemMatch: { participantId: friendData[0].friendId } },
+              { $elemMatch: { participantId: currentUserId } }
+            ]
+          },
+          $expr: { $eq: [{ $size: "$participants" }, 2] }
         })
+
+        console.log("chatroomAlreadyExists", chatroomAlreadyExists)
 
         if (chatroomAlreadyExists) {
           // return user to the chatroom page with that specific user
-          return res.redirect("")
+          return res.redirect(`CLIENT_URL/dashboard/chat/${chatroomAlreadyExists._id}`)
         }
 
         const chatRoom = new ChatRoom({
           room_title: `${currentUserName}, ${friendData[0].friendName}`,
-          images: [currentUserPicture, friendData[0].friendPicture],
-          participants: [currentUserId, friendData[0].friendId]
+          participants: [
+            { participantId: currentUserId, participantPicture: currentUserPicture },
+            { participantId: friendData[0].friendId, participantPicture: friendData[0].friendPicture }
+          ]
         })
 
         await chatRoom.save()
+
+        console.log("chatRoom", chatRoom)
 
         return res.status(200).json({
           message: `Created a chatroom with ${friendData[0].friendName}`
@@ -55,10 +70,17 @@ const chatRoutes = express.Router()
         const userNames = friendData.map((friend: Friend) => friend.friendName)
         const roomTitle = `${currentUserName}, ${userNames.join(", ")}`
 
+        const participants = [
+          { participantId: currentUserId, participantPicture: currentUserPicture },
+          ...friendData.map((friend: Friend) => ({
+            participantId: friend.friendId,
+            participantPicture: friend.friendPicture
+          }))
+        ]
+
         const chatRoom = new ChatRoom({
           room_title: roomTitle,
-          images: [currentUserPicture, ...friendData.map((friend: Friend) => friend.friendPicture)],
-          participants: [currentUserId, ...friendData.map((friend: Friend) => friend.friendId)],
+          participants: participants,
         })
 
         await chatRoom.save()
@@ -91,23 +113,22 @@ const chatRoutes = express.Router()
 
     try {
       const data = await ChatRoom.find({
-        participants: userId
+        participants: { $elemMatch: { participantId: userId } }
       })
 
       const chatRooms = data.map(room => {
 
+        console.log("room", room)
+
         const allParticipants = room.room_title.split("|").map(p => p.trim())
         const friendName = allParticipants.find(p => p !== name)
-
-        const friendImage = room.images.find(i => i !== image)
 
         return {
           id: room._id,
           createdAt: room.createdAt,
           updatedAt: room.updatedAt,
           title: friendName,
-          participants: room.participants,
-          image: friendImage
+          participants: room.participants
         }
       })
       console.log("chat-rooms", chatRooms)

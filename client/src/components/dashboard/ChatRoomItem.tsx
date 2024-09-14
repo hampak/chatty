@@ -25,6 +25,8 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
 
   const { title, image, id, participants } = data
 
+  console.log(data.image)
+
   const participantStatuses = participants
     .filter(participantId => participantId !== user?.id)
     .map(participantId => friendStatuses[participantId])
@@ -54,10 +56,34 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>
       <div className="mr-2 relative inline-block">
-        <Avatar>
-          <AvatarImage src={image} />
-        </Avatar>
-        {statusIndicator}
+        {
+          data.participants.length === 2 ? (
+            <>
+              <Avatar>
+                <AvatarImage src={image} />
+              </Avatar>
+              {data.participants.length === 2 ? statusIndicator : null}
+            </>
+          ) : (
+            <div className="flex items-center space-x-[-25px]">
+              {
+                data.participants.slice(0, 4).map((participant, index) => (
+                  <Avatar
+                    key={index}
+                    className={`relative border border-white z-[${4 - index}]`}
+                  >
+                    <AvatarImage src={image} />
+                  </Avatar>
+                ))
+              }
+              {data.participants.length > 4 && (
+                <div className="relative z-0 w-8 h-8 rounded-full bg-gray-200 text-xs font-medium flex items-center justify-center border border-white">
+                  +{data.participants.length - 4}
+                </div>
+              )}
+            </div>
+          )
+        }
       </div>
       <div className="mr-auto w-full">
         <span className="text-sm font-semibold">{title}</span>
