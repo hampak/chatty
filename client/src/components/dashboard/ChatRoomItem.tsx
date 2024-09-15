@@ -72,14 +72,17 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
             : (
               <div className="flex items-center space-x-[-25px]">
                 {
-                  data.participants.slice(0, 4).map((participant, index) => (
-                    <Avatar
-                      key={index}
-                      className={`relative border border-white z-[${4 - index}]`}
-                    >
-                      <AvatarImage src={participant.participantPicture} />
-                    </Avatar>
-                  ))
+                  data.participants
+                    .filter(participant => participant.participantId !== user?.id)
+                    .slice(0, 4)
+                    .map((participant, index) => (
+                      <Avatar
+                        key={index}
+                        className={`relative border border-white z-[${4 - index}]`}
+                      >
+                        <AvatarImage src={participant.participantPicture} />
+                      </Avatar>
+                    ))
                 }
                 {data.participants.length > 4 && (
                   <div className="relative z-0 w-8 h-8 rounded-full bg-gray-200 text-xs font-medium flex items-center justify-center border border-white">
@@ -90,9 +93,25 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
             )
         }
       </div>
-      <div className="mr-auto w-full">
-        <span className="text-sm font-semibold">{title}</span>
-        <p className="text-xs font-base w-full text-ellipsis">{lastMessage}</p>
+      <div className="mr-auto w-full bg-red-200s">
+        {
+          data.participants.length === 2 ? (
+            <span className="text-sm font-semibold">
+              {
+                title.split(",")
+                  .filter(name => name !== user?.name)
+                  .map(friendName => {
+                    return friendName.trim()
+                  })
+              }
+            </span>
+          ) : (
+            <span className="text-sm font-semibold">
+              {title}
+            </span>
+          )
+        }
+        <p className="text-xs font-base max-w-[70%] truncate bg-blue-200s">{lastMessage}</p>
       </div>
       <div className="bg-red-200s mb-auto">
         <span className="text-xs text-gray-500">6/25</span>
