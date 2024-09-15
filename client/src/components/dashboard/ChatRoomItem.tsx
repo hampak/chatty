@@ -58,7 +58,7 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>
-      <div className="mr-2 relative inline-block">
+      <div className="relative flex min-w-[90%] max-w-[90%] bg-blue-30 space-x-2">
         {
           data.participants.length === 2 ? (
             data.participants
@@ -92,26 +92,26 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
               </div>
             )
         }
-      </div>
-      <div className="mr-auto w-full bg-red-200s">
-        {
-          data.participants.length === 2 ? (
-            <span className="text-sm font-semibold">
-              {
-                title.split(",")
-                  .filter(name => name !== user?.name)
-                  .map(friendName => {
-                    return friendName.trim()
-                  })
-              }
-            </span>
-          ) : (
-            <span className="text-sm font-semibold">
-              {title}
-            </span>
-          )
-        }
-        <p className="text-xs font-base max-w-[70%] truncate bg-blue-200s">{lastMessage}</p>
+        <div className="mr-auto max-w-[70%] bg-red-200s">
+          {
+            data.participants.length === 2 ? (
+              <span className="text-sm font-semibold">
+                {
+                  title.split(",")
+                    .filter(name => name !== user?.name)
+                    .map(friendName => {
+                      return friendName.trim()
+                    })
+                }
+              </span>
+            ) : (
+              <span className="text-sm font-semibold truncate">
+                {title}
+              </span>
+            )
+          }
+          <p className="text-xs font-base max-w-full truncate bg-blue-200s">{lastMessage}</p>
+        </div>
       </div>
       <div className="bg-red-200s mb-auto">
         <span className="text-xs text-gray-500">6/25</span>
