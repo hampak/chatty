@@ -98,7 +98,7 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
               <span className="text-sm font-semibold">
                 {
                   title.split(",")
-                    .filter(name => name !== user?.name)
+                    .filter(name => name.trim() !== user?.name)
                     .map(friendName => {
                       return friendName.trim()
                     })
