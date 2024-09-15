@@ -7,6 +7,8 @@ import { Separator } from "../ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import AddFriendModal from "./AddFriendModal"
 import CreateChatModal from "./CreateChatModal"
+import { useEffect } from "react"
+import { socket } from "@/utils/io"
 
 const Label = ({ children, title }: { children: React.ReactNode, title: string }) => {
   return (
@@ -56,7 +58,9 @@ const FriendsList = ({ userId }: { userId?: string }) => {
 
   const { data, isPending } = useGetFriendsList({ userId: userId })
 
-  const disableAddFriendButton = data?.length === 0
+  //   useEffect(() => {
+  // socket.on()
+  //   }, [])
 
   return (
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">

@@ -74,7 +74,6 @@ io.on("connection", async (socket: CustomSocket) => {
       await redis.hset("online-users", userId!, "online")
 
       const friends: string[] = await redis.smembers(`friends-${userId}`)
-      console.log("friends", friends)
 
       if (friends.length === 0) {
         const onlyCurrentUserOnline = { [currentUserId!]: "online" }
@@ -82,8 +81,6 @@ io.on("connection", async (socket: CustomSocket) => {
       }
 
       const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
-      console.log("onlineUsers", onlineUsers)
-
 
       const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
         const userStatus = onlineUsers[key]
@@ -93,12 +90,9 @@ io.on("connection", async (socket: CustomSocket) => {
         return result
       }, {} as Record<string, string>)
 
-      console.log("filteredOnlineFriends", filteredOnlineFriends)
-
       return io.emit("getOnlineFriends", filteredOnlineFriends)
     } else if (status === "away") {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
-      console.log("friends", friends)
 
       if (friends.length === 0) {
         const onlyCurrentUserOnline = { [currentUserId!]: "away" }
@@ -123,7 +117,13 @@ io.on("connection", async (socket: CustomSocket) => {
     await redis.hset("online-users", userId, status)
 
     const friends: string[] = await redis.smembers(`friends-${userId}`)
-    console.log("friends", friends)
+
+
+    if (friends.length === 0) {
+      const onlyCurrentUserOnline = { [currentUserId!]: status }
+      return io.emit("getOnlineFriends", onlyCurrentUserOnline)
+    }
+
     const onlineUsers = await redis.hgetall("online-users")
 
     const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
@@ -138,7 +138,6 @@ io.on("connection", async (socket: CustomSocket) => {
 
   socket.on("add-friend", async (userId: string) => {
     const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
-    console.log("onlineUsers", onlineUsers)
 
     const friends: string[] = await redis.smembers(`friends-${userId}`)
     console.log("friends", friends)

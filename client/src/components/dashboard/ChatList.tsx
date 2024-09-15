@@ -11,21 +11,21 @@ const ChatList = () => {
   const { onlineFriends } = useSocket()
   const { data, isPending } = useGetChatsList({ userId: user?.id })
 
-  console.log("data", data)
+  // console.log("data", data)
 
-  const getFriendStatus = (participantIds: string[]): { [friendId: string]: "online" | "away" } => {
-    if (!user || !onlineFriends) return {}
+  // const getFriendStatus = (participantIds: string[]): { [friendId: string]: "online" | "away" } => {
+  //   if (!user || !onlineFriends) return {}
 
-    const friendIds = participantIds.filter(id => id !== user.id);
-    const statuses = friendIds.reduce<{ [friendId: string]: 'online' | 'away' }>((acc, friendId) => {
-      const status = onlineFriends[friendId];
-      if (status) {
-        acc[friendId] = status;
-      }
-      return acc;
-    }, {});
-    return statuses;
-  }
+  //   const friendIds = participantIds.filter(id => id !== user.id);
+  //   const statuses = friendIds.reduce<{ [friendId: string]: 'online' | 'away' }>((acc, friendId) => {
+  //     const status = onlineFriends[friendId];
+  //     if (status) {
+  //       acc[friendId] = status;
+  //     }
+  //     return acc;
+  //   }, {});
+  //   return statuses;
+  // }
 
   if (isPending || !data) {
     return (

@@ -124,7 +124,7 @@ const authRoutes = express.Router()
         const newUser = new User({
           name: accessingUser?.name,
           google_id: accessingUser?.sub,
-          github_id: "",
+          github_id: undefined,
           image: accessingUser?.picture,
           userTag
         })
@@ -222,7 +222,7 @@ const authRoutes = express.Router()
         const newUser = new User({
           name: name,
           github_id: id,
-          google_id: "",
+          google_id: undefined,
           image: avatar_url,
           userTag
         })

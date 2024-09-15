@@ -34,9 +34,9 @@ export const SocketProvider = ({
 
     // socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }, responseTime) => {
     socket.on("getOnlineFriends", async (online: { [userId: string]: "online" | "away" }) => {
-      console.log("getOnlineFriends")
+      // console.log("getOnlineFriends")
       setOnlineFriends(online)
-      console.log("onlineFriends", online)
+      // console.log("onlineFriends", online)
 
       const userStatus = online[user.id]
 
@@ -49,7 +49,7 @@ export const SocketProvider = ({
       socket.off("userOnline")
       socket.off("getOnlineFriends")
     }
-  }, [user])
+  }, [user, queryClient])
 
   return (
     <SocketContext.Provider value={{ socket, onlineFriends, currentStatus }}>

@@ -16,13 +16,11 @@ const userSchema = new mongoose.Schema({
   },
   google_id: {
     type: String,
-    required: false,
-    unique: true
+    required: false
   },
   github_id: {
     type: String,
-    required: false,
-    unique: true
+    required: false
   },
   image: {
     type: String,
