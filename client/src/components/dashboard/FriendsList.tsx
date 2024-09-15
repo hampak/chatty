@@ -9,6 +9,7 @@ import AddFriendModal from "./AddFriendModal"
 import CreateChatModal from "./CreateChatModal"
 import { useEffect } from "react"
 import { socket } from "@/utils/io"
+import { useQueryClient } from "@tanstack/react-query"
 
 const Label = ({ children, title }: { children: React.ReactNode, title: string }) => {
   return (
@@ -55,12 +56,14 @@ const FriendDropdown = ({ children, name }: FriendDropdownProps) => {
 
 
 const FriendsList = ({ userId }: { userId?: string }) => {
-
+  const queryClient = useQueryClient()
   const { data, isPending } = useGetFriendsList({ userId: userId })
 
-  //   useEffect(() => {
-  // socket.on()
-  //   }, [])
+  useEffect(() => {
+    socket.on("added-as-friend", async () => {
+      await queryClient.invalidateQueries({ queryKey: ["friend_list", userId] })
+    })
+  }, [queryClient, userId])
 
   return (
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">

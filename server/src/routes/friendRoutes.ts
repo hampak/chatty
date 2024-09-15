@@ -101,7 +101,8 @@ const friendRoutes = express.Router()
 
       return res.status(200).json({
         friendUserTag,
-        friendName: userWithUserTagExists.name
+        friendName: userWithUserTagExists.name,
+        friendId: userWithUserTagExists._id.toString()
       })
     } catch (error) {
       res.status(400).json({

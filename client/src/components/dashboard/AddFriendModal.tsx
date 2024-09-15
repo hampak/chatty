@@ -13,6 +13,7 @@ import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
+import { socket } from "@/utils/io"
 
 const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
 
@@ -47,6 +48,7 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["friend_list", user?.id] })
         toast.success(`Added ${data.friendName} as a friend :D`)
+        socket.emit("add-friend", data.friendId)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

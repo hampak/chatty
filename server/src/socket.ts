@@ -64,6 +64,7 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
 
   const currentUserId = socket.userId
+  redis.hset("userSocketId", currentUserId!, socket.id)
 
   socket.on("userOnline", async (userId) => {
 
@@ -136,23 +137,26 @@ io.on("connection", async (socket: CustomSocket) => {
     io.emit("getOnlineFriends", filteredOnlineFriends)
   })
 
-  socket.on("add-friend", async (userId: string) => {
+  socket.on("add-friend", async (friendId: string) => {
     const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
 
-    const friends: string[] = await redis.smembers(`friends-${userId}`)
-    console.log("friends", friends)
+    const friendSocketId = await redis.hget(`userSocketId`, friendId)
 
-    const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
-      const userStatus = onlineUsers[key]
-      if ((key === userId || friends.includes(key)) && userStatus) {
-        result[key] = userStatus
-      }
-      return result
-    }, {} as Record<string, string>)
+    if (!friendSocketId) return
 
-    console.log("filteredOnlineFriends", filteredOnlineFriends)
+    // const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+    //   const userStatus = onlineUsers[key]
+    //   if ((key === userId || friends.includes(key)) && userStatus) {
+    //     result[key] = userStatus
+    //   }
+    //   return result
+    // }, {} as Record<string, string>)
 
-    return io.emit("getOnlineFriends", filteredOnlineFriends)
+    // console.log("filteredOnlineFriends", filteredOnlineFriends)
+
+    // return io.emit("getOnlineFriends", filteredOnlineFriends)
+
+    return io.to(friendSocketId).emit("added-as-friend")
   })
 
   socket.on("connected-to-room", async (chatroomId) => {
