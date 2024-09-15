@@ -88,80 +88,88 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
           <DialogDescription>You can start a 1 on 1 chat with a single friend or a group chat!</DialogDescription>
           <Separator />
         </DialogHeader>
-        <div>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <div className="overflow-y-auto h-[200px] custom-scrollbar">
-                <FormField
-                  control={form.control}
-                  name="friendData"
-                  render={({ field }) => (
-                    <>
-                      {
-                        Array.isArray(data) && data.length > 0 ? (
-                          data.map(f => {
-                            // const isChecked = field.value.includes(f.userId)
-                            const isChecked = field.value.some(friend => friend.friendId === f.userId)
-                            return (
-                              <FormItem
-                                className="px-3 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all space-y-0 cursor-pointer mb-1"
-                                key={f.userId}
-                              >
-                                <FormLabel className="flex items-center bg-green-200s w-full cursor-pointer">
-                                  <Avatar className="mr-3">
-                                    <AvatarImage
-                                      src={f.image}
-                                      className="border"
-                                    />
-                                  </Avatar>
-                                  <h2>
-                                    {f.name}
-                                  </h2>
-                                </FormLabel>
-                                <FormControl>
-                                  <Checkbox
-                                    className=""
-                                    checked={isChecked}
-                                    onCheckedChange={(checked) => {
-                                      if (checked) {
-                                        // field.onChange([...field.value, f.userId]); // Add userId to the list
-                                        field.onChange([...field.value, { friendId: f.userId, friendPicture: f.image, friendName: f.name }])
-                                      } else {
-                                        field.onChange(
-                                          // field.value.filter((id) => id !== f.userId) // Remove userId from the list
-                                          field.value.filter((friend) => friend.friendId !== f.userId)
-                                        );
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )
-                          })
-                        ) : (
-                          <></>
-                        )
-                      }
-                    </>
-                  )}
-                />
-              </div>
-              <div className="flex justify-between items-center">
-                <Button
-                  type="submit"
-                  disabled={selectedFriends.length === 0 || isPending || !user}
-                  className="w-full mt-4"
+        {
+          data?.length === 0 ? (
+            <div>
+              <p className="text-red-500">No noes! You don't have any friends to start a chat :/ Add a friend first to start chatting :)</p>
+            </div>
+          ) : (
+            <div>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
                 >
-                  {selectedFriends.length === 0 ? "Start New Chat" : (
-                    selectedFriends.length === 1 ? "1 on 1 Chat" : `Group chat with ${selectedFriends.length} friends`
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </div>
+                  <div className="overflow-y-auto h-[200px] custom-scrollbar">
+                    <FormField
+                      control={form.control}
+                      name="friendData"
+                      render={({ field }) => (
+                        <>
+                          {
+                            Array.isArray(data) && data.length > 0 ? (
+                              data.map(f => {
+                                // const isChecked = field.value.includes(f.userId)
+                                const isChecked = field.value.some(friend => friend.friendId === f.userId)
+                                return (
+                                  <FormItem
+                                    className="px-3 py-2 w-full flex items-center justify-between bg-red-200s rounded-lg hover:bg-gray-100 transition-all space-y-0 cursor-pointer mb-1"
+                                    key={f.userId}
+                                  >
+                                    <FormLabel className="flex items-center bg-green-200s w-full cursor-pointer">
+                                      <Avatar className="mr-3">
+                                        <AvatarImage
+                                          src={f.image}
+                                          className="border"
+                                        />
+                                      </Avatar>
+                                      <h2>
+                                        {f.name}
+                                      </h2>
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Checkbox
+                                        className=""
+                                        checked={isChecked}
+                                        onCheckedChange={(checked) => {
+                                          if (checked) {
+                                            // field.onChange([...field.value, f.userId]); // Add userId to the list
+                                            field.onChange([...field.value, { friendId: f.userId, friendPicture: f.image, friendName: f.name }])
+                                          } else {
+                                            field.onChange(
+                                              // field.value.filter((id) => id !== f.userId) // Remove userId from the list
+                                              field.value.filter((friend) => friend.friendId !== f.userId)
+                                            );
+                                          }
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </FormItem>
+                                )
+                              })
+                            ) : (
+                              <></>
+                            )
+                          }
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <Button
+                      type="submit"
+                      disabled={selectedFriends.length === 0 || isPending || !user}
+                      className="w-full mt-4"
+                    >
+                      {selectedFriends.length === 0 ? "Start New Chat" : (
+                        selectedFriends.length === 1 ? "1 on 1 Chat" : `Group chat with ${selectedFriends.length} friends`
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </div>
+          )
+        }
       </DialogContent>
     </Dialog >
   )

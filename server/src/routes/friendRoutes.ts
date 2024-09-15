@@ -87,7 +87,9 @@ const friendRoutes = express.Router()
       }
 
       currentUser.friends.push(userWithUserTagExists._id)
+      userWithUserTagExists.friends.push(userId)
       await currentUser.save()
+      await userWithUserTagExists.save()
 
       // save user to redis
 
@@ -107,4 +109,5 @@ const friendRoutes = express.Router()
       })
     }
   })
+
 export default friendRoutes

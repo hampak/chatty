@@ -56,6 +56,8 @@ const FriendsList = ({ userId }: { userId?: string }) => {
 
   const { data, isPending } = useGetFriendsList({ userId: userId })
 
+  const disableAddFriendButton = data?.length === 0
+
   return (
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">
       {/* Add Friend Modal */}
@@ -67,7 +69,7 @@ const FriendsList = ({ userId }: { userId?: string }) => {
             </Label>
           </AddFriendModal>
         </div>
-        <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
+        <div className="h-12 w-12 aspect-square rounded-3xl flex items-center justify-center bg-black cursor-pointer transition-all duration-150 hover:rounded-xl">
           <CreateChatModal data={data}>
             <Label title="Create a Chat">
               <MessageCirclePlus className="text-white" size={22} />
