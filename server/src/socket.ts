@@ -114,7 +114,7 @@ io.on("connection", async (socket: CustomSocket) => {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
 
       if (friends.length === 0) {
-        const onlyCurrentUserOnline = { [currentUserId!]: "online" }
+        const onlyCurrentUserOnline = { [currentUserId!]: "away" }
         return io.to(socket.id).emit("getOnlineFriends", onlyCurrentUserOnline)
       }
 
@@ -150,7 +150,7 @@ io.on("connection", async (socket: CustomSocket) => {
 
 
     if (friends.length === 0) {
-      const onlyCurrentUserOnline = { [currentUserId!]: "online" }
+      const onlyCurrentUserOnline = { [currentUserId!]: status }
       return io.to(socket.id).emit("getOnlineFriends", onlyCurrentUserOnline)
     }
 
@@ -178,26 +178,25 @@ io.on("connection", async (socket: CustomSocket) => {
     // io.emit("getOnlineFriends", filteredOnlineFriends)
   })
 
-  socket.on("add-friend", async (friendId: string) => {
-    const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
+  socket.on("add-friend", async (friendId: string, userId: string) => {
+    const onlineUsers = await redis.hgetall("online-users")
+    const friends: string[] = await redis.smembers(`friends-${userId}`)
+
+    const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+      const userStatus = onlineUsers[key]
+      if ((key === userId || friends.includes(key)) && userStatus) {
+        result[key] = userStatus
+      }
+      return result
+    }, {} as Record<string, string>)
 
     const friendSocketId = await redis.hget(`userSocketId`, friendId)
 
     if (!friendSocketId) return
 
-    // const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
-    //   const userStatus = onlineUsers[key]
-    //   if ((key === userId || friends.includes(key)) && userStatus) {
-    //     result[key] = userStatus
-    //   }
-    //   return result
-    // }, {} as Record<string, string>)
-
-    // console.log("filteredOnlineFriends", filteredOnlineFriends)
-
-    // return io.emit("getOnlineFriends", filteredOnlineFriends)
-
-    return io.to(friendSocketId).emit("added-as-friend")
+    io.to(friendSocketId).emit("added-as-friend")
+    io.to(friendSocketId).emit("getOnlineFriends", filteredOnlineFriends)
+    io.to(socket.id).emit("getOnlineFriends", filteredOnlineFriends)
   })
 
   socket.on("connected-to-room", async (chatroomId) => {
