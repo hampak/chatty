@@ -10,6 +10,7 @@ import CreateChatModal from "./CreateChatModal"
 import { useEffect } from "react"
 import { socket } from "@/utils/io"
 import { useQueryClient } from "@tanstack/react-query"
+import { useSocket } from "../context/SocketContext"
 
 const Label = ({ children, title }: { children: React.ReactNode, title: string }) => {
   return (
@@ -56,8 +57,10 @@ const FriendDropdown = ({ children, name }: FriendDropdownProps) => {
 
 
 const FriendsList = ({ userId }: { userId?: string }) => {
+
   const queryClient = useQueryClient()
   const { data, isPending } = useGetFriendsList({ userId: userId })
+  const { onlineFriends } = useSocket()
 
   useEffect(() => {
     socket.on("added-as-friend", async () => {
@@ -65,23 +68,37 @@ const FriendsList = ({ userId }: { userId?: string }) => {
     })
   }, [queryClient, userId])
 
+  console.log("onlineFriends", onlineFriends)
+
+  const friendStatus = (friendId: string): "online" | "away" | "offline" => {
+    return onlineFriends[friendId] || "offline"
+  }
+
+  // const statusIndicator = friendStatus === "online" ? (
+  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+  // ) : "away" ? (
+  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
+  // ) : (
+  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
+  // )
+
   return (
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">
       {/* Add Friend Modal */}
       <div className="h-[18%] flex flex-col items-center justify-evenly bg-blue-400s">
         <div className="h-12 w-12 aspect-square bg-black rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-150 hover:rounded-xl">
+          {/* <Label title="Add a Friend"> */}
           <AddFriendModal>
-            <Label title="Add a Friend">
-              <Plus className="text-white" size={22} />
-            </Label>
+            <Plus className="text-white" size={22} />
           </AddFriendModal>
+          {/* </Label> */}
         </div>
         <div className="h-12 w-12 aspect-square rounded-3xl flex items-center justify-center bg-black cursor-pointer transition-all duration-150 hover:rounded-xl">
+          {/* <Label title="Create a Chat"> */}
           <CreateChatModal data={data}>
-            <Label title="Create a Chat">
-              <MessageCirclePlus className="text-white" size={22} />
-            </Label>
+            <MessageCirclePlus className="text-white" size={22} />
           </CreateChatModal>
+          {/* </Label> */}
         </div>
         <Separator className="h-1 rounded-lg w-[60%]" />
       </div>
@@ -93,18 +110,32 @@ const FriendsList = ({ userId }: { userId?: string }) => {
             <Loader2 className="animate-spin h-5 w-5" />
           ) : (
             Array.isArray(data) && data.length > 0 ? (
-              data.map(f => (
-                <Avatar className="h-12 w-12" key={f.userId}>
-                  <FriendDropdown
-                    name={f.name}
-                  >
-                    <AvatarImage
-                      className="rounded-3xl hover:rounded-xl transition-all duration-150 hover:cursor-pointer border border-gray-200"
-                      src={f.image}
-                    />
-                  </FriendDropdown>
-                </Avatar>
-              ))
+              data.map(f => {
+
+                const status = friendStatus(f.userId)
+
+                const statusIndicator = status === "online" ? (
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                ) : status === "away" ? (
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
+                ) : (
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
+                );
+
+                return (
+                  <Avatar className="h-12 w-12 relative" key={f.userId}>
+                    <FriendDropdown
+                      name={f.name}
+                    >
+                      <AvatarImage
+                        className="rounded-3xl hover:rounded-xl transition-all duration-150 hover:cursor-pointer border border-gray-200"
+                        src={f.image}
+                      />
+                      {statusIndicator}
+                    </FriendDropdown>
+                  </Avatar>
+                )
+              })
             ) : (
               <></>
             )

@@ -16,14 +16,17 @@ export default function UserProvider({
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isLoading } = useQuery({
     queryKey: ["get_user"],
     queryFn: async () => {
-      const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
-        withCredentials: true,
-      })
-      console.log(response.data)
-      return response.data
+      try {
+        const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
+          withCredentials: true,
+        })
+        return response.data
+      } catch {
+        return null
+      }
     },
     // refetchOnWindowFocus: true,
     // staleTime: 10 * 1000
@@ -54,7 +57,8 @@ export default function UserProvider({
   //   checkUser()
   // }, [serverURL])
 
-  if (!data || isPending) return null
+  // if (!data && isPending) return null
+  if (isLoading) return null
 
   console.log("data", data)
 
