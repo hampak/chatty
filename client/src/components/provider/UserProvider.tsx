@@ -3,8 +3,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../../types";
 
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
-const UserContext = createContext<{ user: User | null; loading: boolean } | null>(null)
+// const UserContext = createContext<{ user: User | null; loading: boolean } | null>(null)
+const UserContext = createContext<{ user: User | null; isPending: boolean } | null>(null)
 
 export default function UserProvider({
   children
@@ -14,34 +16,53 @@ export default function UserProvider({
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const { data, isPending } = useQuery({
+    queryKey: ["get_user"],
+    queryFn: async () => {
+      const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
+        withCredentials: true,
+      })
+      console.log(response.data)
+      return response.data
+    },
+    // refetchOnWindowFocus: true,
+    // staleTime: 10 * 1000
+  })
+  // useEffect(() => {
 
-    const checkUser = async () => {
+  //   const checkUser = async () => {
 
-      try {
-        const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
-          withCredentials: true,
-        })
+  //     try {
+  //       const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
+  //         withCredentials: true,
+  //       })
 
-        const { data, status } = response
+  //       const { data, status } = response
 
-        if (status === 200) {
-          setUser(data)
-        } else if (status === 401) {
-          setUser(null)
-        }
-      } catch {
-        setUser(null)
-      } finally {
-        setLoading(false)
-      }
-    }
+  //       if (status === 200) {
+  //         setUser(data)
+  //       } else if (status === 401) {
+  //         setUser(null)
+  //       }
+  //     } catch {
+  //       setUser(null)
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
 
-    checkUser()
-  }, [serverURL])
+  //   checkUser()
+  // }, [serverURL])
+
+  if (!data || isPending) return null
+
+  console.log("data", data)
 
   return (
-    <UserContext.Provider value={{ user, loading }}>
+    // <UserContext.Provider value={{ user, loading }}>
+    //   {children}
+    // </UserContext.Provider>
+    <UserContext.Provider value={{ user: data, isPending }}>
       {children}
     </UserContext.Provider>
   )
