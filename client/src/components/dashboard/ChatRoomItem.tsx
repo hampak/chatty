@@ -15,20 +15,22 @@ interface ChatRoomItem {
     }[],
     createdAt: Date,
     updatedAt: Date,
-    image: string
+    lastMessage: string
   },
   user: User | null,
   friendStatuses?: { [friendId: string]: 'online' | 'away' };
 }
 
-const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
+const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
 
   const { chatId } = useParams()
   const [lastMessage, setLastMesage] = useState("")
 
-  const { title, image, id, participants } = data
+  const { title, id } = data
 
   useEffect(() => {
+
+    setLastMesage(data.lastMessage)
 
     socket.on("lastMessage", async (message, chatroomId) => {
       console.log(message)
@@ -40,7 +42,7 @@ const ChatRoomItem = ({ data, friendStatuses, user }: ChatRoomItem) => {
     return (() => {
       socket.off("lastMessage")
     })
-  }, [data.id, lastMessage])
+  }, [data.id, lastMessage, data.lastMessage])
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>

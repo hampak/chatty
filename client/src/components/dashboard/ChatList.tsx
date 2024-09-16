@@ -10,7 +10,7 @@ const ChatList = () => {
 
 
   const { user } = useUser()
-  const { data, isPending } = useGetChatsList({ userId: user?.id })
+  const { data, isLoading } = useGetChatsList({ userId: user?.id })
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const ChatList = () => {
     })
   }, [queryClient, user?.id])
 
-  if (isPending || !data) {
+  if (isLoading || !data) {
     return (
       <div className="mt-2 h-full w-full bg-green-700s">
         <div className="flex items-center justify-center h-full">
@@ -29,18 +29,17 @@ const ChatList = () => {
     )
   }
 
+
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">
       {
         data && Array.isArray(data) && data.length > 0 ? (
           data.map((room, index) => {
-            // const statuses = getFriendStatus(room.participants)
             return (
               <div key={index} className="w-full">
                 <ChatRoomItem
                   data={room}
                   user={user}
-                // friendStatuses={statuses}
                 />
               </div>
             )

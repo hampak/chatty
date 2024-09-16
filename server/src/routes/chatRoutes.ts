@@ -116,19 +116,28 @@ const chatRoutes = express.Router()
         participants: { $elemMatch: { participantId: userId } }
       })
 
-      const chatRooms = data.map(room => {
+      const chatRooms = await Promise.all(data.map(async room => {
+
+        let lastMessage
+
+        const lastMessageRaw = await redis.zrange(`messages-${room._id}`, -1, -1)
+
+        lastMessage = lastMessageRaw[0] ? JSON.parse(lastMessageRaw[0]) : ""
 
         const allParticipants = room.room_title.split("|").map(p => p.trim())
         const friendName = allParticipants.find(p => p !== name)
+
+        console.log("lastMessage", lastMessage.message)
 
         return {
           id: room._id,
           createdAt: room.createdAt,
           updatedAt: room.updatedAt,
           title: friendName,
-          participants: room.participants
+          participants: room.participants,
+          lastMessage: lastMessage.message
         }
-      })
+      }))
       console.log("chat-rooms", chatRooms)
       res.status(200).json(chatRooms)
     } catch (error) {

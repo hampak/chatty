@@ -17,7 +17,7 @@ export type ChatList = {
   ],
   createdAt: Date,
   updatedAt: Date,
-  image: string
+  lastMessage: string
 }[]
 
 export type Chat = {
