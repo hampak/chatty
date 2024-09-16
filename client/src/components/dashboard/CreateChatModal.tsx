@@ -22,6 +22,7 @@ import { useCreateChat } from "@/lib/data"
 import { useUser } from "../provider/UserProvider"
 import { AxiosError } from "axios"
 import { toast } from "sonner"
+import { socket } from "@/utils/io"
 
 
 
@@ -45,6 +46,8 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
 
   const onSubmit = (values: z.infer<typeof startChatWithFriendSchema>) => {
 
+    const friendIds = values.friendData.map(friend => friend.friendId)
+
     createChat({
       friendData: values.friendData,
       currentUserId: user!.id,
@@ -56,7 +59,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
         toast.success(data.message)
-        // socket.emit("add-friend", user?.id)
+        socket.emit("added-in-chatroom", user?.id, friendIds)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

@@ -64,23 +64,14 @@ const FriendsList = ({ userId }: { userId?: string }) => {
 
   useEffect(() => {
     socket.on("added-as-friend", async () => {
+      console.log("you have been added by another user!")
       await queryClient.invalidateQueries({ queryKey: ["friend_list", userId] })
     })
   }, [queryClient, userId])
 
-  console.log("onlineFriends", onlineFriends)
-
   const friendStatus = (friendId: string): "online" | "away" | "offline" => {
     return onlineFriends[friendId] || "offline"
   }
-
-  // const statusIndicator = friendStatus === "online" ? (
-  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-  // ) : "away" ? (
-  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
-  // ) : (
-  //   <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />
-  // )
 
   return (
     <div className="w-[18%] h-full bg-red-200s border-r-[1px] p-1 flex-col">

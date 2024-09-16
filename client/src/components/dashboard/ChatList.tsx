@@ -1,31 +1,23 @@
 import { useUser } from "@/components/provider/UserProvider";
 import { useGetChatsList } from "@/lib/data";
+import { socket } from "@/utils/io";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, MessageCirclePlus } from "lucide-react";
-import { useSocket } from "../context/SocketContext";
+import { useEffect } from "react";
 import ChatRoomItem from "./ChatRoomItem";
 
 const ChatList = () => {
 
 
   const { user } = useUser()
-  const { onlineFriends } = useSocket()
   const { data, isPending } = useGetChatsList({ userId: user?.id })
+  const queryClient = useQueryClient()
 
-  // console.log("data", data)
-
-  // const getFriendStatus = (participantIds: string[]): { [friendId: string]: "online" | "away" } => {
-  //   if (!user || !onlineFriends) return {}
-
-  //   const friendIds = participantIds.filter(id => id !== user.id);
-  //   const statuses = friendIds.reduce<{ [friendId: string]: 'online' | 'away' }>((acc, friendId) => {
-  //     const status = onlineFriends[friendId];
-  //     if (status) {
-  //       acc[friendId] = status;
-  //     }
-  //     return acc;
-  //   }, {});
-  //   return statuses;
-  // }
+  useEffect(() => {
+    socket.on("added-in-chatroom", async () => {
+      await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
+    })
+  }, [queryClient, user?.id])
 
   if (isPending || !data) {
     return (

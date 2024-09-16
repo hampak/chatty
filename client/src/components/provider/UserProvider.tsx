@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 import { User } from "../../types";
 
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 // const UserContext = createContext<{ user: User | null; loading: boolean } | null>(null)
 const UserContext = createContext<{ user: User | null; isPending: boolean } | null>(null)

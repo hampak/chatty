@@ -199,6 +199,19 @@ io.on("connection", async (socket: CustomSocket) => {
     io.to(socket.id).emit("getOnlineFriends", filteredOnlineFriends)
   })
 
+  socket.on("added-in-chatroom", async (currentUserId, friendIds: string[]) => {
+
+    const friendSocketIds = await Promise.all(friendIds.map(async (friendId) => {
+      return redis.hget("userSocketId", friendId)
+    }))
+
+    const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
+
+    validSocketIds.forEach(socketId => {
+      return io.to(socketId).emit("added-in-chatroom")
+    })
+  })
+
   socket.on("connected-to-room", async (chatroomId) => {
     await socket.join(chatroomId);
 
