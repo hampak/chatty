@@ -29,8 +29,10 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
   const { title, id } = data
 
   useEffect(() => {
-
     setLastMesage(data.lastMessage)
+  }, [data.lastMessage])
+
+  useEffect(() => {
 
     socket.on("lastMessage", async (message, chatroomId) => {
       console.log(message)
@@ -42,7 +44,7 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
     return (() => {
       socket.off("lastMessage")
     })
-  }, [data.id, lastMessage, data.lastMessage])
+  }, [data.id, lastMessage])
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>
