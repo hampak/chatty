@@ -22,11 +22,10 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
   const { chatroomId } = data
 
   useEffect(() => {
-    socket.emit("connected-to-room", chatroomId)
+    socket.emit("connected-to-room", chatroomId, user.id)
 
-    socket.on("joined-chatroom", (message) => {
+    socket.on("joined-chatroom", () => {
       setIsConnected(true)
-      console.log(message)
     })
 
 
@@ -36,7 +35,7 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
       socket.off("connected-to-room")
     })
     // need to handle the case where the user navigates to another chatroom. Because right now, chats are being sent to another room
-  }, [chatroomId])
+  }, [chatroomId, user.id])
 
   console.log("data", data)
 

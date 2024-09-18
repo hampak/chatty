@@ -1,8 +1,8 @@
 import dotenv from "dotenv"
 import express from "express"
 import { ChatRoom, User } from "../db/models"
-import { checkAuthStatus } from "../utils/middleware"
 import { redis } from "../db/redis"
+import { checkAuthStatus } from "../utils/middleware"
 
 dotenv.config()
 
@@ -100,7 +100,8 @@ const chatRoutes = express.Router()
   })
 
   .get("/chat-list", checkAuthStatus, async (req, res) => {
-    const { userId } = req.query
+    const { userId } = await req.query
+    const currentUserId = userId?.toString()
 
     const user = await User.findById(userId)
 
@@ -110,7 +111,7 @@ const chatRoutes = express.Router()
       })
     }
 
-    const { name, image } = user
+    const { name } = user
 
     try {
       const data = await ChatRoom.find({
@@ -120,6 +121,7 @@ const chatRoutes = express.Router()
       const chatRooms = await Promise.all(data.map(async room => {
 
         let lastMessage
+        let chatRoomId = room._id
 
         const lastMessageRaw = await redis.zrange(`messages-${room._id}`, -1, -1)
 
@@ -128,7 +130,14 @@ const chatRoutes = express.Router()
         const allParticipants = room.room_title.split("|").map(p => p.trim())
         const friendName = allParticipants.find(p => p !== name)
 
-        console.log("lastMessage", lastMessage.message)
+        const lastSeenTimestamp = await redis.get(`last_seen-${userId}-${chatRoomId}`)
+
+        if (!lastSeenTimestamp) {
+          const totalMessages = await redis.zcount(`messages-${chatRoomId}`, "-inf", "+inf")
+          return totalMessages;
+        }
+
+        const unreadMessagesCount = await redis.zcount(`messages-${chatRoomId}`, lastSeenTimestamp, "+inf")
 
         return {
           id: room._id,
@@ -136,7 +145,8 @@ const chatRoutes = express.Router()
           updatedAt: room.updatedAt,
           title: friendName,
           participants: room.participants,
-          lastMessage: lastMessage.message
+          lastMessage: lastMessage.message,
+          unreadMessagesCount
         }
       }))
       console.log("chat-rooms", chatRooms)

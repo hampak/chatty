@@ -15,7 +15,8 @@ interface ChatRoomItem {
     }[],
     createdAt: Date,
     updatedAt: Date,
-    lastMessage: string
+    lastMessage: string,
+    unreadMessagesCount: number
   },
   user: User | null,
   friendStatuses?: { [friendId: string]: 'online' | 'away' };
@@ -25,6 +26,9 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
 
   const { chatId } = useParams()
   const [lastMessage, setLastMesage] = useState("")
+  // const [unreadMessagesCount, setUnreadMessagesCount] = useState()
+
+  console.log("unread", data.unreadMessagesCount)
 
   const { title, id } = data
 
@@ -48,7 +52,7 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>
-      <div className="relative flex min-w-[90%] max-w-[90%] bg-blue-30 space-x-2">
+      <div className="relative flex min-w-[90%] max-w-[90%] bg-blue-300s space-x-2">
         {
           data.participants.length === 2 ? (
             data.participants
@@ -103,8 +107,15 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
           <p className="text-xs font-base max-w-full truncate bg-blue-200s">{lastMessage}</p>
         </div>
       </div>
-      <div className="bg-red-200s mb-auto">
-        <span className="text-xs text-gray-500">6/25</span>
+      <div className="bg-red-200s mb-auto flex flex-col bg-blue-300s h-full items-center justify-between">
+        <p className="text-xs text-gray-500">6/25</p>
+        {
+          data.unreadMessagesCount === 0 ? null : (
+            <p className="text-xs mt-1 text-white bg-red-500 w-5 h-5 flex items-center justify-center rounded-full">
+              {data.unreadMessagesCount}
+            </p>
+          )
+        }
       </div>
     </div>
   )

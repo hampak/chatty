@@ -17,7 +17,8 @@ export type ChatList = {
   ],
   createdAt: Date,
   updatedAt: Date,
-  lastMessage: string
+  lastMessage: string,
+  unreadMessagesCount: number
 }[]
 
 export type Chat = {
