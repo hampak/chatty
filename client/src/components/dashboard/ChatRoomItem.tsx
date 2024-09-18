@@ -51,7 +51,7 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
       console.log(message)
       if (data.id === chatroomId) {
         setLastMesage(message)
-        if (!chatId) {
+        if (!chatId || chatId !== chatroomId) {
           setUnreadMessages(prevCount => prevCount + 1)
         }
       }
