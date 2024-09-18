@@ -213,7 +213,7 @@ io.on("connection", async (socket: CustomSocket) => {
     const timestamp = Date.now()
     const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
 
-    io.to(chatroomId).emit("joined-chatroom", `${chatroomId} has joined the room`)
+    io.to(chatroomId).emit("joined-chatroom")
   })
 
   socket.on("leave-chatroom", async (chatroomId) => {

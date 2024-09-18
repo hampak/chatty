@@ -26,15 +26,24 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
 
   const { chatId } = useParams()
   const [lastMessage, setLastMesage] = useState("")
-  // const [unreadMessagesCount, setUnreadMessagesCount] = useState()
+  const [unreadMessages, setUnreadMessages] = useState<number>(0)
+  // const [isInThisChatroom, setIsInThisChatroom] = useState(false)
 
-  console.log("unread", data.unreadMessagesCount)
+  console.log("chatId", chatId)
 
   const { title, id } = data
 
   useEffect(() => {
     setLastMesage(data.lastMessage)
-  }, [data.lastMessage])
+    setUnreadMessages(data.unreadMessagesCount)
+  }, [data.lastMessage, data.unreadMessagesCount])
+
+  useEffect(() => {
+    if (chatId === data.id) {
+      // setIsInThisChatroom(prev => !prev)
+      setUnreadMessages(0)
+    }
+  }, [chatId, data.id])
 
   useEffect(() => {
 
@@ -42,13 +51,16 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
       console.log(message)
       if (data.id === chatroomId) {
         setLastMesage(message)
+        if (!chatId) {
+          setUnreadMessages(prevCount => prevCount + 1)
+        }
       }
     })
 
     return (() => {
       socket.off("lastMessage")
     })
-  }, [data.id, lastMessage])
+  }, [data.id, lastMessage, chatId])
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>
@@ -110,9 +122,9 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
       <div className="bg-red-200s mb-auto flex flex-col bg-blue-300s h-full items-center justify-between">
         <p className="text-xs text-gray-500">6/25</p>
         {
-          data.unreadMessagesCount === 0 ? null : (
-            <p className="text-xs mt-1 text-white bg-red-500 w-5 h-5 flex items-center justify-center rounded-full">
-              {data.unreadMessagesCount}
+          unreadMessages === 0 ? null : (
+            <p className="text-[0.6rem] mt-1.5 text-white bg-red-500 w-[1.1rem] h-[1.1rem] flex items-center justify-center rounded-full">
+              {unreadMessages}
             </p>
           )
         }

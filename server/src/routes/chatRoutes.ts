@@ -132,12 +132,25 @@ const chatRoutes = express.Router()
 
         const lastSeenTimestamp = await redis.get(`last_seen-${userId}-${chatRoomId}`)
 
+        let unreadMessagesCount = 0;
+
         if (!lastSeenTimestamp) {
-          const totalMessages = await redis.zcount(`messages-${chatRoomId}`, "-inf", "+inf")
-          return totalMessages;
+          const allMessages = await redis.zrange(`messages-${chatRoomId}`, 0, -1);
+          const unreadMessages = allMessages.filter(message => {
+            const parsedMessage = JSON.parse(message)
+            return parsedMessage.senderId !== currentUserId
+          })
+          unreadMessagesCount = unreadMessages.length;
+        } else {
+          // const unreadMessagesCount = await redis.zcount(`messages-${chatRoomId}`, lastSeenTimestamp, "+inf")
+          const messagesAfterLastSeen = await redis.zrangebyscore(`messages-${chatRoomId}`, lastSeenTimestamp, "+inf")
+          const unreadMessages = messagesAfterLastSeen.filter(message => {
+            const parsedMessage = JSON.parse(message);
+            return parsedMessage.senderId !== currentUserId
+          })
+          unreadMessagesCount = unreadMessages.length
         }
 
-        const unreadMessagesCount = await redis.zcount(`messages-${chatRoomId}`, lastSeenTimestamp, "+inf")
 
         return {
           id: room._id,
