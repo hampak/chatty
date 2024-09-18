@@ -86,7 +86,8 @@ const chatRoutes = express.Router()
         await chatRoom.save()
 
         return res.status(200).json({
-          message: `Created a group chat with ${userNames.length} friends!`
+          message: `Created a group chat with ${userNames.length} friends!`,
+          chatroomId: chatRoom._id
         })
       }
 
@@ -183,6 +184,8 @@ const chatRoutes = express.Router()
     const allParticipants = room_title.split("|").map(p => p.trim())
     const friendName = allParticipants.find(p => p !== name)
 
+    const participantsId = chatRoomInfo.participants.map(p => p.participantId)
+
     const options: Intl.DateTimeFormatOptions = {
       day: '2-digit',
       month: 'long',
@@ -198,6 +201,7 @@ const chatRoutes = express.Router()
       chatroomId: _id,
       title: friendName,
       participants: allParticipants,
+      participantsId,
       createdAt: formattedDate,
       messages
     })

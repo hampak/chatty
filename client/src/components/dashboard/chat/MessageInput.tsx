@@ -5,6 +5,7 @@ import { socket } from "@/utils/io"
 import { messageSchema } from "@/utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SendIcon } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -17,10 +18,13 @@ interface MessageInputProps {
     online: boolean,
     picture: string,
     userTag: string
-  }
+  },
+  participants: string[]
 }
 
-const MessageInput = ({ isConnected, chatroomId, user }: MessageInputProps) => {
+const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageInputProps) => {
+
+  const [participantsIds, setParticipantsIds] = useState<string[]>([])
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -29,11 +33,22 @@ const MessageInput = ({ isConnected, chatroomId, user }: MessageInputProps) => {
     }
   })
 
+  useEffect(() => {
+
+    const participantsExcludingCurrentUser = participants.filter(p => p !== user.id)
+
+    setParticipantsIds(participantsExcludingCurrentUser)
+
+
+  }, [user.id, participants])
+
   const { getValues } = form
   const lengthOfMessage = getValues("message")
 
+  console.log("particiaptsn", participantsIds)
+
   const onSubmit = async (values: z.infer<typeof messageSchema>) => {
-    socket.emit("sendMessage", values.message, chatroomId, user.id)
+    socket.emit("sendMessage", values.message, chatroomId, user.id, participantsIds)
     form.reset()
   }
 

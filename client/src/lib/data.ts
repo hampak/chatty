@@ -142,7 +142,8 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
 interface ServerResponse {
   friendUserTag: string;
   friendId: string;
-  message: string
+  message: string,
+  chatroomId: string
 }
 
 export function useAddFriend() {

@@ -43,7 +43,7 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">
       <MessagesContainer user={user} messages={data.messages} />
-      <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} user={user} />
+      <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} user={user} participants={data.participantsId} />
     </div>
   )
 }

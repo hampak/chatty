@@ -24,6 +24,7 @@ export type Chat = {
   chatroomId: string,
   title: string,
   participants: string[],
+  participantsId: string[],
   createdAt: string,
   messages: {
     message: string,

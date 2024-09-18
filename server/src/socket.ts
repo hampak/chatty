@@ -199,7 +199,11 @@ io.on("connection", async (socket: CustomSocket) => {
     io.to(socket.id).emit("getOnlineFriends", filteredOnlineFriends)
   })
 
-  socket.on("added-in-chatroom", async (currentUserId, friendIds: string[]) => {
+  socket.on("added-in-chatroom", async (currentUserId, friendIds: string[], chatroomId) => {
+
+    await Promise.all(friendIds.map(async (friendId) => {
+      redis.sadd(`participants-${chatroomId}`, friendId)
+    }))
 
     const friendSocketIds = await Promise.all(friendIds.map(async (friendId) => {
       return redis.hget("userSocketId", friendId)
@@ -222,7 +226,8 @@ io.on("connection", async (socket: CustomSocket) => {
     await socket.leave(chatroomId)
   })
 
-  socket.on("sendMessage", async (message, chatroomId, senderId) => {
+  socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[]) => {
+
     try {
       const timestamp = Date.now()
       await redis.zadd(`messages-${chatroomId}`, timestamp, JSON.stringify({
@@ -230,7 +235,20 @@ io.on("connection", async (socket: CustomSocket) => {
         senderId: senderId,
         timestamp
       }))
-      io.to(chatroomId).emit("lastMessage", message, chatroomId)
+      // io.to(chatroomId).emit("lastMessage", message, chatroomId)
+
+      const friendSocketIds = await Promise.all(participantsIds.map(async (friendId) => {
+        return redis.hget("userSocketId", friendId)
+      }))
+
+      const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
+
+      validSocketIds.push(socket.id)
+
+      validSocketIds.forEach(socketId => {
+        io.to(socketId).emit("lastMessage", message, chatroomId)
+      })
+
       io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
     } catch (error) {
       console.log(error)

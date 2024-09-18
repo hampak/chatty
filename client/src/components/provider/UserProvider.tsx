@@ -23,13 +23,14 @@ export default function UserProvider({
         const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
           withCredentials: true,
         })
+        console.log("response", response)
         return response.data
       } catch {
         return null
       }
     },
-    // refetchOnWindowFocus: true,
-    // staleTime: 10 * 1000
+    refetchOnWindowFocus: true,
+    staleTime: 60 * 1000
   })
   // useEffect(() => {
 
