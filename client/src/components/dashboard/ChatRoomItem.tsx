@@ -98,7 +98,7 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
               </div>
             )
         }
-        <div className="mr-auto max-w-[70%] bg-red-200s">
+        <div className="mr-auto max-w-[70%] bg-red-200s truncate">
           {
             data.participants.length === 2 ? (
               <span className="text-sm font-semibold">
