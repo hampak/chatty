@@ -81,7 +81,6 @@ io.on("connection", async (socket: CustomSocket) => {
       }
 
       const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
-      const onlineUsersSocketIds: Record<string, string | undefined> = await redis.hgetall("userSocketId")
 
       const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
         const userStatus = onlineUsers[key]
@@ -91,45 +90,18 @@ io.on("connection", async (socket: CustomSocket) => {
         return result
       }, {} as Record<string, string>)
 
-      // const filteredOnlineFriendsSocketIds: Record<string, string> = Object.keys(onlineUsersSocketIds).reduce((result, key) => {
-      //   const userSocketId = onlineUsersSocketIds[key] ? onlineUsersSocketIds[key] : ""
-      //   if ((key === userId && friends.includes(key))) {
-      //     result[key] = userSocketId
-      //   }
-      //   return result
-      // }, {} as Record<string, string>)
-
-      // const friendSocketId = await redis.hget(`userSocketId`)
-
-      // const friendSocketIds = await Promise.all(friends.map(async (friendId) => {
-      //   const socketId = await redis.hget("userSocketId", friendId)
-      //   return { friendId, socketId }
-      // }))
-      // // console.log("friendSocketIds", friendSocketIds)
-
-      // const validSocketIds = friendSocketIds.filter(friend => friend.socketId !== null && friend.socketId !== undefined);
-
-      // validSocketIds.push({ friendId: userId, socketId: socket.id! })
-
-      // console.log("validSocketIds", validSocketIds)
-
       const friendSocketIds = await Promise.all(friends.map(async (friendId) => {
         return redis.hget("userSocketId", friendId)
       }))
-      // console.log("friendSocketIds", friendSocketIds)
 
       const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
 
       validSocketIds.push(socket.id)
 
-      console.log("validSocketIds", validSocketIds)
-
-      return validSocketIds.forEach(id => {
+      return validSocketIds.forEach(async id => {
         // io.to(socketId).emit("getOnlineFriends", filteredOnlineFriends, filteredOnlineFriendsSocketIds)
         io.to(id).emit("getOnlineFriends", filteredOnlineFriends)
       })
-
-      // return io.emit("getOnlineFriends", filteredOnlineFriends)
     } else if (status === "away") {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
 
