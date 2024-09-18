@@ -42,13 +42,21 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
 
   }, [user.id, participants])
 
-  const { getValues } = form
-  const lengthOfMessage = getValues("message")
+  const { watch } = form
 
-  console.log("particiaptsn", participantsIds)
+  const messageValue = watch("message")
+
+  const trimmedMessage = messageValue.trim();
 
   const onSubmit = async (values: z.infer<typeof messageSchema>) => {
-    socket.emit("sendMessage", values.message, chatroomId, user.id, participantsIds)
+
+    const trimmedMessage = values.message.trim()
+
+    if (!trimmedMessage) return
+
+    // socket.emit("sendMessage", values.message, chatroomId, user.id, participantsIds)
+    socket.emit("sendMessage", trimmedMessage, chatroomId, user.id, participantsIds);
+
     form.reset()
   }
 
@@ -78,7 +86,7 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
             />
           </div>
           <Button
-            disabled={!lengthOfMessage || !isConnected}
+            disabled={!trimmedMessage || !isConnected}
           >
             <SendIcon className="w-4 h-4" />
           </Button>

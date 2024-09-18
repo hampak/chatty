@@ -10,6 +10,7 @@ import ChatList from "./ChatList";
 import FriendsList from "./FriendsList";
 import LogoutAlert from "./LogoutAlert";
 import UserSettingsModal from "./UserSettingsModal";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
 
@@ -46,9 +47,9 @@ const Sidebar = () => {
 
       <div className="w-[82%] h-full bg-green-200s px-1">
         <div className="w-full h-[7%] bg-red-200s flex justify-between items-center border-b-[1px] px-3">
-          <span className="text-lg font-semibold">
+          <Link className="text-lg font-semibold" to="/dashboard">
             Chatty
-          </span>
+          </Link>
           <RxHamburgerMenu
             className={cn("h-5 w-5 hover:cursor-pointer transition-colors hover:text-gray-400 md:hidden")}
             onClick={toggleSidebar}
