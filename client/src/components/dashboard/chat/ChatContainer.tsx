@@ -31,11 +31,9 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
     return (() => {
       socket.off("joined-chatroom")
       socket.off("connected-to-room")
-      socket.emit("leave-chatroom", chatroomId)
+      socket.emit("leave-chatroom", chatroomId, user.id)
     })
   }, [chatroomId, user.id])
-
-  console.log("data", data)
 
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">

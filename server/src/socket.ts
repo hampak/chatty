@@ -209,14 +209,18 @@ io.on("connection", async (socket: CustomSocket) => {
   })
 
   socket.on("connected-to-room", async (chatroomId, userId) => {
-    await socket.join(chatroomId);
     const timestamp = Date.now()
-    // const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
+    await socket.join(chatroomId);
+    await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
 
     io.to(chatroomId).emit("joined-chatroom")
+    console.log("Joined the socket room")
+    // const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
   })
 
-  socket.on("leave-chatroom", async (chatroomId) => {
+  socket.on("leave-chatroom", async (chatroomId, userId) => {
+    const timestamp = Date.now()
+    await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
     await socket.leave(chatroomId)
   })
 
