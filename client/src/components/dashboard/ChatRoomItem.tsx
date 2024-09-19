@@ -35,8 +35,12 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
 
   useEffect(() => {
     setLastMesage(data.lastMessage)
+    // setUnreadMessages(data.unreadMessagesCount)
+  }, [data.lastMessage])
+
+  useEffect(() => {
     setUnreadMessages(data.unreadMessagesCount)
-  }, [data.lastMessage, data.unreadMessagesCount])
+  }, [data.unreadMessagesCount])
 
   useEffect(() => {
     if (chatId === data.id) {
@@ -48,10 +52,14 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
   useEffect(() => {
 
     socket.on("lastMessage", async (message, chatroomId) => {
-      console.log(message)
+      console.log("message", message, "chatroomId", chatroomId)
       if (data.id === chatroomId) {
+        console.log(data.id, chatroomId)
         setLastMesage(message)
-        if (!chatId || chatId !== chatroomId) {
+        // if (!chatId || chatId !== chatroomId) {
+        //   setUnreadMessages(prevCount => prevCount + 1)
+        // }
+        if (chatId !== chatroomId) {
           setUnreadMessages(prevCount => prevCount + 1)
         }
       }
@@ -60,7 +68,7 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
     return (() => {
       socket.off("lastMessage")
     })
-  }, [data.id, lastMessage, chatId])
+  }, [data.id, chatId])
 
   const content = (
     <div className={cn("w-full p-2 rounded-lg hover:bg-gray-100 flex items-center transition-colors", chatId === id ? "cursor-default bg-gray-100" : "hover:cursor-pointer")}>

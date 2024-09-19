@@ -211,7 +211,7 @@ io.on("connection", async (socket: CustomSocket) => {
   socket.on("connected-to-room", async (chatroomId, userId) => {
     await socket.join(chatroomId);
     const timestamp = Date.now()
-    const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
+    // const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
 
     io.to(chatroomId).emit("joined-chatroom")
   })
@@ -239,11 +239,22 @@ io.on("connection", async (socket: CustomSocket) => {
 
       validSocketIds.push(socket.id)
 
-      validSocketIds.forEach(socketId => {
-        io.to(socketId).emit("lastMessage", message, chatroomId)
-      })
 
       io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
+
+      // await Promise.all(validSocketIds.forEach(async socketId => {
+      //   return new Promise((resolve) => {
+      //     io.to(socketId).emit("lastMessage", message, chatroomId)
+      //     resolve()
+      //   })
+      // }))
+      await Promise.all(validSocketIds.map(async (socketId): Promise<void> => {
+        return new Promise((resolve) => {
+          io.to(socketId).emit("lastMessage", message, chatroomId)
+          resolve() // Resolve after emitting
+        })
+      }))
+
     } catch (error) {
       console.log(error)
     }

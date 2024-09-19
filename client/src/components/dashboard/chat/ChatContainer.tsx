@@ -28,13 +28,11 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
       setIsConnected(true)
     })
 
-
     return (() => {
-      socket.emit("leave-chatroom", chatroomId)
       socket.off("joined-chatroom")
       socket.off("connected-to-room")
+      socket.emit("leave-chatroom", chatroomId)
     })
-    // need to handle the case where the user navigates to another chatroom. Because right now, chats are being sent to another room
   }, [chatroomId, user.id])
 
   console.log("data", data)
