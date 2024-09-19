@@ -136,7 +136,7 @@ const authRoutes = express.Router()
           picture: savedUser?.image
         },
           JWT_SECRET!,
-          { expiresIn: "30m" }
+          { expiresIn: "60m" }
         )
 
         await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 1800)
@@ -147,7 +147,7 @@ const authRoutes = express.Router()
           picture: user?.image
         },
           JWT_SECRET!,
-          { expiresIn: "30m" }
+          { expiresIn: "60m" }
         )
 
         redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 1800)
@@ -234,7 +234,7 @@ const authRoutes = express.Router()
           picture: savedUser?.image
         },
           JWT_SECRET!,
-          { expiresIn: "30m" }
+          { expiresIn: "60m" }
         )
 
         await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 1800)
@@ -245,7 +245,7 @@ const authRoutes = express.Router()
           picture: user?.image
         },
           JWT_SECRET!,
-          { expiresIn: "30m" }
+          { expiresIn: "60m" }
         )
 
         redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 1800)

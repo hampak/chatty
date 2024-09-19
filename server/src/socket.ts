@@ -222,6 +222,7 @@ io.on("connection", async (socket: CustomSocket) => {
     const timestamp = Date.now()
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
     await socket.leave(chatroomId)
+    console.log("Left chatroom!")
   })
 
   socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[]) => {
