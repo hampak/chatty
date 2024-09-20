@@ -214,6 +214,13 @@ io.on("connection", async (socket: CustomSocket) => {
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
 
     io.to(chatroomId).emit("joined-chatroom")
+    const room = io.sockets.adapter.rooms.get(chatroomId);
+    if (room) {
+      const socketIds = Array.from(room);
+      console.log(socketIds);
+    } else {
+      console.log('Room does not exist or is empty.');
+    }
     console.log("Joined the socket room")
     // const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
   })

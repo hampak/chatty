@@ -31,7 +31,7 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
     return (() => {
       socket.off("joined-chatroom")
       socket.off("connected-to-room")
-      socket.emit("leave-chatroom", chatroomId, user.id)
+      // socket.emit("leave-chatroom", chatroomId, user.id)
     })
   }, [chatroomId, user.id])
 

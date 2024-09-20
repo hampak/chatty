@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { useUser } from "../provider/UserProvider";
 import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 
 interface OnlineFriends {
   [userId: string]: "online" | "away"
@@ -24,8 +25,10 @@ export const SocketProvider = ({
 
   const [onlineFriends, setOnlineFriends] = useState<OnlineFriends>({});
   const [currentStatus, setCurrentStatus] = useState<"online" | "away" | undefined>(undefined)
+
   const queryClient = useQueryClient()
   const { user } = useUser()
+  const { chatId } = useParams()
 
 
   useEffect(() => {
@@ -50,6 +53,12 @@ export const SocketProvider = ({
       socket.off("getOnlineFriends")
     }
   }, [user, queryClient])
+
+  useEffect(() => {
+    if (chatId) {
+      console.log(chatId)
+    } else return
+  }, [chatId])
 
   return (
     <SocketContext.Provider value={{ socket, onlineFriends, currentStatus }}>

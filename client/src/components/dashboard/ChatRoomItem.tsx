@@ -27,9 +27,6 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
   const { chatId } = useParams()
   const [lastMessage, setLastMesage] = useState("")
   const [unreadMessages, setUnreadMessages] = useState<number>(0)
-  // const [isInThisChatroom, setIsInThisChatroom] = useState(false)
-
-  console.log("chatId", chatId)
 
   const { title, id } = data
 
