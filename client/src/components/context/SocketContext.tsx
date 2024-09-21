@@ -59,6 +59,20 @@ export const SocketProvider = ({
     } else return
   }, [chatId])
 
+  useEffect(() => {
+    socket.emit("connected-to-room", chatroomId, user.id)
+
+    socket.on("joined-chatroom", () => {
+      setIsConnected(true)
+    })
+
+    return (() => {
+      socket.off("joined-chatroom")
+      socket.off("connected-to-room")
+      // socket.emit("leave-chatroom", chatroomId, user.id)
+    })
+  }, [chatroomId, user.id])
+
   return (
     <SocketContext.Provider value={{ socket, onlineFriends, currentStatus }}>
       {children}
