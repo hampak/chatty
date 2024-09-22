@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react"
+import { Chat } from "@/types"
+import { socket } from "@/utils/io"
+import { useEffect, useState } from "react"
 import MessageInput from "./MessageInput"
 import MessagesContainer from "./MessagesContainer"
-import { socket } from "@/utils/io"
-import { Chat } from "@/types"
 
 interface ChatContainerProps {
   data: Chat,
@@ -20,14 +20,9 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
   const [isConnected, setIsConnected] = useState(false)
   const { chatroomId } = data
 
-  const previousChatroomId = useRef<string | null>(null)
+  // const previousChatroomId = useRef<string | null>(null)
 
   useEffect(() => {
-
-    if (previousChatroomId.current && previousChatroomId.current !== chatroomId) {
-      console.log("Leaving previous room:", previousChatroomId.current);
-      socket.emit("leave-chatroom", previousChatroomId, user.id)
-    }
 
     socket.emit("connected-to-room", chatroomId, user.id)
 
@@ -35,15 +30,33 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
       setIsConnected(true)
     })
 
-    previousChatroomId.current = chatroomId
-
     return () => {
-      // socket.emit("leave-chatroom", chatroomId, user.id)
-      socket.off("leave-chatroom")
       socket.off("joined-chatroom")
       socket.off("connected-to-room")
     }
   }, [chatroomId, user.id])
+
+  // useEffect(() => {
+
+  //   if (previousChatroomId.current && previousChatroomId.current !== chatroomId) {
+  //     console.log("Leaving previous room:", previousChatroomId.current);
+  //     socket.emit("leave-chatroom", previousChatroomId, user.id)
+  //   }
+
+  //   socket.emit("connected-to-room", chatroomId, user.id)
+
+  //   socket.on("joined-chatroom", () => {
+  //     setIsConnected(true)
+  //   })
+
+  //   previousChatroomId.current = chatroomId
+
+  //   return () => {
+  //     socket.off("leave-chatroom")
+  //     socket.off("joined-chatroom")
+  //     socket.off("connected-to-room")
+  //   }
+  // }, [chatroomId, user.id])
 
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">
