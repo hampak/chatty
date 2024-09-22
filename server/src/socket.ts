@@ -217,7 +217,7 @@ io.on("connection", async (socket: CustomSocket) => {
     const room = io.sockets.adapter.rooms.get(chatroomId);
     if (room) {
       const socketIds = Array.from(room);
-      console.log(socketIds);
+      console.log("Socket Room after join", socketIds);
     } else {
       console.log('Room does not exist or is empty.');
     }
@@ -229,6 +229,13 @@ io.on("connection", async (socket: CustomSocket) => {
     const timestamp = Date.now()
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
     await socket.leave(chatroomId)
+    const room = io.sockets.adapter.rooms.get(chatroomId);
+    if (room) {
+      const socketIds = Array.from(room);
+      console.log("Socket Room after leave", socketIds);
+    } else {
+      console.log('Room does not exist or is empty.');
+    }
     console.log("Left chatroom!")
   })
 
@@ -279,7 +286,7 @@ io.on("connection", async (socket: CustomSocket) => {
 
     await redis.hdel("online-users", userId)
     const friends: string[] = await redis.smembers(`friends-${userId}`)
-    console.log("friends", friends)
+    // console.log("friends", friends)
     const onlineUsers = await redis.hgetall("online-users")
 
     const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {

@@ -40,7 +40,7 @@ const chatRoutes = express.Router()
           $expr: { $eq: [{ $size: "$participants" }, 2] }
         })
 
-        console.log("chatroomAlreadyExists", chatroomAlreadyExists)
+        // console.log("chatroomAlreadyExists", chatroomAlreadyExists)
 
         if (chatroomAlreadyExists) {
           // return user to the chatroom page with that specific user
@@ -57,7 +57,7 @@ const chatRoutes = express.Router()
 
         await chatRoom.save()
 
-        console.log("chatRoom", chatRoom)
+        // console.log("chatRoom", chatRoom)
 
         return res.status(200).json({
           message: `Created a chatroom with ${friendData[0].friendName}`
@@ -162,7 +162,7 @@ const chatRoutes = express.Router()
           unreadMessagesCount
         }
       }))
-      console.log("chat-rooms", chatRooms)
+      // console.log("chat-rooms", chatRooms)
       res.status(200).json(chatRooms)
     } catch (error) {
       res.status(400).json({
