@@ -59,19 +59,20 @@ export const SocketProvider = ({
     } else return
   }, [chatId])
 
-  useEffect(() => {
-    socket.emit("connected-to-room", chatroomId, user.id)
+  // useEffect(() => {
+  //   if (user === null) return
+  //   socket.emit("connected-to-room", chatId, user.id)
 
-    socket.on("joined-chatroom", () => {
-      setIsConnected(true)
-    })
+  //   // socket.on("joined-chatroom", () => {
+  //   //   setIsConnected(true)
+  //   // })
 
-    return (() => {
-      socket.off("joined-chatroom")
-      socket.off("connected-to-room")
-      // socket.emit("leave-chatroom", chatroomId, user.id)
-    })
-  }, [chatroomId, user.id])
+  //   return (() => {
+  //     socket.off("joined-chatroom")
+  //     socket.off("connected-to-room")
+  //     // socket.emit("leave-chatroom", chatroomId, user.id)
+  //   })
+  // }, [chatId, user])
 
   return (
     <SocketContext.Provider value={{ socket, onlineFriends, currentStatus }}>
