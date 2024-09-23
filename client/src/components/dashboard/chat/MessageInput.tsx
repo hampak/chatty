@@ -55,6 +55,7 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
     if (!trimmedMessage) return
 
     // socket.emit("sendMessage", values.message, chatroomId, user.id, participantsIds)
+    console.log("chatroomId", chatroomId)
     socket.emit("sendMessage", trimmedMessage, chatroomId, user.id, participantsIds);
 
     form.reset()

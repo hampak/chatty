@@ -53,12 +53,6 @@ export const SocketProvider = ({
     }
   }, [user, queryClient])
 
-  useEffect(() => {
-    if (chatId) {
-      console.log(chatId)
-    } else return
-  }, [chatId])
-
   // useEffect(() => {
   //   if (user === null) return
   //   socket.emit("connected-to-room", chatId, user.id)

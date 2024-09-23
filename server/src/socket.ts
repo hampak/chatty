@@ -251,6 +251,8 @@ io.on("connection", async (socket: CustomSocket) => {
       }))
       // io.to(chatroomId).emit("lastMessage", message, chatroomId)
 
+      io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
+
       const friendSocketIds = await Promise.all(participantsIds.map(async (friendId) => {
         return redis.hget("userSocketId", friendId)
       }))
@@ -259,8 +261,6 @@ io.on("connection", async (socket: CustomSocket) => {
 
       validSocketIds.push(socket.id)
 
-
-      io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
 
       // await Promise.all(validSocketIds.forEach(async socketId => {
       //   return new Promise((resolve) => {

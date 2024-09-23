@@ -1,6 +1,6 @@
 import { Chat } from "@/types"
 import { socket } from "@/utils/io"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import MessageInput from "./MessageInput"
 import MessagesContainer from "./MessagesContainer"
 
@@ -17,18 +17,26 @@ interface ChatContainerProps {
 
 const ChatContainer = ({ data, user }: ChatContainerProps) => {
 
-  const [isConnected, setIsConnected] = useState(false)
   const { chatroomId } = data
+  const [isConnected, setIsConnected] = useState(false)
 
-  // const previousChatroomId = useRef<string | null>(null)
+  const previousChatroomId = useRef<string | null>(null)
 
   useEffect(() => {
+
+    // if (previousChatroomId.current !== chatroomId) {
+    //   socket.emit("leave-chatroom", previousChatroomId, user.id)
+    // }
+
+    console.log("chatroomId", chatroomId)
 
     socket.emit("connected-to-room", chatroomId, user.id)
 
     socket.on("joined-chatroom", () => {
       setIsConnected(true)
+      previousChatroomId.current = chatroomId
     })
+
 
     return () => {
       socket.off("joined-chatroom")

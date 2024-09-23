@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils"
 import { socket } from "@/utils/io"
 import { useEffect, useRef, useState } from "react"
+import { useParams } from "react-router-dom"
 
 interface MessagesContainerProps {
   user: {
@@ -27,6 +28,7 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
 
   const [messageList, setMessageList] = useState<Message[]>([])
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const { chatId } = useParams()
 
 
   const getDateString = (timestamp: number) => {
@@ -43,16 +45,21 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
   }, [messages])
 
   useEffect(() => {
-    const handleMessage = (message: string, senderId: string, timestamp: number) => {
+    const handleMessage = (message: string, senderId: string, timestamp: number, incomingChatroomId: string) => {
       const newMessage: Message = { message, senderId, timestamp };
-      setMessageList((prevState) => [...prevState, newMessage]);
+
+      console.log(chatId, incomingChatroomId)
+
+      if (incomingChatroomId === chatId) {
+        setMessageList((prevState) => [...prevState, newMessage]);
+      }
     };
     socket.on("message", handleMessage)
 
     return () => {
       socket.off("message", handleMessage)
     }
-  }, [])
+  }, [chatId])
 
   useEffect(() => {
     if (chatContainerRef.current) {
