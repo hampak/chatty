@@ -1,38 +1,37 @@
 import { useGetFriendsList } from "@/lib/data"
+import { socket } from "@/utils/io"
 import { Avatar } from "@radix-ui/react-avatar"
+import { useQueryClient } from "@tanstack/react-query"
 import { Loader2, MessageCirclePlus, Plus } from "lucide-react"
+import { useEffect } from "react"
+import { useSocket } from "../context/SocketContext"
 import { AvatarImage } from "../ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Separator } from "../ui/separator"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import AddFriendModal from "./AddFriendModal"
 import CreateChatModal from "./CreateChatModal"
-import { useEffect } from "react"
-import { socket } from "@/utils/io"
-import { useQueryClient } from "@tanstack/react-query"
-import { useSocket } from "../context/SocketContext"
 
-const Label = ({ children, title }: { children: React.ReactNode, title: string }) => {
-  return (
-    <TooltipProvider
-      delayDuration={0}
-    >
-      <Tooltip>
-        <TooltipTrigger className="w-full h-full flex items-center justify-center">
-          {children}
-        </TooltipTrigger>
-        <TooltipContent
-          side="right"
-          sideOffset={10}
-          align="center"
-          className="bg-black"
-        >
-          <span className="text-white">{title}</span>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
-}
+// const Label = ({ children, title }: { children: React.ReactNode, title: string }) => {
+//   return (
+//     <TooltipProvider
+//       delayDuration={0}
+//     >
+//       <Tooltip>
+//         <TooltipTrigger className="w-full h-full flex items-center justify-center">
+//           {children}
+//         </TooltipTrigger>
+//         <TooltipContent
+//           side="right"
+//           sideOffset={10}
+//           align="center"
+//           className="bg-black"
+//         >
+//           <span className="text-white">{title}</span>
+//         </TooltipContent>
+//       </Tooltip>
+//     </TooltipProvider>
+//   )
+// }
 
 interface FriendDropdownProps {
   children: React.ReactNode;
