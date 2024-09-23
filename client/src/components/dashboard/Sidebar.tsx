@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 const Sidebar = () => {
 
   const { isOpen, toggleSidebar, openSidebar } = useSidebarStore()
-  const { user, loading } = useUser()
+  const { user, isPending: loading } = useUser()
   const { currentStatus } = useSocket()
 
   useEffect(() => {

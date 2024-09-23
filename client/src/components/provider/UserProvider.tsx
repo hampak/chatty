@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 import { User } from "../../types";
 
@@ -13,8 +13,8 @@ export default function UserProvider({
 }: { children: React.ReactNode }) {
 
   const serverURL = import.meta.env.VITE_API_URL
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  // const [user, setUser] = useState<User | null>(null)
+  // const [loading, setLoading] = useState(true)
 
   const { data, isPending, isLoading } = useQuery({
     queryKey: ["get_user"],

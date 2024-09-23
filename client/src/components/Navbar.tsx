@@ -8,7 +8,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 const Navbar = () => {
 
-  const { user, loading } = useUser()
+  const { user, isPending: loading } = useUser()
 
   return (
     <nav className="w-full p-5 border border-b flex justify-between items-center">

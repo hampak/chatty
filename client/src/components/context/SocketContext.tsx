@@ -1,9 +1,8 @@
 import { socket } from "@/utils/io";
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { useUser } from "../provider/UserProvider";
-import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
 
 interface OnlineFriends {
   [userId: string]: "online" | "away"
@@ -28,7 +27,6 @@ export const SocketProvider = ({
 
   const queryClient = useQueryClient()
   const { user } = useUser()
-  const { chatId } = useParams()
 
 
   useEffect(() => {
@@ -52,21 +50,6 @@ export const SocketProvider = ({
       socket.off("getOnlineFriends")
     }
   }, [user, queryClient])
-
-  // useEffect(() => {
-  //   if (user === null) return
-  //   socket.emit("connected-to-room", chatId, user.id)
-
-  //   // socket.on("joined-chatroom", () => {
-  //   //   setIsConnected(true)
-  //   // })
-
-  //   return (() => {
-  //     socket.off("joined-chatroom")
-  //     socket.off("connected-to-room")
-  //     // socket.emit("leave-chatroom", chatroomId, user.id)
-  //   })
-  // }, [chatId, user])
 
   return (
     <SocketContext.Provider value={{ socket, onlineFriends, currentStatus }}>
