@@ -30,7 +30,8 @@ export type Chat = {
   messages: {
     message: string,
     senderId: string,
-    timestamp: number
+    timestamp: number,
+    senderImage: string
   }[]
 }
 

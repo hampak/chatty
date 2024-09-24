@@ -15,14 +15,16 @@ interface MessagesContainerProps {
   messages: {
     message: string,
     senderId: string,
-    timestamp: number
+    timestamp: number,
+    senderImage: string
   }[]
 }
 
 interface Message {
   message: string;
   senderId: string;
-  timestamp: number
+  timestamp: number;
+  senderImage?: string
 }
 
 const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
@@ -46,8 +48,10 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
   }, [messages])
 
   useEffect(() => {
-    const handleMessage = (message: string, senderId: string, timestamp: number, incomingChatroomId: string) => {
-      const newMessage: Message = { message, senderId, timestamp };
+    const handleMessage = (message: string, senderId: string, timestamp: number, incomingChatroomId: string, senderImage: string) => {
+      const newMessage: Message = { message, senderId, timestamp, senderImage };
+
+      console.log("newMessage", newMessage)
 
       console.log(chatId, incomingChatroomId)
 
@@ -96,28 +100,46 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
               <div className={cn("mb-2", m.senderId === user.id ? "flex flex-col items-end" : "flex flex-col items-start")}>
                 {
                   m.senderId === user.id ? (
-                    <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg">
-                      {m.message}
-                    </p>
-                  ) : (
-                    <>
-                      <Avatar>
-                        <AvatarImage />
-                      </Avatar>
-                      <p className="py-1 px-2.5 bg-gray-200 rounded-tr-lg rounded-br-lg rounded-bl-lg">
+                    <div className="flex space-x-2">
+                      <div className="text-xs text-gray-400 mt-auto">
+                        {
+                          new Date(m.timestamp).toLocaleString([], {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })
+                        }
+                      </div>
+                      <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg">
                         {m.message}
                       </p>
-                    </>
+                    </div>
+                  ) : (
+                    <div className="flex space-x-2">
+                      <Avatar>
+                        <AvatarImage src={m.senderImage} />
+                      </Avatar>
+                      <p className="py-1 px-2.5 bg-gray-200 rounded-tr-lg rounded-br-lg rounded-bl-lg h-min mt-auto">
+                        {m.message}
+                      </p>
+                      <div className="text-xs text-gray-400 mt-auto">
+                        {
+                          new Date(m.timestamp).toLocaleString([], {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })
+                        }
+                      </div>
+                    </div>
                   )
                 }
-                <div className="text-xs text-gray-400">
+                {/* <div className="text-xs text-gray-400">
                   {
                     new Date(m.timestamp).toLocaleString([], {
                       hour: "2-digit",
                       minute: "2-digit"
                     })
                   }
-                </div>
+                </div> */}
               </div>
             </div>
           )

@@ -252,7 +252,7 @@ io.on("connection", async (socket: CustomSocket) => {
       }))
       // io.to(chatroomId).emit("lastMessage", message, chatroomId)
 
-      io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId)
+      io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId, senderImage)
 
       const friendSocketIds = await Promise.all(participantsIds.map(async (friendId) => {
         return redis.hget("userSocketId", friendId)
