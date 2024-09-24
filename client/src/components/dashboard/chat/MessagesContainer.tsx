@@ -75,7 +75,7 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
   return (
     <div
       ref={chatContainerRef}
-      className="bg-blue-300s h-[93%] overflow-y-auto w-full px-5 custom-scrollbar"
+      className="bg-blue-300s h-[93%] overflow-y-auto max-w-full px-5 custom-scrollbar pb-3"
     >
       {
         messageList.map((m, index) => {
@@ -97,10 +97,10 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
                   </div>
                 )
               }
-              <div className={cn("mb-2", m.senderId === user.id ? "flex flex-col items-end" : "flex flex-col items-start")}>
+              <div className={cn("mb-2 bg-red-200s", m.senderId === user.id ? "flex flex-col items-end" : "flex flex-col items-start")}>
                 {
                   m.senderId === user.id ? (
-                    <div className="flex space-x-2 bg-red-200s max-w-[60%] justify-end">
+                    <div className="flex space-x-2 bg-red-200s max-w-[300px] md:max-w-[550px] justify-end break-words">
                       <div className="text-xs text-gray-400 mt-auto">
                         {
                           new Date(m.timestamp).toLocaleString([], {
@@ -109,16 +109,16 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
                           })
                         }
                       </div>
-                      <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg break-words max-w-full">
+                      <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg break-words max-w-[85%]">
                         {m.message}
                       </p>
                     </div>
                   ) : (
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 bg-red-200s max-w-[300px] md:max-w-[550px] break-words">
                       <Avatar>
                         <AvatarImage src={m.senderImage} />
                       </Avatar>
-                      <p className="py-1 px-2.5 bg-gray-200 rounded-tr-lg rounded-br-lg rounded-bl-lg h-min mt-auto">
+                      <p className="py-1 px-2.5 bg-gray-200 rounded-tr-lg rounded-br-lg rounded-bl-lg h-min mt-auto break-words max-w-[80%]">
                         {m.message}
                       </p>
                       <div className="text-xs text-gray-400 mt-auto">

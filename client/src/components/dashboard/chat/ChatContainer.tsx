@@ -3,6 +3,8 @@ import { socket } from "@/utils/io"
 import { useEffect, useRef, useState } from "react"
 import MessageInput from "./MessageInput"
 import MessagesContainer from "./MessagesContainer"
+import { useSidebarStore } from "@/utils/zustand"
+import { cn } from "@/lib/utils"
 
 interface ChatContainerProps {
   data: Chat,
@@ -46,8 +48,10 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
     }
   }, [chatroomId, user.id])
 
+  const { isOpen } = useSidebarStore()
+
   return (
-    <div className="bg-red-200s h-[calc(100%-40px)] py-2">
+    <div className={cn("bg-red-500s h-[calc(100%-40px)] py-2", isOpen ? "" : "h-[calc(100vh-97px)]")}>
       <MessagesContainer user={user} messages={data.messages} />
       <MessageInput isConnected={isConnected} chatroomId={data.chatroomId} user={user} participants={data.participantsId} />
     </div>

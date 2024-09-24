@@ -11,12 +11,12 @@ const DashboardLayout = () => {
   const { isOpen, toggleSidebar } = useSidebarStore()
 
   return (
-    <main className="w-full h-screen bg-red-200s flex">
+    <main className="max-w-full h-screen bg-red-200s flex">
       <Sidebar />
       <div className="flex flex-col flex-1">
         <div className="flex flex-col w-full">
-          <div className={cn("md:hidden", isOpen ? "hidden" : "block w-full")}>
-            <div className="flex justify-between w-full items-center py-2 px-4 border-b">
+          <div className={cn("lg:hidden h-10 bg-blue-200s", isOpen ? "hidden" : "block w-full")}>
+            <div className="flex justify-between w-full items-center py-2 px-4 border-b h-full">
               <RxHamburgerMenu
                 className="h-5 w-5 hover:cursor-pointer transition-colors hover:text-gray-400"
                 onClick={toggleSidebar}

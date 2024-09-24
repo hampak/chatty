@@ -40,7 +40,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className={cn("w-[400px] h-full bg-green-200s py-2 border-r-[1px] bg-white inline-flex z-[40]", isOpen ? "fixed left-0 md:relative" : "hidden")}>
+    <div className={cn("w-[400px] h-full py-2 border-r-[1px] bg-white inline-flex z-[40]", isOpen ? "fixed left-0 lg:relative" : "hidden")}>
 
       {/* Friends List */}
       <FriendsList userId={user?.id} />
@@ -51,7 +51,7 @@ const Sidebar = () => {
             Chatty
           </Link>
           <RxHamburgerMenu
-            className={cn("h-5 w-5 hover:cursor-pointer transition-colors hover:text-gray-400 md:hidden")}
+            className={cn("h-5 w-5 hover:cursor-pointer transition-colors hover:text-gray-400 lg:hidden")}
             onClick={toggleSidebar}
           />
         </div>

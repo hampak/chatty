@@ -3,7 +3,7 @@ import { Toaster } from "sonner"
 
 const RootLayout = () => {
   return (
-    <main className="w-full h-screen bg-red-200s">
+    <main className="max-w-screen h-screen bg-red-200s">
       <Outlet />
       <Toaster richColors={true} />
     </main>
