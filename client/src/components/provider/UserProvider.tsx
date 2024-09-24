@@ -32,33 +32,7 @@ export default function UserProvider({
     refetchOnWindowFocus: true,
     staleTime: 60 * 1000
   })
-  // useEffect(() => {
 
-  //   const checkUser = async () => {
-
-  //     try {
-  //       const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
-  //         withCredentials: true,
-  //       })
-
-  //       const { data, status } = response
-
-  //       if (status === 200) {
-  //         setUser(data)
-  //       } else if (status === 401) {
-  //         setUser(null)
-  //       }
-  //     } catch {
-  //       setUser(null)
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-
-  //   checkUser()
-  // }, [serverURL])
-
-  // if (!data && isPending) return null
   if (isLoading) return null
 
   console.log("data", data)
