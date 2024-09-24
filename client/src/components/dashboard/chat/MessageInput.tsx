@@ -29,7 +29,8 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
     defaultValues: {
-      message: ""
+      message: "",
+      senderImage: user.picture
     }
   })
 
@@ -52,11 +53,13 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
 
     const trimmedMessage = values.message.trim()
 
+    const { senderImage } = values
+
     if (!trimmedMessage) return
 
     // socket.emit("sendMessage", values.message, chatroomId, user.id, participantsIds)
     console.log("chatroomId", chatroomId)
-    socket.emit("sendMessage", trimmedMessage, chatroomId, user.id, participantsIds);
+    socket.emit("sendMessage", trimmedMessage, chatroomId, user.id, participantsIds, senderImage);
 
     form.reset()
   }

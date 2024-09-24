@@ -1,3 +1,4 @@
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { socket } from "@/utils/io"
 import { useEffect, useRef, useState } from "react"
@@ -93,9 +94,22 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
                 )
               }
               <div className={cn("mb-2", m.senderId === user.id ? "flex flex-col items-end" : "flex flex-col items-start")}>
-                <p className={cn("py-1 px-2.5", m.senderId === user.id ? "bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg" : "bg-gray-200 rounded-tr-lg rounded-br-lg rounded-bl-lg")}>
-                  {m.message}
-                </p>
+                {
+                  m.senderId === user.id ? (
+                    <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg">
+                      {m.message}
+                    </p>
+                  ) : (
+                    <>
+                      <Avatar>
+                        <AvatarImage />
+                      </Avatar>
+                      <p className="py-1 px-2.5 bg-gray-200 rounded-tr-lg rounded-br-lg rounded-bl-lg">
+                        {m.message}
+                      </p>
+                    </>
+                  )
+                }
                 <div className="text-xs text-gray-400">
                   {
                     new Date(m.timestamp).toLocaleString([], {

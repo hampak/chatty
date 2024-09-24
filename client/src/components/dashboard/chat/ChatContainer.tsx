@@ -20,6 +20,8 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
   const { chatroomId } = data
   const [isConnected, setIsConnected] = useState(false)
 
+  console.log("data", data)
+
   const previousChatroomId = useRef<string | null>(null)
 
   useEffect(() => {
@@ -43,28 +45,6 @@ const ChatContainer = ({ data, user }: ChatContainerProps) => {
       socket.off("connected-to-room")
     }
   }, [chatroomId, user.id])
-
-  // useEffect(() => {
-
-  //   if (previousChatroomId.current && previousChatroomId.current !== chatroomId) {
-  //     console.log("Leaving previous room:", previousChatroomId.current);
-  //     socket.emit("leave-chatroom", previousChatroomId, user.id)
-  //   }
-
-  //   socket.emit("connected-to-room", chatroomId, user.id)
-
-  //   socket.on("joined-chatroom", () => {
-  //     setIsConnected(true)
-  //   })
-
-  //   previousChatroomId.current = chatroomId
-
-  //   return () => {
-  //     socket.off("leave-chatroom")
-  //     socket.off("joined-chatroom")
-  //     socket.off("connected-to-room")
-  //   }
-  // }, [chatroomId, user.id])
 
   return (
     <div className="bg-red-200s h-[calc(100%-40px)] py-2">

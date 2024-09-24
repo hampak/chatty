@@ -240,14 +240,15 @@ io.on("connection", async (socket: CustomSocket) => {
     console.log("Left chatroom!")
   })
 
-  socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[]) => {
+  socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[], senderImage) => {
 
     try {
       const timestamp = Date.now()
       await redis.zadd(`messages-${chatroomId}`, timestamp, JSON.stringify({
-        message: message,
-        senderId: senderId,
-        timestamp
+        message,
+        senderId,
+        timestamp,
+        senderImage
       }))
       // io.to(chatroomId).emit("lastMessage", message, chatroomId)
 
