@@ -13,7 +13,7 @@ const Chat = () => {
   if (!data || !user) return null
 
   return (
-    <div className="flex-1 h-full bg-green-100s p-2">
+    <div className="flex-1 h-full bg-green-100s p-2 max-w-screen">
       <ChatHeader
         chatId={chatId!}
         title={data?.title}

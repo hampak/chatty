@@ -100,7 +100,7 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
               <div className={cn("mb-2", m.senderId === user.id ? "flex flex-col items-end" : "flex flex-col items-start")}>
                 {
                   m.senderId === user.id ? (
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 bg-red-200s max-w-[60%] justify-end">
                       <div className="text-xs text-gray-400 mt-auto">
                         {
                           new Date(m.timestamp).toLocaleString([], {
@@ -109,7 +109,7 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
                           })
                         }
                       </div>
-                      <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg">
+                      <p className="py-1 px-2.5 bg-blue-500 text-white rounded-tl-lg rounded-br-lg rounded-bl-lg break-words max-w-full">
                         {m.message}
                       </p>
                     </div>
