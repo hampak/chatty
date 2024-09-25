@@ -3,6 +3,7 @@ import express from "express"
 import { ChatRoom, User } from "../db/models"
 import { redis } from "../db/redis"
 import { checkAuthStatus } from "../utils/middleware"
+import mongoose from "mongoose"
 
 dotenv.config()
 
@@ -173,6 +174,14 @@ const chatRoutes = express.Router()
 
   .get("/chat-info", checkAuthStatus, async (req, res) => {
     const { chatId, userId } = req.query
+
+    if (!chatId) return res.status(404)
+
+    if (!mongoose.Types.ObjectId.isValid(chatId.toString())) {
+      return res.status(400).json({
+        message: "Invalid chat room ID"
+      })
+    }
 
     const chatRoomInfo = await ChatRoom.findById(chatId)
     const user = await User.findById(userId)

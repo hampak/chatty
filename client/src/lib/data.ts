@@ -131,6 +131,9 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
           const errorMessage = error.response?.data.message || "An unexpected error has occurred"
 
           switch (status) {
+            case 400:
+              window.location.href = "/dashboard"
+              break;
             case 401:
               toast.error(errorMessage)
               setTimeout(() => window.location.href = "/login", 1200)
