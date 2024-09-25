@@ -3,6 +3,7 @@ import { useUser } from "../components/provider/UserProvider"
 import ChatHeader from "../components/dashboard/chat/ChatHeader"
 import { useGetChatInfo } from "../lib/data"
 import ChatContainer from "@/components/dashboard/chat/ChatContainer"
+import { Loader2 } from "lucide-react"
 
 const Chat = () => {
 
@@ -10,7 +11,13 @@ const Chat = () => {
   const { user } = useUser()
 
   const { data } = useGetChatInfo({ chatId: chatId, userId: user?.id })
-  if (!data || !user) return null
+  if (!data || !user) {
+    return (
+      <div className="flex-1 h-full flex items-center justify-center max-w-screen">
+        <Loader2 className="animate-spin" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 h-full bg-green-100s p-2 max-w-screen">
