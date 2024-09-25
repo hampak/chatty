@@ -250,7 +250,6 @@ io.on("connection", async (socket: CustomSocket) => {
         timestamp,
         senderImage
       }))
-      // io.to(chatroomId).emit("lastMessage", message, chatroomId)
 
       io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId, senderImage)
 
@@ -262,17 +261,10 @@ io.on("connection", async (socket: CustomSocket) => {
 
       validSocketIds.push(socket.id)
 
-
-      // await Promise.all(validSocketIds.forEach(async socketId => {
-      //   return new Promise((resolve) => {
-      //     io.to(socketId).emit("lastMessage", message, chatroomId)
-      //     resolve()
-      //   })
-      // }))
       await Promise.all(validSocketIds.map(async (socketId): Promise<void> => {
         return new Promise((resolve) => {
           io.to(socketId).emit("lastMessage", message, chatroomId)
-          resolve() // Resolve after emitting
+          resolve()
         })
       }))
 

@@ -189,6 +189,16 @@ const chatRoutes = express.Router()
       })
     }
 
+    const isParticipant = chatRoomInfo.participants.some(participant =>
+      participant.participantId.toString() === user._id.toString()
+    )
+
+    if (!isParticipant) {
+      return res.status(404).json({
+        message: "You're not part of this chat :("
+      })
+    }
+
     const rawMessages = await redis.zrange(`messages-${chatId}`, 0, -1, "WITHSCORES")
     const messages = []
     for (let i = 0; i < rawMessages.length; i += 2) {
