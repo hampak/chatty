@@ -179,12 +179,12 @@ const chatRoutes = express.Router()
 
     if (!user) {
       return res.status(401).json({
-        message: "Not authenticated"
+        message: "Session expired. Redirecting to login."
       })
     }
 
     if (!chatRoomInfo) {
-      return res.status(200).json({
+      return res.status(404).json({
         message: "Chatroom not found :/"
       })
     }
@@ -194,7 +194,7 @@ const chatRoutes = express.Router()
     )
 
     if (!isParticipant) {
-      return res.status(404).json({
+      return res.status(403).json({
         message: "You're not part of this chat :("
       })
     }

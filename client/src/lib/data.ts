@@ -127,8 +127,21 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
         return response.data
       } catch (error) {
         if (error instanceof AxiosError) {
-          toast.error(`${error.response?.data.message}`)
-          setTimeout(() => window.location.href = "/login", 1200)
+          const status = error.response?.status;
+          const errorMessage = error.response?.data.message || "An unexpected error has occurred"
+
+          switch (status) {
+            case 401:
+              toast.error(errorMessage)
+              setTimeout(() => window.location.href = "/login", 1200)
+              break;
+            case 404:
+              window.location.href = "/dashboard"
+              break;
+            case 403:
+              window.location.href = "/dashboard"
+              break;
+          }
         }
         return null
       }
