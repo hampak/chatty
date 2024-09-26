@@ -100,7 +100,7 @@ io.on("connection", async (socket: CustomSocket) => {
 
       return validSocketIds.forEach(async id => {
         // io.to(socketId).emit("getOnlineFriends", filteredOnlineFriends, filteredOnlineFriendsSocketIds)
-        io.to(id).emit("getOnlineFriends", filteredOnlineFriends)
+        io.to(id).emit("getOnlineFriends", filteredOnlineFriends, validSocketIds)
       })
     } else if (status === "away") {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
@@ -129,7 +129,7 @@ io.on("connection", async (socket: CustomSocket) => {
       validSocketIds.push(socket.id)
 
       validSocketIds.forEach(socketId => {
-        return io.to(socketId).emit("getOnlineFriends", filteredOnlineFriends)
+        return io.to(socketId).emit("getOnlineFriends", filteredOnlineFriends, validSocketIds)
       })
       // return io.emit("getOnlineFriends", filteredOnlineFriends)
     }
