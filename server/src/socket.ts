@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
 import { User } from "./db/models";
 import { redis } from "./db/redis";
-import { timeStamp } from "console";
+
 interface CustomSocket extends Socket {
   userId?: string
 }
@@ -61,6 +61,11 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 
 io.use(authenticateSocket)
 
+// 1. When user A connects for the first time (or refreshes), send a list of online friends to that user's client
+// 2. When user A's friend becomes online, update the other user's friend list so that User B's status is updated
+// 3. send a event to user B's friends + in the client, append that new info in the Socket Context.
+// 4. When user A refreshes, it's okay because user A's friendList had already been updated in step #2
+
 io.on("connection", async (socket: CustomSocket) => {
 
   const currentUserId = socket.userId
@@ -75,20 +80,29 @@ io.on("connection", async (socket: CustomSocket) => {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
       await redis.hset("online-users", userId!, "online")
 
+      const onlyCurrentUserOnline = { [currentUserId!]: "online" }
+
       if (friends.length === 0) {
-        const onlyCurrentUserOnline = { [currentUserId!]: "online" }
         return io.to(socket.id).emit("getOnlineFriends", onlyCurrentUserOnline)
       }
 
       const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
 
-      const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
-        const userStatus = onlineUsers[key]
-        if ((key === userId || friends.includes(key)) && userStatus) {
-          result[key] = userStatus
+      // const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
+      //   const userStatus = onlineUsers[key]
+      //   if ((key === userId || friends.includes(key)) && userStatus) {
+      //     result[key] = userStatus
+      //   }
+      //   return result
+      // }, {} as Record<string, string>)
+
+      const filteredOnlineFriends: Record<string, string> = friends.reduce((result, friendId) => {
+        const userStatus = onlineUsers[friendId];
+        if (userStatus) {
+          result[friendId] = userStatus;
         }
-        return result
-      }, {} as Record<string, string>)
+        return result;
+      }, {} as Record<string, string>);
 
       const friendSocketIds = await Promise.all(friends.map(async (friendId) => {
         return redis.hget("userSocketId", friendId)
