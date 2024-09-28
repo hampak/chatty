@@ -71,7 +71,9 @@ io.on("connection", async (socket: CustomSocket) => {
   const currentUserId = socket.userId
 
   // set user's socketID as a string
-  redis.set(`socketId:${currentUserId}`, socket.id)
+  // redis.set(`socketId:${currentUserId}`, socket.id)
+  redis.hset(`user:${currentUserId}`, "socketId", socket.id)
+
 
   redis.hset("userSocketId", currentUserId!, socket.id)
 
@@ -79,16 +81,26 @@ io.on("connection", async (socket: CustomSocket) => {
 
     const status = await redis.hget("online-users", userId)
 
-    // if the user is logging in || if the user already has a status of "online"
-    if (status === null || status === "online") {
-      const friends: string[] = await redis.smembers(`friends-${userId}`)
-      await redis.hset("online-users", userId!, "online")
+    // retrieve the current user's status
+    const Status = await redis.hget(`user:${userId}`, "status")
 
-      const onlyCurrentUserOnline = { [currentUserId!]: "online" }
+    // if the user is logging in || if the user already has a status of "online" (this would be applicable when the user refreshes the client, establishing a new socket connection)
+    if (status === null || status === "online") {
+
+      // retrieve the current user's friends
+      const friends: string[] = await redis.smembers(`friends-${userId}`)
+
+      // set current user's status in a string
+      await redis.hset("online-users", userId!, "online")
+      await redis.hset(`user:${userId}`, "status", "online")
+
+      const currentUserStatus = { [currentUserId!]: "online" }
 
       if (friends.length === 0) {
-        return io.to(socket.id).emit("getOnlineFriends", onlyCurrentUserOnline)
+        return io.to(socket.id).emit("getOnlineFriends", currentUserStatus)
       }
+
+      console.log("friend", friends)
 
       const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
 
