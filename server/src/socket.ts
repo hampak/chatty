@@ -69,6 +69,10 @@ io.use(authenticateSocket)
 io.on("connection", async (socket: CustomSocket) => {
 
   const currentUserId = socket.userId
+
+  // set user's socketID as a string
+  redis.set(`socketId:${currentUserId}`, socket.id)
+
   redis.hset("userSocketId", currentUserId!, socket.id)
 
   socket.on("userOnline", async (userId) => {

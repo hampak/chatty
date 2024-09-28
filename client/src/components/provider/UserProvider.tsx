@@ -23,7 +23,7 @@ export default function UserProvider({
         const response = await axios.get(serverURL ? `${serverURL}/api/user` : "/api/user", {
           withCredentials: true,
         })
-        console.log("response", response)
+        // console.log("response", response)
         return response.data
       } catch {
         return null
@@ -35,7 +35,7 @@ export default function UserProvider({
 
   if (isLoading) return null
 
-  console.log("data", data)
+  // console.log("data", data)
 
   return (
     // <UserContext.Provider value={{ user, loading }}>
