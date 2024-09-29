@@ -36,15 +36,8 @@ export const SocketProvider = ({
     if (user === null) return
     socket.emit("userOnline", user.id)
 
-    // socket.on("getOnlineFriends", (online: { [userId: string]: "online" | "away" }, responseTime) => {
-    // socket.on("getOnlineFriends", async (online: { [userId: string]: "online" | "away" }, friendsSocketIds) => {
-
     socket.on("retrieveCurrentUserStatus", async (data: "online" | "away") => {
       setCurrentStatus(data)
-    })
-
-    socket.on("retrieveOnlineFriends", async (data) => {
-      setOnlineFriends(data)
     })
 
     socket.on("getOnlineFriend", async (updatedFriendId: string, updatedFriendSocketId: string, updatedFriendStatus: "online" | "away") => {
@@ -67,12 +60,20 @@ export const SocketProvider = ({
     return () => {
       socket.off("userOnline")
       socket.off("getOnlineFriend")
-      socket.off("retrieveOnlineFriends")
     }
   }, [user, queryClient])
 
+  useEffect(() => {
+    socket.on("retrieveOnlineFriends", async (data) => {
+      setOnlineFriends(data)
+    })
+
+    return () => {
+      socket.off("retrieveOnlineFriends")
+    }
+  }, [])
+
   console.log("onlineFriends", onlineFriends)
-  console.log("currentUserStatus", currentStatus)
 
   // need to find a way to send a list of friend's socket ID's from the server to the client. Need to fix the issue of having to query redis to find friend's socket IDs every time I send a message
 
