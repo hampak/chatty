@@ -74,16 +74,10 @@ io.on("connection", async (socket: CustomSocket) => {
   // redis.set(`socketId:${currentUserId}`, socket.id)
   redis.hset(`user:${currentUserId}`, "socketId", socket.id)
 
-  // delete this
-  redis.hset("userSocketId", currentUserId!, socket.id)
-
   socket.on("userOnline", async (userId) => {
 
-    // delete this
-    const status = await redis.hget("online-users", userId)
-
     // retrieve the current user's status
-    const Status = await redis.hget(`user:${userId}`, "status")
+    const status = await redis.hget(`user:${userId}`, "status")
 
     // if the user is logging in || if the user already has a status of "online" (this would be applicable when the user refreshes the client, establishing a new socket connection)
     if (status === null || status === "online") {
@@ -94,21 +88,15 @@ io.on("connection", async (socket: CustomSocket) => {
       // set current user's status in a string
       await redis.hset(`user:${userId}`, "status", "online")
 
-      // delete this
-      await redis.hset("online-users", userId!, "online")
-
       const currentUserStatus = { [currentUserId!]: "online" }
 
       if (friends.length === 0) {
         return io.to(socket.id).emit("getOnlineFriends", currentUserStatus)
       }
 
-      // delete this
-      const onlineUsers: Record<string, string | undefined> = await redis.hgetall("online-users")
-
-      // const friendsSocketIdsPromise = friends.map(async (friendId) => {
-      //   return await redis.hget(`user:${friendId}`, "socketId")
-      // })
+      const friendsSocketIdsPromise: Promise<string | null>[] = friends.map(async (friendId) => {
+        return await redis.hget(`user:${friendId}`, "socketId")
+      })
 
       const friendDataPromises = friends.map(friendId => {
         return new Promise<[string | null, string | null]>((resolve) => {
@@ -119,28 +107,11 @@ io.on("connection", async (socket: CustomSocket) => {
       })
 
       const friendData: [string | null, string | null][] = await Promise.all(friendDataPromises)
+      const friendSocketId: (string | null)[] = await Promise.all(friendsSocketIdsPromise)
 
-      // const friendsSocketIds = await Promise.all(friendsSocketIdsPromise)
 
-      console.log("friendData", friendData)
 
-      // const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
-      //   const userStatus = onlineUsers[key]
-      //   if ((key === userId || friends.includes(key)) && userStatus) {
-      //     result[key] = userStatus
-      //   }
-      //   return result
-      // }, {} as Record<string, string>)
-
-      const filteredOnlineFriends: Record<string, string> = friends.reduce((result, friendId) => {
-        const userStatus = onlineUsers[friendId];
-        if (userStatus) {
-          result[friendId] = userStatus;
-        }
-        return result;
-      }, {} as Record<string, string>);
-
-      const filteredOnlineFriends2: Record<string, { status: string | null; socketId: string | null }> = friendData.reduce((result, [socketId, status], index) => {
+      const filteredOnlineFriends: Record<string, { status: string | null; socketId: string | null }> = friendData.reduce((result, [socketId, status], index) => {
         const friendId = friends[index]
         if (status && friendId) {
           result[friendId] = { status, socketId };
@@ -148,19 +119,19 @@ io.on("connection", async (socket: CustomSocket) => {
         return result
       }, {} as Record<string, { status: string | null; socketId: string | null }>);
 
-      console.log("filteredOnlineFriends2", filteredOnlineFriends2)
+      console.log("friendSocketId", friendSocketId)
+      console.log("filteredOnlineFriends", filteredOnlineFriends)
 
-      const friendSocketIds = await Promise.all(friends.map(async (friendId) => {
-        return redis.hget("userSocketId", friendId)
-      }))
+      io.to(socket.id).emit("retrieveOnlineFriends", filteredOnlineFriends)
 
-      const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
+      const validFriendSocketIds = friendSocketId.filter(id => id !== null && id !== undefined);
 
-      validSocketIds.push(socket.id)
+      // validSocketIds.push(socket.id)
 
-      return validSocketIds.forEach(async id => {
-        // io.to(socketId).emit("getOnlineFriends", filteredOnlineFriends, filteredOnlineFriendsSocketIds)
-        io.to(id).emit("getOnlineFriends", filteredOnlineFriends, validSocketIds)
+      return validFriendSocketIds.forEach(async id => {
+
+        // send the current user's id + socket id to his/her friends. The client will append / change this value and track it in a state
+        io.to(id).emit("getOnlineFriend", currentUserId, socket.id, status)
       })
     } else if (status === "away") {
       const friends: string[] = await redis.smembers(`friends-${userId}`)
