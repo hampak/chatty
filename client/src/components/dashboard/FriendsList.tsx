@@ -69,7 +69,8 @@ const FriendsList = ({ userId }: { userId?: string }) => {
   }, [queryClient, userId])
 
   const friendStatus = (friendId: string): "online" | "away" | "offline" => {
-    return onlineFriends[friendId] || "offline"
+    const friendData = onlineFriends[friendId]
+    return friendData ? friendData.status : "offline"
   }
 
   return (
