@@ -30,7 +30,7 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
 
   const form = useForm({
     defaultValues: {
-      status: currentStatus
+      status: currentStatus?.status
     }
   })
 
@@ -38,15 +38,15 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
   const selectedStatusInForm = form.watch("status")
 
   useEffect(() => {
-    setSelectedStatus(currentStatus)
+    setSelectedStatus(currentStatus?.status)
   }, [currentStatus])
 
   useEffect(() => {
     if (!open) {
       form.reset()
-      setSelectedStatus(currentStatus)
+      setSelectedStatus(currentStatus?.status)
     }
-  }, [open, setOpen, form, currentStatus])
+  }, [open, setOpen, form, currentStatus?.status])
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -95,7 +95,7 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
                     <FormControl>
                       <RadioGroup
                         className="w-full"
-                        defaultValue={currentStatus}
+                        defaultValue={currentStatus?.status}
                         onValueChange={(value: "online" | "away") => {
                           field.onChange(value)
                           setSelectedStatus(value)
@@ -148,7 +148,7 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={(!isDirty || selectedStatusInForm === currentStatus) || isLoading}
+                  disabled={(!isDirty || selectedStatusInForm === currentStatus?.status) || isLoading}
                 >
                   {isLoading ? <Loader2 className="animate-spin" /> : "Save"}
                 </Button>
