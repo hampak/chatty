@@ -31,9 +31,9 @@ const Sidebar = () => {
     }
   }, [openSidebar])
 
-  const statusIndicator = currentStatus === "online" ? (
+  const statusIndicator = currentStatus?.status === "online" ? (
     <div className="absolute bottom-1 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-  ) : currentStatus === "away" ? (
+  ) : currentStatus?.status === "away" ? (
     <div className="absolute bottom-1 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
   ) : (
     <div className="absolute bottom-1 right-0 w-3 h-3 bg-gray-500 border-2 border-white rounded-full" />

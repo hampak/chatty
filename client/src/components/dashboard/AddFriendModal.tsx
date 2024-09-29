@@ -14,10 +14,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
 import { socket } from "@/utils/io"
+import { useSocket } from "../context/SocketContext"
 
 const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
 
   const { user } = useUser()
+  const { currentStatus } = useSocket()
   const queryClient = useQueryClient()
   const [isCopied, setIsCopied] = useState(false)
   const [open, setOpen] = useState(false)
@@ -48,7 +50,7 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["friend_list", user?.id] })
         toast.success(`Added ${data.friendName} as a friend :D`)
-        socket.emit("add-friend", data.friendId, user?.id)
+        socket.emit("add-friend", data.friendId, user?.id, currentStatus?.socketId, currentStatus?.status)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

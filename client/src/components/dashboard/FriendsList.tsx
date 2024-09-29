@@ -63,7 +63,6 @@ const FriendsList = ({ userId }: { userId?: string }) => {
 
   useEffect(() => {
     socket.on("added-as-friend", async () => {
-      console.log("you have been added by another user!")
       await queryClient.invalidateQueries({ queryKey: ["friend_list", userId] })
     })
   }, [queryClient, userId])

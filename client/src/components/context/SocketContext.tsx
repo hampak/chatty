@@ -14,7 +14,10 @@ interface OnlineFriends {
 interface SocketContextValue {
   socket: Socket;
   onlineFriends: OnlineFriends;
-  currentStatus: "online" | "away" | undefined
+  currentStatus: {
+    socketId: string,
+    status: "online" | "away" | undefined
+  } | undefined
 }
 
 const SocketContext = createContext<SocketContextValue | undefined>(undefined)
@@ -26,7 +29,11 @@ export const SocketProvider = ({
 }) => {
 
   const [onlineFriends, setOnlineFriends] = useState<OnlineFriends>({});
-  const [currentStatus, setCurrentStatus] = useState<"online" | "away" | undefined>(undefined)
+  // const [currentStatus, setCurrentStatus] = useState<{"online" | "away" | undefined}>(undefined)
+  const [currentStatus, setCurrentStatus] = useState<{
+    socketId: string;
+    status: "online" | "away" | undefined
+  } | undefined>(undefined)
 
   const queryClient = useQueryClient()
   const { user } = useUser()
@@ -36,8 +43,11 @@ export const SocketProvider = ({
     if (user === null) return
     socket.emit("userOnline", user.id)
 
-    socket.on("retrieveCurrentUserStatus", async (data: "online" | "away") => {
-      setCurrentStatus(data)
+    socket.on("retrieveCurrentUser", async (currentUserSocketId: string, currentUserStatus: "online" | "away") => {
+      setCurrentStatus({
+        socketId: currentUserSocketId,
+        status: currentUserStatus
+      })
     })
 
     socket.on("getOnlineFriend", async (updatedFriendId: string, updatedFriendSocketId: string, updatedFriendStatus: "online" | "away") => {
@@ -73,7 +83,8 @@ export const SocketProvider = ({
     }
   }, [])
 
-  console.log("onlineFriends", onlineFriends)
+  // console.log("onlineFriends", onlineFriends)
+  console.log("currentStatus", currentStatus)
 
   // need to find a way to send a list of friend's socket ID's from the server to the client. Need to fix the issue of having to query redis to find friend's socket IDs every time I send a message
 
