@@ -286,7 +286,7 @@ io.on("connection", async (socket: CustomSocket) => {
     console.log("Left chatroom!")
   })
 
-  socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[], senderImage) => {
+  socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[], senderImage, participantsSocketIds: string[]) => {
 
     try {
       const timestamp = Date.now()
@@ -299,15 +299,18 @@ io.on("connection", async (socket: CustomSocket) => {
 
       io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId, senderImage)
 
-      const friendSocketIds = await Promise.all(participantsIds.map(async (friendId) => {
-        return redis.hget("userSocketId", friendId)
-      }))
+      // receive socket Ids of participants from the client rather than querying redis
+      // const friendSocketIds = await Promise.all(participantsIds.map(async (friendId) => {
+      //   return redis.hget("userSocketId", friendId)
+      // }))
 
-      const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
+      // const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
 
-      validSocketIds.push(socket.id)
+      // validSocketIds.push(socket.id)
 
-      await Promise.all(validSocketIds.map(async (socketId): Promise<void> => {
+      participantsSocketIds.push(socket.id)
+
+      await Promise.all(participantsSocketIds.map(async (socketId): Promise<void> => {
         return new Promise((resolve) => {
           io.to(socketId).emit("lastMessage", message, chatroomId)
           resolve()

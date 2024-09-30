@@ -1,3 +1,4 @@
+import { useSocket } from "@/components/context/SocketContext"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -24,7 +25,10 @@ interface MessageInputProps {
 
 const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageInputProps) => {
 
+  const { onlineFriends } = useSocket()
+
   const [participantsIds, setParticipantsIds] = useState<string[]>([])
+  const [participantsSocketIds, setParticipantsSocketIds] = useState<string[]>([])
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -40,8 +44,10 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
 
     setParticipantsIds(participantsExcludingCurrentUser)
 
+    const participantsSocketIds = participantsExcludingCurrentUser.map(id => onlineFriends[id]?.socketId)
 
-  }, [user.id, participants])
+    setParticipantsSocketIds(participantsSocketIds)
+  }, [user.id, participants, onlineFriends])
 
   const { watch } = form
 
@@ -58,8 +64,8 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
     if (!trimmedMessage) return
 
     // socket.emit("sendMessage", values.message, chatroomId, user.id, participantsIds)
-    console.log("chatroomId", chatroomId)
-    socket.emit("sendMessage", trimmedMessage, chatroomId, user.id, participantsIds, senderImage);
+    // console.log("chatroomId", chatroomId)
+    socket.emit("sendMessage", trimmedMessage, chatroomId, user.id, participantsIds, senderImage, participantsSocketIds);
 
     form.reset()
   }
