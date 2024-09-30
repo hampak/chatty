@@ -245,18 +245,9 @@ io.on("connection", async (socket: CustomSocket) => {
       return typedFriend.socketId;
     })
 
-    // work on this!
-
     await Promise.all(friendIds.map(async (friendId) => {
       redis.sadd(`participants-${chatroomId}`, friendId)
     }))
-
-
-    // const friendSocketIds = await Promise.all(friendIds.map(async (friendId) => {
-    //   return redis.hget("userSocketId", friendId)
-    // }))
-
-    // const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
 
     friendSocketIds.forEach(socketId => {
       return io.to(socketId).emit("added-in-chatroom")
