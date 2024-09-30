@@ -23,14 +23,18 @@ import { useUser } from "../provider/UserProvider"
 import { AxiosError } from "axios"
 import { toast } from "sonner"
 import { socket } from "@/utils/io"
+import { useSocket } from "../context/SocketContext"
 
 
 
 const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: FriendsList | null }) => {
 
   const { user } = useUser()
+  const { onlineFriends } = useSocket()
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
+
+  console.log("onlineFriends", onlineFriends)
 
   const form = useForm<z.infer<typeof startChatWithFriendSchema>>({
     resolver: zodResolver(startChatWithFriendSchema),
@@ -59,7 +63,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
         toast.success(data.message)
-        socket.emit("added-in-chatroom", user?.id, friendIds, data.chatroomId)
+        socket.emit("added-in-chatroom", user?.id, friendIds, data.chatroomId, onlineFriends)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

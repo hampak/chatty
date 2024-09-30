@@ -237,19 +237,28 @@ io.on("connection", async (socket: CustomSocket) => {
     io.to(friendSocketId).emit("added-as-friend")
   })
 
-  socket.on("added-in-chatroom", async (currentUserId, friendIds: string[], chatroomId) => {
+  socket.on("added-in-chatroom", async (currentUserId, friendIds: string[], chatroomId, onlineFriends) => {
+
+    // receive the socketIds of friends from the client (rather than from the db)
+    const friendSocketIds = Object.values(onlineFriends).map(friend => {
+      const typedFriend = friend as { status: "online" | "away"; socketId: string };
+      return typedFriend.socketId;
+    })
+
+    // work on this!
 
     await Promise.all(friendIds.map(async (friendId) => {
       redis.sadd(`participants-${chatroomId}`, friendId)
     }))
 
-    const friendSocketIds = await Promise.all(friendIds.map(async (friendId) => {
-      return redis.hget("userSocketId", friendId)
-    }))
 
-    const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
+    // const friendSocketIds = await Promise.all(friendIds.map(async (friendId) => {
+    //   return redis.hget("userSocketId", friendId)
+    // }))
 
-    validSocketIds.forEach(socketId => {
+    // const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
+
+    friendSocketIds.forEach(socketId => {
       return io.to(socketId).emit("added-in-chatroom")
     })
   })
