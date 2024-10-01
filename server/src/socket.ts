@@ -61,17 +61,11 @@ const authenticateSocket = async (socket: CustomSocket, next: any) => {
 
 io.use(authenticateSocket)
 
-// 1. When user A connects for the first time (or refreshes), send a list of online friends to that user's client
-// 2. When user A's friend becomes online, update the other user's friend list so that User B's status is updated
-// 3. send a event to user B's friends + in the client, append that new info in the Socket Context.
-// 4. When user A refreshes, it's okay because user A's friendList had already been updated in step #2
-
 io.on("connection", async (socket: CustomSocket) => {
 
   const currentUserId = socket.userId
 
   // set user's socketID as a string
-  redis.hset(`user:${currentUserId}`, "socketId", socket.id)
   redis.hset(`user:${currentUserId}`, "socketId", socket.id, "status", "online")
 
   socket.on("userOnline", async (userId) => {
@@ -204,26 +198,6 @@ io.on("connection", async (socket: CustomSocket) => {
   })
 
   socket.on("add-friend", async (friendId: string, userId: string, socketId: string, status: "online" | "away") => {
-    // const onlineUsers = await redis.hgetall("online-users")
-    // const friends: string[] = await redis.smembers(`friends-${userId}`)
-
-    // const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
-    //   const userStatus = onlineUsers[key]
-    //   if ((key === userId || friends.includes(key)) && userStatus) {
-    //     result[key] = userStatus
-    //   }
-    //   return result
-    // }, {} as Record<string, string>)
-
-    // const friendSocketId = await redis.hget(`userSocketId`, friendId)
-
-    // const friendsSocketIdsPromise: Promise<string | null>[] = friends.map(async (friendId) => {
-    //   return await redis.hget(`user:${friendId}`, "socketId")
-    // })
-
-    // const friendSocketId: (string | null)[] = await Promise.all(friendsSocketIdsPromise)
-
-    // const validSocketIds = friendSocketId.filter(id => id !== null && id !== undefined);
 
     const addedFriend = await redis.hmget(`user:${friendId}`, "socketId", "status")
 
@@ -269,7 +243,6 @@ io.on("connection", async (socket: CustomSocket) => {
       console.log('Room does not exist or is empty.');
     }
     console.log("Joined the socket room")
-    // const lastSeenTimestamp = await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
   })
 
   socket.on("leave-chatroom", async (chatroomId, userId) => {
@@ -299,15 +272,6 @@ io.on("connection", async (socket: CustomSocket) => {
       }))
 
       io.to(chatroomId).emit("message", message, senderId, timestamp, chatroomId, senderImage)
-
-      // receive socket Ids of participants from the client rather than querying redis
-      // const friendSocketIds = await Promise.all(participantsIds.map(async (friendId) => {
-      //   return redis.hget("userSocketId", friendId)
-      // }))
-
-      // const validSocketIds = friendSocketIds.filter(id => id !== null && id !== undefined);
-
-      // validSocketIds.push(socket.id)
 
       participantsSocketIds.push(socket.id)
 
