@@ -327,23 +327,35 @@ io.on("connection", async (socket: CustomSocket) => {
 
     if (!userId) return
 
-    await redis.hdel("online-users", userId)
+    // await redis.hdel("online-users", userId)
     const friends: string[] = await redis.smembers(`friends-${userId}`)
-    // console.log("friends", friends)
-    const onlineUsers = await redis.hgetall("online-users")
 
-    const filteredOnlineFriends: Record<string, string> = Object.keys(onlineUsers).reduce((result, key) => {
-      const userStatus = onlineUsers[key]
-      if ((key === userId || friends.includes(key)) && userStatus) {
-        result[key] = userStatus
-      }
-      return result
-    }, {} as Record<string, string>)
-    io.emit("getOnlineFriends", filteredOnlineFriends)
+    if (friends.length === 0) return
+
+    const status = "offline"
+
+    // await redis.hset(`user:${userId}`, "status", status)
+    await redis.hdel(`user:${userId}`, "socketId", "status")
+
+    // io.to(socket.id).emit("retrieveCurrentUser", socket.id, status)
+
+    const friendsSocketIdsPromise: Promise<string | null>[] = friends.map(async (friendId) => {
+      return await redis.hget(`user:${friendId}`, "socketId")
+    })
+
+    const friendSocketId: (string | null)[] = await Promise.all(friendsSocketIdsPromise)
+
+    const validSocketIds = friendSocketId.filter(id => id !== null && id !== undefined);
+
+    // validSocketIds.push(socket.id)
+
+    validSocketIds.forEach(id => {
+      io.to(id).emit("getOnlineFriend", currentUserId, socket.id, status)
+    })
   })
 
-  socket.on("disconnect", async () => {
-  })
+  // socket.on("disconnect", async () => {
+  // })
 })
 
 export {
