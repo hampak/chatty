@@ -139,7 +139,7 @@ const authRoutes = express.Router()
           { expiresIn: "60m" }
         )
 
-        await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 1800)
+        await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 3600)
       } else {
         token = jwt.sign({
           user_id: user?._id,
@@ -150,7 +150,7 @@ const authRoutes = express.Router()
           { expiresIn: "60m" }
         )
 
-        redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 1800)
+        redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 3600)
       }
 
       res.cookie("user", token, {
@@ -237,7 +237,7 @@ const authRoutes = express.Router()
           { expiresIn: "60m" }
         )
 
-        await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 1800)
+        await redis.set(`sessionToken-${savedUser._id.toString()}`, token, "EX", 3600)
       } else {
         token = jwt.sign({
           user_id: user?._id,
@@ -248,7 +248,7 @@ const authRoutes = express.Router()
           { expiresIn: "60m" }
         )
 
-        redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 1800)
+        redis.set(`sessionToken-${user._id.toString()}`, token, "EX", 3600)
       }
 
       res.cookie("user", token, {
