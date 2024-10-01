@@ -38,6 +38,13 @@ type AddFriend = {
   friendUserTag: string
 }
 
+interface ServerResponse {
+  friendUserTag: string;
+  friendId: string;
+  message: string,
+  chatroomId: string
+}
+
 
 export function useGetUser() {
   return useQuery({
@@ -154,13 +161,6 @@ export function useGetChatInfo({ chatId, userId }: GetChatInfo) {
   })
 }
 
-
-interface ServerResponse {
-  friendUserTag: string;
-  friendId: string;
-  message: string,
-  chatroomId: string
-}
 
 export function useAddFriend() {
   return useMutation({

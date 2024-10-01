@@ -21,8 +21,6 @@ const friendRoutes = express.Router()
     try {
       const { userId } = req.query
 
-      // const user = await User.findById(userId).populate("friends", "name image userTag")
-
       const user = await User.findById(userId)
 
       if (!user) {
@@ -36,7 +34,7 @@ const friendRoutes = express.Router()
       }).select("_id name image userTag")
 
       const friends = friendsList.map(friend => ({
-        userId: friend._id,
+        userId: friend._id.toString(),
         name: friend.name,
         image: friend.image,
         userTag: friend.userTag
