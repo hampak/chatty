@@ -6,7 +6,7 @@ import { socket } from "@/utils/io"
 import { messageSchema } from "@/utils/zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SendIcon } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -29,6 +29,7 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
 
   const [participantsIds, setParticipantsIds] = useState<string[]>([])
   const [participantsSocketIds, setParticipantsSocketIds] = useState<string[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -37,6 +38,12 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
       senderImage: user.picture
     }
   })
+
+  useEffect(() => {
+    if (isConnected) {
+      inputRef.current?.focus()
+    }
+  }, [isConnected])
 
   useEffect(() => {
 
@@ -89,6 +96,7 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
                       {...field}
                       className="focus-visible:ring-1 px-2 focus-visible:ring-offset-0"
                       disabled={!isConnected}
+                      ref={inputRef}
                     />
                   </FormControl>
                 </FormItem>
