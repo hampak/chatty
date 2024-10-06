@@ -62,9 +62,7 @@ export const SocketProvider = ({
         }
       })
 
-      // setCurrentStatus(userStatus)
-
-      await queryClient.invalidateQueries({ queryKey: ["chat_list", user.id] })
+      // await queryClient.invalidateQueries({ queryKey: ["chat_list", user.id] })
     })
 
     return () => {

@@ -65,7 +65,7 @@ const UserSettingsModal = ({ children }: { children: React.ReactNode }) => {
 
   const onSubmit = async (values: { status: "online" | "away" | undefined }) => {
     setIsLoading(true)
-    socket.emit("change-status", values.status, user?.id)
+    socket.emit("changeStatus", values.status, user?.id)
     setTimeout(() => {
       setOpen(false)
       setIsLoading(false)

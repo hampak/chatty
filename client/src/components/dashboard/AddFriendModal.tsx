@@ -50,7 +50,7 @@ const AddFriendModal = ({ children }: { children: React.ReactNode }) => {
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["friend_list", user?.id] })
         toast.success(`Added ${data.friendName} as a friend :D`)
-        socket.emit("add-friend", data.friendId, user?.id, currentStatus?.socketId, currentStatus?.status)
+        socket.emit("addFriend", data.friendId, user?.id, currentStatus?.socketId, currentStatus?.status)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

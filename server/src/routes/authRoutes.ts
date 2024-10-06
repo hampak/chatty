@@ -286,7 +286,6 @@ const authRoutes = express.Router()
       })
     }
 
-
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload
       if (typeof decoded !== "string" && decoded.user_id) {

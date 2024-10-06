@@ -63,7 +63,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
         form.reset()
         await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
         toast.success(data.message)
-        socket.emit("added-in-chatroom", user?.id, friendIds, data.chatroomId, onlineFriends)
+        socket.emit("addedInChatroom", user?.id, friendIds, data.chatroomId, onlineFriends)
       },
       onError: (error) => {
         if (error instanceof AxiosError) {

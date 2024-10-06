@@ -14,7 +14,7 @@ const ChatList = () => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    socket.on("added-in-chatroom", async () => {
+    socket.on("addedInChatroom", async () => {
       await queryClient.invalidateQueries({ queryKey: ["chat_list", user?.id] })
     })
   }, [queryClient, user?.id])

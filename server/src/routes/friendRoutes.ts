@@ -52,9 +52,18 @@ const friendRoutes = express.Router()
     try {
       const { friendUserTag, userId } = await req.body
 
+      const currentUser = await User.findById(userId)
+
+      if (!currentUser) {
+        return res.status(404).json({
+          message: "Current user not found | Unauthorized"
+        })
+      }
+
       const userWithUserTagExists = await User.findOne({
         userTag: friendUserTag
       })
+
 
       if (!userWithUserTagExists) {
         return res.status(400).json({
@@ -65,14 +74,6 @@ const friendRoutes = express.Router()
       if (userWithUserTagExists._id.toString() === userId) {
         return res.status(400).json({
           message: "You cannot befriend yourself :/"
-        })
-      }
-
-      const currentUser = await User.findById(userId)
-
-      if (!currentUser) {
-        return res.status(404).json({
-          message: "Current user not found | Unauthorized"
         })
       }
 

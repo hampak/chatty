@@ -102,9 +102,7 @@ io.on("connection", async (socket: CustomSocket) => {
         })
       })
 
-
       const friendData: [string | null, string | null][] = await Promise.all(friendDataPromises)
-      console.log("friendData", friendData)
       const friendSocketId: (string | null)[] = await Promise.all(friendsSocketIdsPromise)
 
       const filteredOnlineFriends: Record<string, { status: string | null; socketId: string | null }> = friendData.reduce((result, [socketId, status], index) => {
@@ -170,7 +168,7 @@ io.on("connection", async (socket: CustomSocket) => {
     }
   })
 
-  socket.on("change-status", async (status, userId) => {
+  socket.on("changeStatus", async (status, userId) => {
 
     await redis.hset(`user:${userId}`, "status", status)
 
@@ -197,7 +195,7 @@ io.on("connection", async (socket: CustomSocket) => {
     })
   })
 
-  socket.on("add-friend", async (friendId: string, userId: string, socketId: string, status: "online" | "away") => {
+  socket.on("addFriend", async (friendId: string, userId: string, socketId: string, status: "online" | "away") => {
 
     const addedFriend = await redis.hmget(`user:${friendId}`, "socketId", "status")
 
@@ -209,10 +207,10 @@ io.on("connection", async (socket: CustomSocket) => {
 
     io.to(socket.id).emit("getOnlineFriend", friendId, friendSocketId, friendStatus)
     io.to(friendSocketId).emit("getOnlineFriend", userId, socketId, status)
-    io.to(friendSocketId).emit("added-as-friend")
+    io.to(friendSocketId).emit("addedAsFriend")
   })
 
-  socket.on("added-in-chatroom", async (currentUserId, friendIds: string[], chatroomId, onlineFriends) => {
+  socket.on("addedInChatroom", async (currentUserId, friendIds: string[], chatroomId, onlineFriends) => {
 
     // receive the socketIds of friends from the client (rather than from the db)
     const friendSocketIds = Object.values(onlineFriends).map(friend => {
@@ -225,16 +223,16 @@ io.on("connection", async (socket: CustomSocket) => {
     }))
 
     friendSocketIds.forEach(socketId => {
-      return io.to(socketId).emit("added-in-chatroom")
+      return io.to(socketId).emit("addedInChatroom")
     })
   })
 
-  socket.on("connected-to-room", async (chatroomId, userId) => {
+  socket.on("connectedToRoom", async (chatroomId, userId) => {
     const timestamp = Date.now()
     await socket.join(chatroomId);
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
 
-    io.to(chatroomId).emit("joined-chatroom")
+    io.to(chatroomId).emit("joinedChatroom")
     const room = io.sockets.adapter.rooms.get(chatroomId);
     if (room) {
       const socketIds = Array.from(room);
@@ -245,7 +243,7 @@ io.on("connection", async (socket: CustomSocket) => {
     console.log("Joined the socket room")
   })
 
-  socket.on("leave-chatroom", async (chatroomId, userId) => {
+  socket.on("leaveChatroom", async (chatroomId, userId) => {
     const timestamp = Date.now()
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
     await socket.leave(chatroomId)

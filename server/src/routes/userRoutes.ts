@@ -11,7 +11,6 @@ const userRoutes = express.Router()
 
   .get("/", async (req, res) => {
     const token = await req.cookies.user
-    // console.log("/api/user || token", token)
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET!) as JwtPayload

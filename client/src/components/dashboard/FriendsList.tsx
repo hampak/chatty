@@ -62,7 +62,7 @@ const FriendsList = ({ userId }: { userId?: string }) => {
   const { onlineFriends } = useSocket()
 
   useEffect(() => {
-    socket.on("added-as-friend", async () => {
+    socket.on("addedAsFriend", async () => {
       await queryClient.invalidateQueries({ queryKey: ["friend_list", userId] })
     })
   }, [queryClient, userId])

@@ -31,7 +31,6 @@ const chatRoutes = express.Router()
       // when creating a 1 on 1 chat
       if (friendData.length === 1) {
         const chatroomAlreadyExists = await ChatRoom.findOne({
-          // participants: { $all: [friendData[0].friendId, currentUserId] }
           participants: {
             $all: [
               { $elemMatch: { participantId: friendData[0].friendId } },
@@ -41,10 +40,7 @@ const chatRoutes = express.Router()
           $expr: { $eq: [{ $size: "$participants" }, 2] }
         })
 
-        // console.log("chatroomAlreadyExists", chatroomAlreadyExists)
-
         if (chatroomAlreadyExists) {
-          // return user to the chatroom page with that specific user
           return res.redirect(`CLIENT_URL/dashboard/chat/${chatroomAlreadyExists._id}`)
         }
 
@@ -143,7 +139,6 @@ const chatRoutes = express.Router()
           })
           unreadMessagesCount = unreadMessages.length;
         } else {
-          // const unreadMessagesCount = await redis.zcount(`messages-${chatRoomId}`, lastSeenTimestamp, "+inf")
           const messagesAfterLastSeen = await redis.zrangebyscore(`messages-${chatRoomId}`, lastSeenTimestamp, "+inf")
           const unreadMessages = messagesAfterLastSeen.filter(message => {
             const parsedMessage = JSON.parse(message);
@@ -151,7 +146,6 @@ const chatRoutes = express.Router()
           })
           unreadMessagesCount = unreadMessages.length
         }
-
 
         return {
           id: room._id,
@@ -238,6 +232,8 @@ const chatRoutes = express.Router()
 
     const date = new Date(createdAt)
     const formattedDate = date.toLocaleString(undefined, options)
+
+    console.log("messages", messages)
 
     return res.status(200).json({
       chatroomId: _id,
