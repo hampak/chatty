@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { useUser } from "../components/provider/UserProvider"
 import ChatHeader from "../components/dashboard/chat/ChatHeader"
 import { useGetChatInfo } from "../lib/data"
@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react"
 const Chat = () => {
 
   const { chatId } = useParams()
+  const location = useLocation()
   const { user } = useUser()
 
   const { data } = useGetChatInfo({ chatId: chatId, userId: user?.id })
@@ -27,7 +28,7 @@ const Chat = () => {
         participants={data?.participants}
         createdAt={data?.createdAt}
       />
-      <ChatContainer data={data} user={user} />
+      <ChatContainer data={data} user={user} chatroomId={chatId} location={location} />
     </div>
   )
 }
