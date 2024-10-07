@@ -8,8 +8,8 @@ import { Loader2 } from "lucide-react"
 const Chat = () => {
 
   const { chatId } = useParams()
-  const location = useLocation()
   const { user } = useUser()
+  const location = useLocation()
 
   const { data } = useGetChatInfo({ chatId: chatId, userId: user?.id })
   if (!data || !user) {
@@ -19,6 +19,8 @@ const Chat = () => {
       </div>
     )
   }
+
+  console.log("location", location)
 
   return (
     <div className="flex-1 h-full bg-green-100s p-2 max-w-screen">

@@ -28,6 +28,8 @@ const ChatContainer = ({ data, user, chatroomId, location }: ChatContainerProps)
 
   useEffect(() => {
 
+    // console.log("location", location)
+
     console.log("previousChatroomId", previousChatroomId)
     console.log("chatroomId", chatroomId)
 
@@ -47,7 +49,7 @@ const ChatContainer = ({ data, user, chatroomId, location }: ChatContainerProps)
       socket.off("joined-chatroom")
       socket.off("connectedToRoom")
     }
-  }, [chatroomId, user.id, location])
+  }, [chatroomId, user.id, location.pathname])
 
   const { isOpen } = useSidebarStore()
 

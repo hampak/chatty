@@ -34,7 +34,7 @@ const CreateChatModal = ({ children, data }: { children: React.ReactNode, data: 
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
 
-  console.log("onlineFriends", onlineFriends)
+  // console.log("onlineFriends", onlineFriends)
 
   const form = useForm<z.infer<typeof startChatWithFriendSchema>>({
     resolver: zodResolver(startChatWithFriendSchema),

@@ -7,8 +7,6 @@ import { useEffect } from "react";
 import ChatRoomItem from "./ChatRoomItem";
 
 const ChatList = () => {
-
-
   const { user } = useUser()
   const { data, isLoading } = useGetChatsList({ userId: user?.id })
   const queryClient = useQueryClient()
@@ -28,7 +26,6 @@ const ChatList = () => {
       </div>
     )
   }
-
 
   return (
     <div className="mt-2 h-full w-full bg-green-700s space-y-2 overflow-y-auto custom-scrollbar">

@@ -82,7 +82,7 @@ export const SocketProvider = ({
   }, [])
 
   // console.log("onlineFriends", onlineFriends)
-  console.log("currentStatus", currentStatus)
+  // console.log("currentStatus", currentStatus)
 
   // need to find a way to send a list of friend's socket ID's from the server to the client. Need to fix the issue of having to query redis to find friend's socket IDs every time I send a message
 
