@@ -13,6 +13,7 @@ import LandingPage from './routes/LandingPage'
 import Login from './routes/Login'
 import NotFound from './routes/NotFound'
 import { checkAuthStatus } from './utils'
+import RouteProvider from './components/provider/RouteProvider'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route
@@ -39,7 +40,9 @@ const router = createBrowserRouter(createRoutesFromElements(
       element={
         <UserProvider>
           <SocketProvider>
-            <DashboardLayout />
+            <RouteProvider>
+              <DashboardLayout />
+            </RouteProvider>
           </SocketProvider>
         </UserProvider>
       }

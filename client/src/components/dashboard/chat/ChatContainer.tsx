@@ -16,40 +16,47 @@ interface ChatContainerProps {
     userTag: string
   },
   chatroomId: string | undefined,
-  location: any
 }
 
-const ChatContainer = ({ data, user, chatroomId, location }: ChatContainerProps) => {
+const ChatContainer = ({ data, user, chatroomId }: ChatContainerProps) => {
 
   // const { chatroomId } = data
   const [isConnected, setIsConnected] = useState(false)
 
-  const previousChatroomId = useRef<string | undefined>(undefined)
-
   useEffect(() => {
-
-    // console.log("location", location)
-
-    console.log("previousChatroomId", previousChatroomId)
-    console.log("chatroomId", chatroomId)
-
-    if (previousChatroomId.current !== chatroomId) {
-      socket.emit("leaveChatroom", previousChatroomId, user.id)
-    }
-
-    socket.emit("connectedToRoom", chatroomId, user.id)
-
     socket.on("joinedChatroom", () => {
       setIsConnected(true)
-      previousChatroomId.current = chatroomId
     })
 
-
     return () => {
-      socket.off("joined-chatroom")
-      socket.off("connectedToRoom")
+      socket.off("joinedChatroom")
     }
-  }, [chatroomId, user.id, location.pathname])
+  }, [chatroomId])
+
+  // const previousChatroomId = useRef<string | undefined>(undefined)
+
+  // useEffect(() => {
+
+  //   // console.log("previousChatroomId", previousChatroomId)
+  //   // console.log("chatroomId", chatroomId)
+
+  //   if (previousChatroomId.current !== chatroomId) {
+  //     socket.emit("leaveChatroom", previousChatroomId, user.id)
+  //   }
+
+  //   socket.emit("connectedToRoom", chatroomId, user.id)
+
+  //   socket.on("joinedChatroom", () => {
+  //     setIsConnected(true)
+  //     previousChatroomId.current = chatroomId
+  //   })
+
+
+  //   return () => {
+  //     socket.off("joined-chatroom")
+  //     socket.off("connectedToRoom")
+  //   }
+  // }, [chatroomId, user.id])
 
   const { isOpen } = useSidebarStore()
 
