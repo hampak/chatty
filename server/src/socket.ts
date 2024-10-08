@@ -227,7 +227,7 @@ io.on("connection", async (socket: CustomSocket) => {
     })
   })
 
-  socket.on("connectedToRoom", async (chatroomId, userId) => {
+  socket.on("connectToRoom", async (chatroomId, userId) => {
     const timestamp = Date.now()
     await socket.join(chatroomId);
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)

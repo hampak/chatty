@@ -59,7 +59,7 @@ export default function RouteProvider({ children }: { children: React.ReactNode 
         socket.emit("leaveChatroom", previousChatroomId.current, user.id)
       }
 
-      socket.emit("connectedToRoom", chatroomId, user.id)
+      socket.emit("connectToRoom", chatroomId, user.id)
 
       socket.off("joinedChatroom")
 
