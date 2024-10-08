@@ -1,10 +1,9 @@
+import { useCurrentRoute } from "@/components/provider/RouteProvider"
+import { cn } from "@/lib/utils"
 import { Chat } from "@/types"
-import { socket } from "@/utils/io"
-import { useEffect, useRef, useState } from "react"
+import { useSidebarStore } from "@/utils/zustand"
 import MessageInput from "./MessageInput"
 import MessagesContainer from "./MessagesContainer"
-import { useSidebarStore } from "@/utils/zustand"
-import { cn } from "@/lib/utils"
 
 interface ChatContainerProps {
   data: Chat,
@@ -18,46 +17,9 @@ interface ChatContainerProps {
   chatroomId: string | undefined,
 }
 
-const ChatContainer = ({ data, user, chatroomId }: ChatContainerProps) => {
+const ChatContainer = ({ data, user }: ChatContainerProps) => {
 
-  // const { chatroomId } = data
-  const [isConnected, setIsConnected] = useState(false)
-
-  useEffect(() => {
-    socket.on("joinedChatroom", () => {
-      setIsConnected(true)
-    })
-
-    return () => {
-      socket.off("joinedChatroom")
-    }
-  }, [chatroomId])
-
-  // const previousChatroomId = useRef<string | undefined>(undefined)
-
-  // useEffect(() => {
-
-  //   // console.log("previousChatroomId", previousChatroomId)
-  //   // console.log("chatroomId", chatroomId)
-
-  //   if (previousChatroomId.current !== chatroomId) {
-  //     socket.emit("leaveChatroom", previousChatroomId, user.id)
-  //   }
-
-  //   socket.emit("connectedToRoom", chatroomId, user.id)
-
-  //   socket.on("joinedChatroom", () => {
-  //     setIsConnected(true)
-  //     previousChatroomId.current = chatroomId
-  //   })
-
-
-  //   return () => {
-  //     socket.off("joined-chatroom")
-  //     socket.off("connectedToRoom")
-  //   }
-  // }, [chatroomId, user.id])
-
+  const { isConnected } = useCurrentRoute()
   const { isOpen } = useSidebarStore()
 
   return (

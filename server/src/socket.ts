@@ -247,15 +247,15 @@ io.on("connection", async (socket: CustomSocket) => {
     const timestamp = Date.now()
     await redis.set(`last_seen-${userId}-${chatroomId}`, timestamp)
     await socket.leave(chatroomId)
-    const room = io.sockets.adapter.rooms.get(chatroomId);
-    console.log("room", room)
-    if (room) {
-      const socketIds = Array.from(room);
-      console.log("Socket Room after leave", socketIds);
-    } else {
-      console.log('Room does not exist or is empty.');
-    }
-    console.log("Left chatroom!")
+    // const room = io.sockets.adapter.rooms.get(chatroomId);
+    // console.log("room", room)
+    // if (room) {
+    //   const socketIds = Array.from(room);
+    //   console.log("Socket Room after leave", socketIds);
+    // } else {
+    //   console.log('Room does not exist or is empty.');
+    // }
+    // console.log("Left chatroom!")
   })
 
   socket.on("sendMessage", async (message, chatroomId, senderId, participantsIds: string[], senderImage, participantsSocketIds: string[]) => {

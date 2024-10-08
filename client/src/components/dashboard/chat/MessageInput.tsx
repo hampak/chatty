@@ -39,11 +39,11 @@ const MessageInput = ({ isConnected, chatroomId, user, participants }: MessageIn
     }
   })
 
-  useEffect(() => {
-    if (isConnected) {
-      inputRef.current?.focus()
-    }
-  }, [isConnected])
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     inputRef.current?.focus()
+  //   }
+  // }, [isConnected])
 
   useEffect(() => {
 

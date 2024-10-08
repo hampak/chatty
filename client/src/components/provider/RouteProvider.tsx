@@ -3,7 +3,18 @@ import { useState, createContext, useContext, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "./UserProvider";
 
-type RouteContext = {
+interface RouteContext {
+  currentRoute: {
+    hash: string;
+    key: string;
+    pathname: string;
+    search: string;
+    state: boolean
+  } | null;
+  isConnected: boolean
+}
+
+type CurrentRouteValue = {
   hash: string;
   key: string;
   pathname: string;
@@ -11,12 +22,13 @@ type RouteContext = {
   state: boolean
 } | null
 
-const RouteContext = createContext<RouteContext>(null)
+const RouteContext = createContext<RouteContext | undefined>(undefined)
 
 export default function RouteProvider({ children }: { children: React.ReactNode }) {
 
-  const [currentRoute, setCurrentRoute] = useState<RouteContext>(null)
+  const [currentRoute, setCurrentRoute] = useState<CurrentRouteValue | null>(null)
   const previousChatroomId = useRef<string | undefined>(undefined)
+  const [isConnected, setIsConnected] = useState(false)
   const { user } = useUser()
 
   const location = useLocation()
@@ -31,13 +43,12 @@ export default function RouteProvider({ children }: { children: React.ReactNode 
       ? location.pathname.split("/chat/")[1]
       : null;
 
-    // console.log("chatroomId", chatroomId)
-
     // when user navigates to a page other than a chatroom (which includes the dashboard page + not found page etc)
     if (!chatroomId && previousChatroomId.current) {
       console.log("User navigated out of current chatroom to dashboard or other page!");
       socket.emit("leaveChatroom", previousChatroomId.current, user.id);
       previousChatroomId.current = undefined;
+      setIsConnected(false)
     }
 
     // when user navigates from a chatroom to another chatroom
@@ -54,10 +65,10 @@ export default function RouteProvider({ children }: { children: React.ReactNode 
 
       socket.on("joinedChatroom", () => {
         console.log("Joined chatroom:", chatroomId);
+        setIsConnected(true)
         previousChatroomId.current = chatroomId;
       });
     }
-
 
     return () => {
       socket.off("joinedChatroom")
@@ -66,7 +77,7 @@ export default function RouteProvider({ children }: { children: React.ReactNode 
   }, [location, user])
 
   return (
-    <RouteContext.Provider value={currentRoute}>
+    <RouteContext.Provider value={{ currentRoute, isConnected }}>
       {children}
     </RouteContext.Provider>
   )
@@ -75,7 +86,9 @@ export default function RouteProvider({ children }: { children: React.ReactNode 
 export const useCurrentRoute = () => {
   const context = useContext(RouteContext)
 
-  if (!context) return
+  if (context === undefined) {
+    throw new Error('useSocket must be used within a SocketProvider');
+  }
 
   return context
 }
