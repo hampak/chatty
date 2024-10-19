@@ -13,8 +13,6 @@ type Friend = {
   friendPicture: string
 }
 
-const CLIENT_URL = process.env.CLIENT_URL
-
 const chatRoutes = express.Router()
   .post("/create-chat", checkAuthStatus, async (req, res) => {
 
@@ -53,8 +51,6 @@ const chatRoutes = express.Router()
         })
 
         await chatRoom.save()
-
-        // console.log("chatRoom", chatRoom)
 
         return res.status(200).json({
           message: `Created a chatroom with ${friendData[0].friendName}`
@@ -157,7 +153,7 @@ const chatRoutes = express.Router()
           unreadMessagesCount
         }
       }))
-      // console.log("chat-rooms", chatRooms)
+
       res.status(200).json(chatRooms)
     } catch (error) {
       res.status(400).json({
