@@ -49,13 +49,8 @@ const ChatRoomItem = ({ data, user }: ChatRoomItem) => {
   useEffect(() => {
 
     socket.on("lastMessage", async (message, chatroomId) => {
-      console.log("message", message, "chatroomId", chatroomId)
       if (data.id === chatroomId) {
-        console.log(data.id, chatroomId)
         setLastMesage(message)
-        // if (!chatId || chatId !== chatroomId) {
-        //   setUnreadMessages(prevCount => prevCount + 1)
-        // }
         if (chatId !== chatroomId) {
           setUnreadMessages(prevCount => prevCount + 1)
         }

@@ -51,14 +51,11 @@ const MessagesContainer = ({ user, messages }: MessagesContainerProps) => {
     const handleMessage = (message: string, senderId: string, timestamp: number, incomingChatroomId: string, senderImage: string) => {
       const newMessage: Message = { message, senderId, timestamp, senderImage };
 
-      console.log("newMessage", newMessage)
-
-      console.log(chatId, incomingChatroomId)
-
       if (incomingChatroomId === chatId) {
         setMessageList((prevState) => [...prevState, newMessage]);
       }
     };
+
     socket.on("message", handleMessage)
 
     return () => {
